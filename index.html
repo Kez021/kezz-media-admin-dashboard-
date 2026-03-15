@@ -620,7 +620,7 @@ function signIn(){
   const pass  = document.getElementById('authPass').value;
   const err   = document.getElementById('authErr');
   err.textContent = '';
-  if(email !== ADMIN_EMAIL){ err.textContent = 'Access denied — admin only.'; return; }
+  if(email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()){ err.textContent = 'Access denied — not the admin email.'; return; }
   auth.signInWithEmailAndPassword(email, pass)
     .then(function(cred){
       document.getElementById('authWall').style.display = 'none';
@@ -637,7 +637,7 @@ function doSignOut(){
 }
 
 auth.onAuthStateChanged(function(u){
-  if(u && u.email === ADMIN_EMAIL){
+  if(u && u.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()){
     document.getElementById('authWall').style.display = 'none';
     document.getElementById('sbName').textContent = u.displayName || 'Admin';
     document.getElementById('sbEmail').textContent = u.email;
