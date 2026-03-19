@@ -9,7 +9,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 <style>
-/* ── TOKENS ─────────────────────────────────────────── */
 :root{
   --pink:#e2688a; --pink-soft:#f0a0b8; --pink-pale:#fceef3;
   --bg:#f8f2f5; --card:#fff; --border:rgba(180,120,145,.15);
@@ -19,18 +18,12 @@
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;}
-
-/* ── SIDEBAR ─────────────────────────────────────────── */
-#sidebar{
-  width:var(--sidebar-w);min-height:100vh;background:var(--card);
-  border-right:1px solid var(--border);position:fixed;top:0;left:0;bottom:0;
-  display:flex;flex-direction:column;z-index:100;
-}
+#sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--card);border-right:1px solid var(--border);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:100;}
 .sb-brand{padding:20px 18px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);}
 .sb-logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#e2688a,#f0a0b8);display:flex;align-items:center;justify-content:center;font-weight:900;color:white;font-size:16px;font-style:italic;}
 .sb-title{font-size:14px;font-weight:700;color:var(--text);}
 .sb-sub{font-size:10.5px;color:var(--text3);}
-.sb-nav{padding:12px 10px;flex:1;}
+.sb-nav{padding:12px 10px;flex:1;overflow-y:auto;}
 .nav-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);padding:8px 8px 4px;}
 .nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .18s;margin-bottom:2px;}
 .nav-item:hover{background:var(--pink-pale);color:var(--pink);}
@@ -41,8 +34,6 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .sb-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--pink-soft));display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;}
 .sb-uname{font-size:12px;font-weight:600;}
 .sb-uemail{font-size:10.5px;color:var(--text3);}
-
-/* ── MAIN ────────────────────────────────────────────── */
 #main{margin-left:var(--sidebar-w);flex:1;min-height:100vh;}
 .topbar{height:54px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;position:sticky;top:0;z-index:50;}
 .topbar-title{font-size:16px;font-weight:700;flex:1;}
@@ -52,26 +43,17 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .refresh-btn{padding:7px 14px;border-radius:10px;background:var(--pink-pale);color:var(--pink);border:none;font-size:12.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;}
 .refresh-btn:hover{background:var(--pink);color:white;}
 .content{padding:24px;}
-
-/* ── STATS ROW ───────────────────────────────────────── */
 .stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px;}
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
 .stat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
 .stat-num{font-size:24px;font-weight:800;color:var(--text);}
 .stat-label{font-size:11.5px;color:var(--text3);margin-top:2px;}
-.stat-delta{font-size:11px;margin-top:6px;font-weight:600;}
-.delta-up{color:var(--green);}
-.delta-info{color:var(--blue);}
-
-/* ── SECTION CARD ────────────────────────────────────── */
 .section{display:none;}
 .section.active{display:block;}
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px;}
 .card-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
 .card-head-title{font-size:14px;font-weight:700;flex:1;}
 .card-head-count{font-size:12px;color:var(--text3);}
-
-/* ── TABLE ───────────────────────────────────────────── */
 .tbl-wrap{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;font-size:12.5px;}
 thead th{padding:10px 14px;text-align:left;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);background:var(--bg);border-bottom:1px solid var(--border);}
@@ -91,14 +73,15 @@ tbody td{padding:10px 14px;vertical-align:middle;}
 .badge-blue{background:#dbeafe;color:#1d4ed8;}
 .badge-red{background:#fee2e2;color:#b91c1c;}
 .badge-gray{background:#f1f5f9;color:#64748b;}
+.badge-orange{background:#fff7ed;color:#c2410c;}
 .tag{display:inline-block;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:1px 7px;font-size:10.5px;color:var(--text2);margin:1px;}
-.action-btn{background:none;border:1px solid var(--border);border-radius:7px;padding:4px 10px;font-size:11.5px;cursor:pointer;color:var(--text2);transition:all .15s;}
+.action-btn{background:none;border:1px solid var(--border);border-radius:7px;padding:4px 10px;font-size:11.5px;cursor:pointer;color:var(--text2);transition:all .15s;font-family:inherit;}
 .action-btn:hover{border-color:var(--pink);color:var(--pink);}
 .action-btn.danger:hover{border-color:var(--red);color:var(--red);}
+.action-btn.success{border-color:var(--green);color:var(--green);}
+.action-btn.success:hover{background:var(--green);color:white;}
 .img-thumb{width:44px;height:44px;object-fit:cover;border-radius:7px;border:1px solid var(--border);}
 .no-img{width:44px;height:44px;border-radius:7px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;}
-
-/* ── USER DRILLDOWN ──────────────────────────────────── */
 .drilldown{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px;display:none;}
 .drilldown.open{display:block;}
 .drilldown-header{display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);}
@@ -112,57 +95,44 @@ tbody td{padding:10px 14px;vertical-align:middle;}
 .ds-label{font-size:10px;color:var(--text3);}
 .close-dd{margin-left:auto;background:none;border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px;color:var(--text2);}
 .close-dd:hover{border-color:var(--pink);color:var(--pink);}
-
-/* ── FILTERS ─────────────────────────────────────────── */
 .filters{display:flex;gap:8px;padding:12px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
-.filter-btn{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text2);transition:all .15s;}
+.filter-btn{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text2);transition:all .15s;font-family:inherit;}
 .filter-btn.on{background:var(--pink);color:white;border-color:var(--pink);}
-
-/* ── AUTH WALL ───────────────────────────────────────── */
 #authWall{position:fixed;inset:0;background:linear-gradient(135deg,#fff0f6,#fde8f2);display:flex;align-items:center;justify-content:center;z-index:999;}
 .auth-box{background:white;border-radius:20px;padding:32px;max-width:360px;width:90%;box-shadow:0 20px 60px rgba(180,100,140,.15);}
 .auth-brand{font-size:28px;font-weight:900;font-style:italic;background:linear-gradient(130deg,#d44f7a,#f4a8c0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;margin-bottom:4px;}
 .auth-sub{text-align:center;font-size:12.5px;color:#b8909e;margin-bottom:20px;}
 .auth-input{width:100%;background:#fdf6f8;border:1.5px solid rgba(180,120,145,.18);border-radius:9px;padding:11px 13px;color:#1a0d12;font-size:13.5px;outline:none;margin-bottom:10px;box-sizing:border-box;}
 .auth-input:focus{border-color:#e2688a;}
-.auth-btn{width:100%;padding:12px;border-radius:9px;border:none;background:linear-gradient(135deg,#e2688a,#f0a0b8);color:white;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px;}
-.auth-err{display:none;align-items:center;gap:8px;background:#fff0f4;border:1.5px solid #e2688a;border-radius:10px;padding:10px 14px;margin-top:10px;font-size:12.5px;color:#c9517a;font-weight:600;text-align:left;}
+.auth-btn{width:100%;padding:12px;border-radius:9px;border:none;background:linear-gradient(135deg,#e2688a,#f0a0b8);color:white;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px;font-family:inherit;}
+.auth-err{display:none;align-items:center;gap:8px;background:#fff0f4;border:1.5px solid #e2688a;border-radius:10px;padding:10px 14px;margin-top:10px;font-size:12.5px;color:#c9517a;font-weight:600;}
 .auth-err.show{display:flex;}
-.auth-err-icon{font-size:18px;flex-shrink:0;}
-.auth-err-text{flex:1;line-height:1.4;}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
 .auth-box.shake{animation:shake .4s ease;}
 .auth-input.invalid{border-color:#e2688a !important;background:#fff5f8;}
-
-/* ── LOADING ─────────────────────────────────────────── */
 .loading{padding:32px;text-align:center;color:var(--text3);font-size:13px;}
 .spinner{width:24px;height:24px;border:2.5px solid var(--border);border-top-color:var(--pink);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px;}
 @keyframes spin{to{transform:rotate(360deg);}}
-
-/* ── EMPTY ───────────────────────────────────────────── */
 .empty{padding:32px;text-align:center;color:var(--text3);font-size:13px;}
-
-/* ── COMMENT PREVIEW ─────────────────────────────────── */
 .comment-row{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;}
 .comment-row:last-child{border-bottom:none;}
 .comment-meta{display:flex;align-items:center;gap:6px;margin-bottom:3px;}
 .comment-text{color:var(--text);padding-left:24px;}
-
-/* ── ACTIVITY TIMELINE ───────────────────────────────── */
 .timeline-item{display:flex;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border);}
 .timeline-item:last-child{border-bottom:none;}
 .tl-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
 .tl-body{flex:1;}
 .tl-text{font-size:12.5px;color:var(--text);}
 .tl-time{font-size:11px;color:var(--text3);margin-top:2px;}
-
-/* ── STORAGE BROWSER ─────────────────────────────────── */
+/* Online dot */
+.online-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-right:4px;}
+/* Deleted post row */
+.deleted-row{opacity:.7;background:#fff5f8;}
+/* Storage browser */
 .storage-toolbar{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
-.storage-view-btn{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text2);transition:all .15s;}
+.storage-view-btn{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text2);transition:all .15s;font-family:inherit;}
 .storage-view-btn.on{background:var(--pink);color:white;border-color:var(--pink);}
 .storage-sort{padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text2);font-size:12px;outline:none;cursor:pointer;}
-
-/* User folder cards */
 .folder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;padding:18px;}
 .folder-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:box-shadow .2s,transform .15s;}
 .folder-card:hover{box-shadow:0 6px 24px rgba(226,104,138,.13);transform:translateY(-2px);}
@@ -175,8 +145,6 @@ tbody td{padding:10px 14px;vertical-align:middle;}
 .folder-preview{display:flex;gap:3px;padding:0 14px 14px;}
 .folder-thumb{width:60px;height:60px;border-radius:8px;object-fit:cover;border:1px solid var(--border);}
 .folder-thumb-more{width:60px;height:60px;border-radius:8px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text3);}
-
-/* Expanded file list */
 .file-gallery{display:none;border-top:1px solid var(--border);}
 .file-gallery.open{display:block;}
 .file-gallery-inner{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;padding:14px;}
@@ -188,11 +156,6 @@ tbody td{padding:10px 14px;vertical-align:middle;}
 .file-name{font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .file-date{font-size:10.5px;color:var(--text3);}
 .file-caption{font-size:10.5px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
-
-/* Flat list view */
-.flat-list-view{padding:0;}
-
-/* Image lightbox */
 #storageLightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:3000;align-items:center;justify-content:center;}
 #storageLightbox.open{display:flex;}
 .slb-inner{max-width:90vw;max-height:90vh;position:relative;}
@@ -205,17 +168,11 @@ tbody td{padding:10px 14px;vertical-align:middle;}
 .slb-prev{left:-52px;}
 .slb-next{right:-52px;}
 .slb-counter{text-align:center;font-size:12px;color:rgba(255,255,255,.6);margin-top:8px;}
-
-/* Storage stats bar */
 .storage-stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 18px;border-bottom:1px solid var(--border);}
 .ssb-item{text-align:center;}
 .ssb-num{font-size:20px;font-weight:800;color:var(--text);}
 .ssb-label{font-size:11px;color:var(--text3);}
-
-/* ── RESPONSIVE ──────────────────────────────────────── */
-@media(max-width:900px){
-  .stats-row{grid-template-columns:repeat(3,1fr);}
-}
+@media(max-width:900px){.stats-row{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:650px){
   #sidebar{width:60px;}
   .sb-title,.sb-sub,.nav-item span,.sb-uname,.sb-uemail,.nav-section{display:none;}
@@ -230,13 +187,13 @@ tbody td{padding:10px 14px;vertical-align:middle;}
 <div id="authWall">
   <div class="auth-box">
     <div class="auth-brand">Kez Media</div>
-    <div class="auth-sub">Admin Dashboard — Sign in to continue</div>
+    <div class="auth-sub">Admin Dashboard — Restricted Access</div>
     <input class="auth-input" id="authEmail" type="email" placeholder="Admin email">
     <input class="auth-input" id="authPass" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')signIn()">
     <button class="auth-btn" onclick="signIn()">Sign In</button>
     <div class="auth-err" id="authErr">
-      <span class="auth-err-icon">🚫</span>
-      <span class="auth-err-text" id="authErrText"></span>
+      <span style="font-size:18px;flex-shrink:0;">🚫</span>
+      <span id="authErrText"></span>
     </div>
   </div>
 </div>
@@ -245,65 +202,66 @@ tbody td{padding:10px 14px;vertical-align:middle;}
 <div id="sidebar">
   <div class="sb-brand">
     <div class="sb-logo">K</div>
-    <div>
-      <div class="sb-title">Kez Media</div>
-      <div class="sb-sub">Admin Dashboard</div>
-    </div>
+    <div><div class="sb-title">Kez Media</div><div class="sb-sub">Admin Dashboard</div></div>
   </div>
   <nav class="sb-nav">
     <div class="nav-section">Overview</div>
     <div class="nav-item active" onclick="showSection('overview')">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
       <span>Overview</span>
     </div>
     <div class="nav-section">Collections</div>
     <div class="nav-item" onclick="showSection('users')">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <span>Users</span>
-      <span class="nb" id="nb-users">—</span>
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Users</span><span class="nb" id="nb-users">—</span>
     </div>
     <div class="nav-item" onclick="showSection('posts')">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
-      <span>Posts</span>
-      <span class="nb" id="nb-posts">—</span>
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+      <span>Posts</span><span class="nb" id="nb-posts">—</span>
+    </div>
+    <div class="nav-item" onclick="showSection('deleted-posts')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+      <span>Deleted Posts</span><span class="nb" id="nb-deleted" style="background:#ef4444;">—</span>
     </div>
     <div class="nav-item" onclick="showSection('comments')">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      <span>Comments</span>
-      <span class="nb" id="nb-comments">—</span>
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span>Comments</span><span class="nb" id="nb-comments">—</span>
     </div>
     <div class="nav-item" onclick="showSection('notifications')">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      <span>Notifications</span>
-      <span class="nb" id="nb-notifs">—</span>
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span>Notifications</span><span class="nb" id="nb-notifs">—</span>
     </div>
     <div class="nav-item" onclick="showSection('feedback')">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="13" y2="14"/></svg>
-      <span>Feedback</span>
-      <span class="nb" id="nb-feedback" style="background:#f59e0b;">—</span>
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/></svg>
+      <span>Feedback</span><span class="nb" id="nb-feedback" style="background:#f59e0b;">—</span>
+    </div>
+    <div class="nav-section">Monitoring</div>
+    <div class="nav-item" onclick="showSection('sessions')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Sessions & Logins</span><span class="nb" id="nb-sessions" style="background:#22c55e;">—</span>
+    </div>
+    <div class="nav-item" onclick="showSection('online')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10-4.48 10-10 10S2 17.52 2 12z"/></svg>
+      <span>Online Now</span><span class="nb" id="nb-online" style="background:#22c55e;">—</span>
     </div>
     <div class="nav-section">Storage</div>
     <div class="nav-item" onclick="showSection('storage')">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
-      <span>Media Storage</span>
-      <span class="nb" id="nb-storage">—</span>
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+      <span>Media Storage</span><span class="nb" id="nb-storage">—</span>
     </div>
     <div class="nav-section">Tools</div>
     <div class="nav-item" onclick="showSection('user-activity')">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       <span>User Activity</span>
     </div>
     <div class="nav-item" onclick="exportData()">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       <span>Export JSON</span>
     </div>
   </nav>
   <div class="sb-user">
     <div class="sb-av" id="sbAv">A</div>
-    <div>
-      <div class="sb-uname" id="sbName">Admin</div>
-      <div class="sb-uemail" id="sbEmail">—</div>
-    </div>
+    <div><div class="sb-uname" id="sbName">Admin</div><div class="sb-uemail" id="sbEmail">—</div></div>
   </div>
 </div>
 
@@ -312,11 +270,11 @@ tbody td{padding:10px 14px;vertical-align:middle;}
   <div class="topbar">
     <div class="topbar-title" id="topbarTitle">Overview</div>
     <div class="topbar-search">
-      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="text" id="searchInput" placeholder="Search any table..." oninput="handleSearch(this.value)">
     </div>
     <button class="refresh-btn" onclick="loadAll()">
-      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
       Refresh
     </button>
     <button onclick="doSignOut()" style="padding:7px 14px;border-radius:10px;background:none;border:1px solid var(--border);font-size:12px;cursor:pointer;color:var(--text2);">Sign Out</button>
@@ -324,57 +282,21 @@ tbody td{padding:10px 14px;vertical-align:middle;}
 
   <div class="content">
 
-    <!-- ── OVERVIEW ── -->
+    <!-- OVERVIEW -->
     <div class="section active" id="section-overview">
-      <div class="stats-row" id="statsRow">
-        <div class="stat-card">
-          <div class="stat-icon" style="background:#fce7f3;"><svg width="18" height="18" fill="none" stroke="#e2688a" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-          <div class="stat-num" id="ov-users">—</div>
-          <div class="stat-label">Total Users</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon" style="background:#dbeafe;"><svg width="18" height="18" fill="none" stroke="#3b82f6" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
-          <div class="stat-num" id="ov-posts">—</div>
-          <div class="stat-label">Total Posts</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon" style="background:#dcfce7;"><svg width="18" height="18" fill="none" stroke="#22c55e" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-          <div class="stat-num" id="ov-comments">—</div>
-          <div class="stat-label">Total Comments</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon" style="background:#fef9c3;"><svg width="18" height="18" fill="none" stroke="#f59e0b" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
-          <div class="stat-num" id="ov-likes">—</div>
-          <div class="stat-label">Total Likes</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon" style="background:#fee2e2;"><svg width="18" height="18" fill="none" stroke="#ef4444" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/></svg></div>
-          <div class="stat-num" id="ov-feedback">—</div>
-          <div class="stat-label">Reports / Suggestions</div>
-        </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-icon" style="background:#fce7f3;"><svg width="18" height="18" fill="none" stroke="#e2688a" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="stat-num" id="ov-users">—</div><div class="stat-label">Total Users</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#dbeafe;"><svg width="18" height="18" fill="none" stroke="#3b82f6" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div><div class="stat-num" id="ov-posts">—</div><div class="stat-label">Total Posts</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#dcfce7;"><svg width="18" height="18" fill="none" stroke="#22c55e" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="stat-num" id="ov-comments">—</div><div class="stat-label">Total Comments</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#fef9c3;"><svg width="18" height="18" fill="none" stroke="#f59e0b" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div class="stat-num" id="ov-likes">—</div><div class="stat-label">Total Likes</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#dcfce7;"><svg width="18" height="18" fill="none" stroke="#22c55e" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="10"/></svg></div><div class="stat-num" id="ov-online">—</div><div class="stat-label">Online Now</div></div>
       </div>
-
-      <!-- Recent activity -->
-      <div class="card">
-        <div class="card-head">
-          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <div class="card-head-title">Recent Posts</div>
-        </div>
-        <div id="ovRecentPosts"><div class="loading"><div class="spinner"></div>Loading...</div></div>
-      </div>
-
-      <div class="card">
-        <div class="card-head">
-          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-          <div class="card-head-title">Recently Joined Users</div>
-        </div>
-        <div id="ovRecentUsers"><div class="loading"><div class="spinner"></div>Loading...</div></div>
-      </div>
+      <div class="card"><div class="card-head"><div class="card-head-title">Recent Posts</div></div><div id="ovRecentPosts"><div class="loading"><div class="spinner"></div>Loading...</div></div></div>
+      <div class="card"><div class="card-head"><div class="card-head-title">Recently Joined Users</div></div><div id="ovRecentUsers"><div class="loading"><div class="spinner"></div>Loading...</div></div></div>
     </div>
 
-    <!-- ── USERS ── -->
+    <!-- USERS -->
     <div class="section" id="section-users">
-      <!-- User drilldown panel -->
       <div class="drilldown" id="userDrilldown">
         <div class="drilldown-header">
           <div class="drilldown-av" id="ddAv">?</div>
@@ -391,199 +313,164 @@ tbody td{padding:10px 14px;vertical-align:middle;}
         </div>
         <div id="ddPostList"></div>
       </div>
-
       <div class="card">
-        <div class="card-head">
-          <div class="card-head-title">All Users</div>
-          <div class="card-head-count" id="usersCount">—</div>
-        </div>
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr>
-              <th>User</th>
-              <th>Handle</th>
-              <th>UID</th>
-              <th>Bio</th>
-              <th>Joined</th>
-              <th>Posts</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr></thead>
-            <tbody id="usersTable"><tr><td colspan="8"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
-          </table>
-        </div>
+        <div class="card-head"><div class="card-head-title">All Users</div><div class="card-head-count" id="usersCount">—</div></div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>User</th><th>Handle</th><th>UID</th><th>Bio</th><th>Last Login</th><th>Posts</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="usersTable"><tr><td colspan="8"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
+        </table></div>
       </div>
     </div>
 
-    <!-- ── POSTS ── -->
+    <!-- POSTS -->
     <div class="section" id="section-posts">
       <div class="card">
-        <div class="card-head">
-          <div class="card-head-title">All Posts</div>
-          <div class="card-head-count" id="postsCount">—</div>
-        </div>
+        <div class="card-head"><div class="card-head-title">All Active Posts</div><div class="card-head-count" id="postsCount">—</div></div>
         <div class="filters" id="postsFilters">
           <button class="filter-btn on" onclick="filterPosts('all',this)">All</button>
-          <button class="filter-btn" onclick="filterPosts('photo',this)">📷 Photos</button>
-          <button class="filter-btn" onclick="filterPosts('status',this)">✍️ Status</button>
-          <button class="filter-btn" onclick="filterPosts('liked',this)">❤️ Most Liked</button>
+          <button class="filter-btn" onclick="filterPosts('photo',this)">Photos</button>
+          <button class="filter-btn" onclick="filterPosts('status',this)">Status</button>
+          <button class="filter-btn" onclick="filterPosts('video',this)">Videos</button>
+          <button class="filter-btn" onclick="filterPosts('youtube',this)">YouTube</button>
+          <button class="filter-btn" onclick="filterPosts('liked',this)">Most Liked</button>
         </div>
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr>
-              <th>Post</th>
-              <th>Author</th>
-              <th>Caption</th>
-              <th>Type</th>
-              <th>Likes</th>
-              <th>Comments</th>
-              <th>Posted</th>
-              <th>Actions</th>
-            </tr></thead>
-            <tbody id="postsTable"><tr><td colspan="8"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
-          </table>
-        </div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Post</th><th>Author</th><th>Caption</th><th>Type</th><th>Likes</th><th>Comments</th><th>Posted</th><th>Actions</th></tr></thead>
+          <tbody id="postsTable"><tr><td colspan="8"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
+        </table></div>
       </div>
     </div>
 
-    <!-- ── COMMENTS ── -->
+    <!-- DELETED POSTS -->
+    <div class="section" id="section-deleted-posts">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title">Deleted Posts — Restore or Wipe</div>
+          <div class="card-head-count" id="deletedPostsCount">—</div>
+        </div>
+        <div style="padding:12px 18px;background:#fff5f8;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);">
+          These posts were soft-deleted by users. Data is safe. <strong style="color:var(--pink);">Restore</strong> brings them back. <strong style="color:#ef4444;">Wipe</strong> permanently removes them forever.
+        </div>
+        <div id="deletedPostsPanel"><div class="loading"><div class="spinner"></div>Loading deleted posts...</div></div>
+      </div>
+    </div>
+
+    <!-- COMMENTS -->
     <div class="section" id="section-comments">
       <div class="card">
-        <div class="card-head">
-          <div class="card-head-title">All Comments</div>
-          <div class="card-head-count" id="commentsCount">—</div>
-        </div>
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr>
-              <th>Comment</th>
-              <th>Author</th>
-              <th>On Post</th>
-              <th>Post Author</th>
-              <th>Text</th>
-            </tr></thead>
-            <tbody id="commentsTable"><tr><td colspan="5"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
-          </table>
-        </div>
+        <div class="card-head"><div class="card-head-title">All Comments</div><div class="card-head-count" id="commentsCount">—</div></div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Comment</th><th>Author</th><th>On Post</th><th>Post Author</th><th>Text</th></tr></thead>
+          <tbody id="commentsTable"><tr><td colspan="5"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
+        </table></div>
       </div>
     </div>
 
-    <!-- ── NOTIFICATIONS ── -->
+    <!-- NOTIFICATIONS -->
     <div class="section" id="section-notifications">
       <div class="card">
-        <div class="card-head">
-          <div class="card-head-title">All Notifications</div>
-          <div class="card-head-count" id="notifsCount">—</div>
-        </div>
+        <div class="card-head"><div class="card-head-title">All Notifications</div><div class="card-head-count" id="notifsCount">—</div></div>
         <div class="filters">
           <button class="filter-btn on" onclick="filterNotifs('all',this)">All</button>
-          <button class="filter-btn" onclick="filterNotifs('like',this)">❤️ Likes</button>
-          <button class="filter-btn" onclick="filterNotifs('comment',this)">💬 Comments</button>
-          <button class="filter-btn" onclick="filterNotifs('follow',this)">👤 Follows</button>
-          <button class="filter-btn" onclick="filterNotifs('message',this)">✉️ Messages</button>
-          <button class="filter-btn" onclick="filterNotifs('unread',this)">🔴 Unread</button>
+          <button class="filter-btn" onclick="filterNotifs('like',this)">Likes</button>
+          <button class="filter-btn" onclick="filterNotifs('comment',this)">Comments</button>
+          <button class="filter-btn" onclick="filterNotifs('follow',this)">Follows</button>
+          <button class="filter-btn" onclick="filterNotifs('message',this)">Messages</button>
+          <button class="filter-btn" onclick="filterNotifs('mention',this)">Mentions</button>
+          <button class="filter-btn" onclick="filterNotifs('unread',this)">Unread</button>
         </div>
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr>
-              <th>Type</th>
-              <th>From</th>
-              <th>To</th>
-              <th>Preview</th>
-              <th>Status</th>
-              <th>Time</th>
-            </tr></thead>
-            <tbody id="notifsTable"><tr><td colspan="6"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
-          </table>
-        </div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Type</th><th>From</th><th>To</th><th>Preview</th><th>Status</th><th>Time</th></tr></thead>
+          <tbody id="notifsTable"><tr><td colspan="6"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
+        </table></div>
       </div>
     </div>
 
-    <!-- ── FEEDBACK ── -->
+    <!-- FEEDBACK -->
     <div class="section" id="section-feedback">
       <div class="card">
-        <div class="card-head">
-          <div class="card-head-title">Reports &amp; Suggestions</div>
-          <div class="card-head-count" id="feedbackCount">—</div>
-        </div>
+        <div class="card-head"><div class="card-head-title">Reports &amp; Suggestions</div><div class="card-head-count" id="feedbackCount">—</div></div>
         <div class="filters">
           <button class="filter-btn on" onclick="filterFeedback('all',this)">All</button>
-          <button class="filter-btn" onclick="filterFeedback('idea',this)">💡 Suggestions</button>
-          <button class="filter-btn" onclick="filterFeedback('bug',this)">🐛 Bugs</button>
-          <button class="filter-btn" onclick="filterFeedback('report',this)">🚩 Reports</button>
-          <button class="filter-btn" onclick="filterFeedback('unread',this)">🔴 Unread</button>
+          <button class="filter-btn" onclick="filterFeedback('restore_request',this)">Restore Requests</button>
+          <button class="filter-btn" onclick="filterFeedback('idea',this)">Suggestions</button>
+          <button class="filter-btn" onclick="filterFeedback('bug',this)">Bugs</button>
+          <button class="filter-btn" onclick="filterFeedback('report',this)">Reports</button>
+          <button class="filter-btn" onclick="filterFeedback('unread',this)">Unread</button>
         </div>
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr>
-              <th>Type</th>
-              <th>From</th>
-              <th>Message</th>
-              <th>Status</th>
-              <th>Time</th>
-              <th>Actions</th>
-            </tr></thead>
-            <tbody id="feedbackTable"><tr><td colspan="6"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
-          </table>
-        </div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Type</th><th>From</th><th>Message</th><th>Status</th><th>Time</th><th>Actions</th></tr></thead>
+          <tbody id="feedbackTable"><tr><td colspan="6"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
+        </table></div>
       </div>
     </div>
 
-    <!-- ── USER ACTIVITY ── -->
+    <!-- SESSIONS & LOGINS -->
+    <div class="section" id="section-sessions">
+      <div class="card">
+        <div class="card-head"><div class="card-head-title">Session & Login History</div><div class="card-head-count" id="sessionsCount">—</div></div>
+        <div class="filters">
+          <button class="filter-btn on" onclick="filterSessions('all',this)">All Events</button>
+          <button class="filter-btn" onclick="filterSessions('signin',this)">Sign Ins</button>
+          <button class="filter-btn" onclick="filterSessions('signout',this)">Sign Outs</button>
+          <button class="filter-btn" onclick="filterSessions('post',this)">Posts</button>
+          <button class="filter-btn" onclick="filterSessions('repost',this)">Reposts</button>
+          <button class="filter-btn" onclick="filterSessions('mention',this)">Mentions</button>
+        </div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Event</th><th>User</th><th>Handle</th><th>Email</th><th>Device</th><th>Time</th></tr></thead>
+          <tbody id="sessionsTable"><tr><td colspan="6"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ONLINE NOW -->
+    <div class="section" id="section-online">
+      <div class="card">
+        <div class="card-head"><div class="card-head-title">Online Right Now</div><div class="card-head-count" id="onlineCount">—</div></div>
+        <div style="padding:12px 18px;font-size:12.5px;color:var(--text3);border-bottom:1px solid var(--border);">Live presence data — updates every 30 seconds.</div>
+        <div id="onlinePanel"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- USER ACTIVITY -->
     <div class="section" id="section-user-activity">
       <div class="card">
-        <div class="card-head">
-          <div class="card-head-title">Per-User Activity</div>
-          <div class="card-head-count">Select a user to see everything they've done</div>
-        </div>
+        <div class="card-head"><div class="card-head-title">Per-User Activity</div><div class="card-head-count">Full history for any user</div></div>
         <div style="padding:14px 18px;">
           <select id="activityUserSelect" style="width:100%;max-width:300px;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;outline:none;" onchange="loadUserActivity(this.value)">
             <option value="">— Select a user —</option>
           </select>
         </div>
-        <div id="activityPanel"><div class="empty">Select a user above to see their full activity log.</div></div>
+        <div id="activityPanel"><div class="empty">Select a user above.</div></div>
       </div>
     </div>
 
-    <!-- ── MEDIA STORAGE ── -->
+    <!-- MEDIA STORAGE -->
     <div class="section" id="section-storage">
-
-      <!-- Lightbox -->
       <div id="storageLightbox" onclick="closeLightbox()">
         <div class="slb-inner" onclick="event.stopPropagation()">
           <button class="slb-close" onclick="closeLightbox()">×</button>
           <button class="slb-nav slb-prev" onclick="lbNav(-1)">‹</button>
           <button class="slb-nav slb-next" onclick="lbNav(1)">›</button>
           <img class="slb-img" id="slbImg" alt="">
-          <div class="slb-info">
-            <div class="slb-caption" id="slbCaption">—</div>
-            <div class="slb-meta" id="slbMeta">—</div>
-          </div>
+          <div class="slb-info"><div class="slb-caption" id="slbCaption">—</div><div class="slb-meta" id="slbMeta">—</div></div>
           <div class="slb-counter" id="slbCounter"></div>
         </div>
       </div>
-
       <div class="card">
-        <div class="card-head">
-          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-          <div class="card-head-title">Media Storage Browser</div>
-          <div class="card-head-count" id="storageCount">—</div>
-        </div>
-
-        <!-- Stats bar -->
+        <div class="card-head"><div class="card-head-title">Media Storage Browser</div><div class="card-head-count" id="storageCount">—</div></div>
         <div class="storage-stats-bar">
           <div class="ssb-item"><div class="ssb-num" id="stTotalFiles">—</div><div class="ssb-label">Total Files</div></div>
           <div class="ssb-item"><div class="ssb-num" id="stPostImgs">—</div><div class="ssb-label">Post Images</div></div>
           <div class="ssb-item"><div class="ssb-num" id="stAvatars">—</div><div class="ssb-label">Avatars</div></div>
           <div class="ssb-item"><div class="ssb-num" id="stBanners">—</div><div class="ssb-label">Banners</div></div>
         </div>
-
-        <!-- Toolbar -->
         <div class="storage-toolbar">
           <span style="font-size:12px;font-weight:700;color:var(--text2);">View:</span>
-          <button class="storage-view-btn on" id="stView-folders" onclick="setStorageView('folders',this)">📁 By User</button>
-          <button class="storage-view-btn" id="stView-all" onclick="setStorageView('all',this)">🖼 All Files</button>
-          <button class="storage-view-btn" id="stView-type" onclick="setStorageView('type',this)">📂 By Type</button>
+          <button class="storage-view-btn on" id="stView-folders" onclick="setStorageView('folders',this)">By User</button>
+          <button class="storage-view-btn" id="stView-all" onclick="setStorageView('all',this)">All Files</button>
+          <button class="storage-view-btn" id="stView-type" onclick="setStorageView('type',this)">By Type</button>
           <span style="margin-left:auto;font-size:12px;font-weight:700;color:var(--text2);">Sort:</span>
           <select class="storage-sort" id="storageSort" onchange="renderStorage()">
             <option value="newest">Newest First</option>
@@ -592,16 +479,15 @@ tbody td{padding:10px 14px;vertical-align:middle;}
             <option value="most">Most Files</option>
           </select>
         </div>
-
         <div id="storageBrowser"><div class="loading"><div class="spinner"></div>Loading storage...</div></div>
       </div>
     </div>
 
-  </div><!-- /content -->
-</div><!-- /main -->
+  </div>
+</div>
 
 <script>
-// ── FIREBASE ──────────────────────────────────────────
+// ── FIREBASE CONFIG ───────────────────────────────────
 const firebaseConfig = {
   apiKey: "AIzaSyCxDRIL9XOeA7d-yqXF84tndWPZY8JxLSY",
   authDomain: "kezz-media.firebaseapp.com",
@@ -613,83 +499,45 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db   = firebase.firestore();
 const auth = firebase.auth();
-const ADMIN_EMAIL    = 'keshamaebangcoyo9@gmail.com';
-const GATE_PASSWORD  = 'KeshaMae1'; 
+const ADMIN_EMAIL   = 'keshamaebangcoyo9@gmail.com';
+const GATE_PASSWORD = 'KeshaMae1';
 
-// ── RAW DATA CACHE ────────────────────────────────────
-let _users = [], _posts = [], _notifs = [], _feedback = [];
-let _activeSection = 'overview';
-let _searchQ = '';
-let _postsFilter = 'all';
-let _notifsFilter = 'all';
-let _feedbackFilter = 'all';
+// ── DATA CACHE ────────────────────────────────────────
+let _users=[], _posts=[], _notifs=[], _feedback=[], _sessions=[], _deletedPosts=[], _presence={};
+let _activeSection='overview';
+let _searchQ='', _postsFilter='all', _notifsFilter='all', _feedbackFilter='all', _sessionsFilter='all';
 
 // ── AUTH ──────────────────────────────────────────────
 function showAuthErr(msg){
-  const box  = document.getElementById('authErr');
-  const text = document.getElementById('authErrText');
-  text.textContent = msg;
-  box.classList.add('show');
-  // Shake the card
-  const card = document.querySelector('.auth-box');
-  card.classList.remove('shake');
-  void card.offsetWidth; // reflow to restart animation
-  card.classList.add('shake');
-  setTimeout(()=>card.classList.remove('shake'), 500);
+  const el=document.getElementById('authErr'); el.querySelector('#authErrText').textContent=msg; el.classList.add('show');
+  const box=document.querySelector('.auth-box'); box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake');
+  setTimeout(()=>box.classList.remove('shake'),500);
 }
-
-function clearAuthErr(){
-  document.getElementById('authErr').classList.remove('show');
-  document.querySelectorAll('.auth-input').forEach(i=>i.classList.remove('invalid'));
-}
+function clearAuthErr(){ document.getElementById('authErr').classList.remove('show'); document.querySelectorAll('.auth-input').forEach(i=>i.classList.remove('invalid')); }
 
 function signIn(){
-  const emailEl = document.getElementById('authEmail');
-  const passEl  = document.getElementById('authPass');
-  const email   = emailEl.value.trim();
-  const pass    = passEl.value;
-
+  const emailEl=document.getElementById('authEmail'), passEl=document.getElementById('authPass');
+  const email=emailEl.value.trim(), pass=passEl.value;
   clearAuthErr();
-
-  // Gate check 1 — wrong email
-  if(email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()){
-    emailEl.classList.add('invalid');
-    showAuthErr('⛔ Unauthorized access. This dashboard is restricted to the owner only.');
-    return;
-  }
-
-  // Gate check 2 — wrong gate password
-  if(pass !== GATE_PASSWORD){
-    passEl.classList.add('invalid');
-    showAuthErr('🔒 Incorrect password. You are not authorized to access this dashboard.');
-    return;
-  }
-
-  // Both passed — now authenticate with Firebase
-  auth.signInWithEmailAndPassword(email, pass)
+  if(email.toLowerCase()!==ADMIN_EMAIL.toLowerCase()){ emailEl.classList.add('invalid'); showAuthErr('Unauthorized. This dashboard is restricted to the owner only.'); return; }
+  if(pass!==GATE_PASSWORD){ passEl.classList.add('invalid'); showAuthErr('Incorrect password.'); return; }
+  auth.signInWithEmailAndPassword(email,pass)
     .then(function(cred){
-      document.getElementById('authWall').style.display = 'none';
-      document.getElementById('sbName').textContent = cred.user.displayName || 'Admin';
-      document.getElementById('sbEmail').textContent = cred.user.email;
-      document.getElementById('sbAv').textContent = (cred.user.email||'A')[0].toUpperCase();
+      document.getElementById('authWall').style.display='none';
+      document.getElementById('sbName').textContent=cred.user.displayName||'Admin';
+      document.getElementById('sbEmail').textContent=cred.user.email;
+      document.getElementById('sbAv').textContent=(cred.user.email||'A')[0].toUpperCase();
       loadAll();
     })
-    .catch(function(e){
-      passEl.classList.add('invalid');
-      showAuthErr('🚫 Authentication failed. Please check your credentials and try again.');
-    });
+    .catch(function(){ passEl.classList.add('invalid'); showAuthErr('Authentication failed. Check your credentials.'); });
 }
-
-function doSignOut(){
-  auth.signOut().then(function(){ location.reload(); });
-}
-
+function doSignOut(){ auth.signOut().then(function(){ location.reload(); }); }
 auth.onAuthStateChanged(function(u){
-  if(u && u.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()){
-    document.getElementById('authWall').style.display = 'none';
-    document.getElementById('sbName').textContent = u.displayName || 'Admin';
-    document.getElementById('sbEmail').textContent = u.email;
-    document.getElementById('sbAv').textContent = (u.email||'A')[0].toUpperCase();
+  if(u && u.email.toLowerCase()===ADMIN_EMAIL.toLowerCase()){
+    document.getElementById('authWall').style.display='none';
+    document.getElementById('sbName').textContent=u.displayName||'Admin';
+    document.getElementById('sbEmail').textContent=u.email;
+    document.getElementById('sbAv').textContent=(u.email||'A')[0].toUpperCase();
     loadAll();
   }
 });
@@ -699,100 +547,88 @@ function showSection(name){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('section-'+name).classList.add('active');
-  const ni = document.querySelector('.nav-item[onclick*="'+name+'"]');
+  const ni=document.querySelector('.nav-item[onclick*="\''+name+'\'"]');
   if(ni) ni.classList.add('active');
-  const titles = {overview:'Overview',users:'Users',posts:'Posts',comments:'Comments',
-    notifications:'Notifications',feedback:'Reports & Suggestions','user-activity':'User Activity',storage:'Media Storage'};
-  document.getElementById('topbarTitle').textContent = titles[name] || name;
-  _activeSection = name;
-  document.getElementById('searchInput').value = '';
-  _searchQ = '';
+  const titles={overview:'Overview',users:'Users',posts:'Active Posts','deleted-posts':'Deleted Posts',comments:'Comments',notifications:'Notifications',feedback:'Reports & Suggestions',sessions:'Sessions & Logins',online:'Online Now',storage:'Media Storage','user-activity':'User Activity'};
+  document.getElementById('topbarTitle').textContent=titles[name]||name;
+  _activeSection=name;
+  document.getElementById('searchInput').value=''; _searchQ='';
   renderCurrentSection();
 }
 
 // ── LOAD ALL DATA ─────────────────────────────────────
 async function loadAll(){
   try{
-    await Promise.all([loadUsers(), loadPosts(), loadNotifs(), loadFeedback()]);
-    buildStorageIndex();
-    updateBadges();
-    renderCurrentSection();
-  }catch(e){ console.error('Load error:', e); }
+    await Promise.all([loadUsers(),loadPosts(),loadNotifs(),loadFeedback(),loadSessions(),loadPresence()]);
+    buildStorageIndex(); updateBadges(); renderCurrentSection();
+  }catch(e){console.error('Load error:',e);}
 }
 
 async function loadUsers(){
-  const snap = await db.collection('profiles').get();
-  _users = snap.docs.map(d=>({id:d.id, ...d.data()}));
+  const snap=await db.collection('profiles').get();
+  _users=snap.docs.map(d=>({id:d.id,...d.data()}));
 }
-
 async function loadPosts(){
-  const snap = await db.collection('posts').get();
-  _posts = snap.docs.map(d=>({id:d.id, ...d.data()}));
-  // Sort newest first
-  _posts.sort((a,b)=>{
-    const ta = a.createdAt?(a.createdAt.toMillis?a.createdAt.toMillis():a.createdAt.seconds*1000):0;
-    const tb = b.createdAt?(b.createdAt.toMillis?b.createdAt.toMillis():b.createdAt.seconds*1000):0;
-    return tb-ta;
-  });
+  const snap=await db.collection('posts').orderBy('createdAt','desc').get();
+  const all=snap.docs.map(d=>({id:d.id,...d.data()}));
+  _posts=all.filter(p=>!p.hidden);
+  _deletedPosts=all.filter(p=>p.hidden);
 }
-
 async function loadNotifs(){
-  const snap = await db.collection('notifications').get();
-  _notifs = snap.docs.map(d=>({id:d.id, ...d.data()}));
-  _notifs.sort((a,b)=>{
-    const ta=a.ts?(a.ts.toMillis?a.ts.toMillis():a.ts.seconds*1000):0;
-    const tb=b.ts?(b.ts.toMillis?b.ts.toMillis():b.ts.seconds*1000):0;
-    return tb-ta;
-  });
+  const snap=await db.collection('notifications').orderBy('ts','desc').limit(200).get();
+  _notifs=snap.docs.map(d=>({id:d.id,...d.data()}));
 }
-
 async function loadFeedback(){
   try{
-    const snap = await db.collection('feedback').get();
-    _feedback = snap.docs.map(d=>({id:d.id, ...d.data()}));
-    _feedback.sort((a,b)=>{
-      const ta=a.ts?(a.ts.toMillis?a.ts.toMillis():a.ts.seconds*1000):0;
-      const tb=b.ts?(b.ts.toMillis?b.ts.toMillis():b.ts.seconds*1000):0;
-      return tb-ta;
-    });
-  }catch(e){ _feedback=[]; }
+    const snap=await db.collection('feedback').orderBy('ts','desc').get();
+    _feedback=snap.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){_feedback=[];}
+}
+async function loadSessions(){
+  try{
+    const snap=await db.collection('activityLog').orderBy('ts','desc').limit(300).get();
+    _sessions=snap.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){_sessions=[];}
+}
+async function loadPresence(){
+  try{
+    const snap=await db.collection('presence').get();
+    _presence={};
+    snap.docs.forEach(d=>{ _presence[d.id]=d.data(); });
+  }catch(e){_presence={};}
 }
 
 function updateBadges(){
-  const totalComments = _posts.reduce((sum,p)=>sum+(p.comments?p.comments.length:0),0);
-  const unreadFb = _feedback.filter(f=>!f.read).length;
-
-  document.getElementById('nb-users').textContent    = _users.length;
-  document.getElementById('nb-posts').textContent    = _posts.length;
-  document.getElementById('nb-comments').textContent = totalComments;
-  document.getElementById('nb-notifs').textContent   = _notifs.length;
-  document.getElementById('nb-feedback').textContent = unreadFb || _feedback.length;
+  const totalComments=_posts.reduce((s,p)=>s+(p.comments?p.comments.length:0),0);
+  const unreadFb=_feedback.filter(f=>!f.read).length;
+  const onlineCount=Object.values(_presence).filter(p=>p.online).length;
+  document.getElementById('nb-users').textContent=_users.length;
+  document.getElementById('nb-posts').textContent=_posts.length;
+  document.getElementById('nb-deleted').textContent=_deletedPosts.length;
+  document.getElementById('nb-comments').textContent=totalComments;
+  document.getElementById('nb-notifs').textContent=_notifs.length;
+  document.getElementById('nb-feedback').textContent=unreadFb||_feedback.length;
   if(unreadFb) document.getElementById('nb-feedback').style.background='#ef4444';
-  else document.getElementById('nb-feedback').style.background='#f59e0b';
-
-  document.getElementById('ov-users').textContent    = _users.length;
-  document.getElementById('ov-posts').textContent    = _posts.length;
-  document.getElementById('ov-comments').textContent = totalComments;
-  document.getElementById('ov-likes').textContent    = _posts.reduce((s,p)=>s+(p.likes||0),0);
-  document.getElementById('ov-feedback').textContent = _feedback.length;
+  document.getElementById('nb-sessions').textContent=_sessions.length;
+  document.getElementById('nb-online').textContent=onlineCount;
+  document.getElementById('nb-storage').textContent=_posts.reduce((s,p)=>s+((p.images||[]).length||0),0);
+  document.getElementById('ov-users').textContent=_users.length;
+  document.getElementById('ov-posts').textContent=_posts.length;
+  document.getElementById('ov-comments').textContent=totalComments;
+  document.getElementById('ov-likes').textContent=_posts.reduce((s,p)=>s+(p.likes||0),0);
+  document.getElementById('ov-online').textContent=onlineCount;
 }
 
 function renderCurrentSection(){
-  if(_activeSection==='overview')       renderOverview();
-  else if(_activeSection==='users')     renderUsers();
-  else if(_activeSection==='posts')     renderPosts();
-  else if(_activeSection==='comments')  renderComments();
-  else if(_activeSection==='notifications') renderNotifs();
-  else if(_activeSection==='feedback')  renderFeedback();
-  else if(_activeSection==='user-activity') populateUserSelect();
-  else if(_activeSection==='storage') renderStorage();
+  const m={overview:renderOverview,users:renderUsers,posts:renderPosts,'deleted-posts':renderDeletedPosts,comments:renderComments,notifications:renderNotifs,feedback:renderFeedback,sessions:renderSessions,online:renderOnline,storage:renderStorage,'user-activity':populateUserSelect};
+  if(m[_activeSection]) m[_activeSection]();
 }
 
 // ── HELPERS ───────────────────────────────────────────
-function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function timeAgo(ts){
   if(!ts) return '—';
-  let ms = ts.toMillis?ts.toMillis():(ts.seconds?ts.seconds*1000:(typeof ts==='number'?ts:0));
+  let ms=ts.toMillis?ts.toMillis():(ts.seconds?ts.seconds*1000:(typeof ts==='number'?ts:0));
   if(!ms) return '—';
   const d=(Date.now()-ms)/1000;
   if(d<60) return Math.floor(d)+'s ago';
@@ -803,313 +639,341 @@ function timeAgo(ts){
 }
 function fullDate(ts){
   if(!ts) return '—';
-  let ms = ts.toMillis?ts.toMillis():(ts.seconds?ts.seconds*1000:0);
+  let ms=ts.toMillis?ts.toMillis():(ts.seconds?ts.seconds*1000:0);
   if(!ms) return '—';
   return new Date(ms).toLocaleString([],{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
 }
-function getUserByUid(uid){
-  return _users.find(u=>u.id===uid||u.uid===uid) || null;
+function getUserByUid(uid){return _users.find(u=>u.id===uid||u.uid===uid)||null;}
+function avatarHTML(user,size=28){
+  const bg=(user&&user.color)||'#e2688a';
+  const init=(user&&(user.initial||(user.name?user.name[0]:'')||'?'))||'?';
+  const av=user&&user.avatar;
+  return `<div class="av-circle" style="width:${size}px;height:${size}px;background:${esc(bg)};font-size:${Math.floor(size/2.8)}px;">`+(av?`<img src="${esc(av)}" alt="">`:esc(init))+`</div>`;
 }
-function avatarHTML(user, size=28){
-  const bg = (user&&user.color)||'#e2688a';
-  const init = (user&&(user.initial||(user.name?user.name[0]:'')||'?'))||'?';
-  const av = user&&user.avatar;
-  return `<div class="av-circle" style="width:${size}px;height:${size}px;background:${esc(bg)};font-size:${Math.floor(size/2.8)}px;">`
-    +(av?`<img src="${esc(av)}" alt="">`:`${esc(init)}`)
-    +`</div>`;
-}
-
-// ── SEARCH ────────────────────────────────────────────
-function handleSearch(q){
-  _searchQ = q.toLowerCase();
-  renderCurrentSection();
-}
+function handleSearch(q){_searchQ=q.toLowerCase();renderCurrentSection();}
 
 // ── OVERVIEW ─────────────────────────────────────────
 function renderOverview(){
-  // Recent posts
-  const rp = document.getElementById('ovRecentPosts');
-  const recent = _posts.slice(0,8);
-  if(!recent.length){ rp.innerHTML='<div class="empty">No posts yet.</div>'; }
+  const rp=document.getElementById('ovRecentPosts');
+  const recent=_posts.slice(0,8);
+  if(!recent.length){rp.innerHTML='<div class="empty">No posts yet.</div>';}
   else{
-    rp.innerHTML=`<div class="tbl-wrap"><table>
-      <thead><tr><th>Post</th><th>Author</th><th>Caption</th><th>Likes</th><th>Comments</th><th>When</th></tr></thead>
-      <tbody>`+recent.map(p=>{
-        const u = getUserByUid(p.uid)||p.user||{};
-        const imgs = p.images||(p.image?[p.image]:[]);
-        return `<tr>
-          <td>${imgs[0]?`<img class="img-thumb" src="${esc(imgs[0])}" alt="">`:`<div class="no-img">${p.isStatus?'✍️':'📄'}</div>`}</td>
+    rp.innerHTML=`<div class="tbl-wrap"><table><thead><tr><th>Post</th><th>Author</th><th>Caption</th><th>Likes</th><th>Comments</th><th>When</th></tr></thead><tbody>`
+      +recent.map(p=>{
+        const u=getUserByUid(p.uid)||p.user||{};
+        const imgs=p.images||(p.image?[p.image]:[]);
+        return `<tr><td>${imgs[0]?`<img class="img-thumb" src="${esc(imgs[0])}" alt="">`:`<div class="no-img">${p.isStatus?'✍️':p.isVideo?'🎬':p.isYoutube?'▶️':'📄'}</div>`}</td>
           <td><div class="td-av">${avatarHTML(u)}<div><div class="td-name">${esc(u.name||'Unknown')}</div><div class="td-sub">@${esc(u.handle||'—')}</div></div></div></td>
           <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc((p.caption||'').slice(0,60))}</td>
-          <td><span class="badge badge-pink">❤️ ${p.likes||0}</span></td>
+          <td><span class="badge badge-pink">❤ ${p.likes||0}</span></td>
           <td>${(p.comments||[]).length}</td>
-          <td title="${fullDate(p.createdAt)}">${timeAgo(p.createdAt)}</td>
-        </tr>`;
+          <td title="${fullDate(p.createdAt)}">${timeAgo(p.createdAt)}</td></tr>`;
       }).join('')+`</tbody></table></div>`;
   }
-
-  // Recent users
-  const ru = document.getElementById('ovRecentUsers');
-  const recentU = [..._users].sort((a,b)=>{
+  const ru=document.getElementById('ovRecentUsers');
+  const recentU=[..._users].sort((a,b)=>{
     const ta=a.createdAt?(a.createdAt.toMillis?a.createdAt.toMillis():a.createdAt.seconds*1000):0;
     const tb=b.createdAt?(b.createdAt.toMillis?b.createdAt.toMillis():b.createdAt.seconds*1000):0;
     return tb-ta;
   }).slice(0,6);
-  if(!recentU.length){ ru.innerHTML='<div class="empty">No users yet.</div>'; }
+  if(!recentU.length){ru.innerHTML='<div class="empty">No users yet.</div>';}
   else{
-    ru.innerHTML=`<div class="tbl-wrap"><table>
-      <thead><tr><th>User</th><th>Handle</th><th>UID</th><th>Posts</th><th>Joined</th></tr></thead>
-      <tbody>`+recentU.map(u=>{
-        const uid = u.id||u.uid||'';
-        const postCount = _posts.filter(p=>p.uid===uid).length;
-        return `<tr>
-          <td><div class="td-av">${avatarHTML(u,32)}<div><div class="td-name">${esc(u.name||'?')}</div></div></div></td>
+    ru.innerHTML=`<div class="tbl-wrap"><table><thead><tr><th>User</th><th>Handle</th><th>Posts</th><th>Last Login</th><th>Online</th></tr></thead><tbody>`
+      +recentU.map(u=>{
+        const uid=u.id||u.uid||'';
+        const pres=_presence[uid];
+        const isOnline=pres&&pres.online;
+        return `<tr><td><div class="td-av">${avatarHTML(u,32)}<div class="td-name">${esc(u.name||'?')}</div></div></td>
           <td>@${esc(u.handle||'—')}</td>
-          <td><span class="tag">${esc(uid.slice(0,12))}…</span></td>
-          <td>${postCount}</td>
-          <td title="${fullDate(u.createdAt)}">${timeAgo(u.createdAt)||'—'}</td>
-        </tr>`;
+          <td>${_posts.filter(p=>p.uid===uid).length}</td>
+          <td>${timeAgo(u.lastLogin)||'—'}</td>
+          <td>${isOnline?'<span class="online-dot"></span>Online':'<span style="color:var(--text3);font-size:12px;">Offline</span>'}</td></tr>`;
       }).join('')+`</tbody></table></div>`;
   }
 }
 
-// ── USERS TABLE ────────────────────────────────────────
+// ── USERS ─────────────────────────────────────────────
 function renderUsers(){
-  let data = _users;
-  if(_searchQ) data=data.filter(u=>
-    (u.name||'').toLowerCase().includes(_searchQ)||
-    (u.handle||'').toLowerCase().includes(_searchQ)||
-    (u.id||'').toLowerCase().includes(_searchQ)||
-    (u.email||'').toLowerCase().includes(_searchQ)
-  );
-  document.getElementById('usersCount').textContent = data.length + ' users';
-  const tbody = document.getElementById('usersTable');
-  if(!data.length){ tbody.innerHTML='<tr><td colspan="8"><div class="empty">No users found.</div></td></tr>'; return; }
-  tbody.innerHTML = data.map(u=>{
-    const uid = u.id||u.uid||'';
-    const postCount = _posts.filter(p=>p.uid===uid).length;
-    const isAdm = u.isAdmin || u.email===ADMIN_EMAIL;
+  let data=_users;
+  if(_searchQ) data=data.filter(u=>(u.name||'').toLowerCase().includes(_searchQ)||(u.handle||'').toLowerCase().includes(_searchQ)||(u.id||'').toLowerCase().includes(_searchQ)||(u.email||'').toLowerCase().includes(_searchQ));
+  document.getElementById('usersCount').textContent=data.length+' users';
+  const tbody=document.getElementById('usersTable');
+  if(!data.length){tbody.innerHTML='<tr><td colspan="8"><div class="empty">No users found.</div></td></tr>';return;}
+  tbody.innerHTML=data.map(u=>{
+    const uid=u.id||u.uid||'';
+    const postCount=_posts.filter(p=>p.uid===uid).length;
+    const isAdm=u.isAdmin||u.email===ADMIN_EMAIL;
+    const pres=_presence[uid];
+    const isOnline=pres&&pres.online;
     return `<tr>
       <td><div class="td-av">${avatarHTML(u,32)}<div><div class="td-name">${esc(u.name||'?')}</div><div class="td-sub">${esc(u.email||'')}</div></div></div></td>
       <td>@${esc(u.handle||'—')}</td>
       <td><span class="tag" title="${esc(uid)}">${esc(uid.slice(0,14))}…</span></td>
-      <td style="max-width:160px;font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(u.bio||'—')}</td>
-      <td title="${fullDate(u.createdAt)}">${timeAgo(u.createdAt)||'—'}</td>
+      <td style="max-width:160px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(u.bio||'—')}</td>
+      <td title="${fullDate(u.lastLogin)}">${timeAgo(u.lastLogin)||'Never'}</td>
       <td><span class="badge badge-blue">${postCount}</span></td>
-      <td>${isAdm?'<span class="badge badge-pink">👑 Admin</span>':'<span class="badge badge-gray">User</span>'}</td>
-      <td><button class="action-btn" onclick="drilldownUser('${esc(uid)}')">View All</button></td>
-    </tr>`;
+      <td>
+        ${isAdm?'<span class="badge badge-pink">Admin</span>':'<span class="badge badge-gray">User</span>'}
+        ${isOnline?'<span class="badge badge-green" style="margin-left:4px;">Online</span>':''}
+        ${u.banned?'<span class="badge badge-red" style="margin-left:4px;">Banned</span>':''}
+      </td>
+      <td style="display:flex;gap:4px;">
+        <button class="action-btn" onclick="drilldownUser('${esc(uid)}')">View</button>
+        <button class="action-btn success" onclick="restoreUserPosts('${esc(uid)}','${esc(u.handle||uid)}')">Restore Posts</button>
+        <button class="action-btn danger" onclick="banUser('${esc(uid)}','${esc(u.name||'User')}',${!!u.banned})">${u.banned?'Unban':'Ban'}</button>
+      </td></tr>`;
   }).join('');
 }
 
-// ── USER DRILLDOWN ─────────────────────────────────────
 function drilldownUser(uid){
-  const u = getUserByUid(uid)||{};
-  const dd = document.getElementById('userDrilldown');
-  const userPosts = _posts.filter(p=>p.uid===uid);
-  const userComments = _posts.reduce((acc,p)=>{
-    (p.comments||[]).forEach(c=>{ if((c.user&&c.user.uid)===uid||(c.user&&c.user.handle)===u.handle) acc.push({...c,postId:p.id,postCaption:p.caption}); });
-    return acc;
-  },[]);
-  const likeCount = userPosts.reduce((s,p)=>s+(p.likes||0),0);
-
-  document.getElementById('ddAv').innerHTML = avatarHTML(u,60);
-  document.getElementById('ddName').textContent = u.name||'Unknown';
-  document.getElementById('ddHandle').textContent = '@'+(u.handle||uid);
-  document.getElementById('ddPosts').textContent = userPosts.length;
-  document.getElementById('ddComments').textContent = userComments.length;
-  document.getElementById('ddLikes').textContent = likeCount;
-
-  let html = '';
+  const u=getUserByUid(uid)||{};
+  const dd=document.getElementById('userDrilldown');
+  const userPosts=_posts.filter(p=>p.uid===uid);
+  const userComments=_posts.reduce((acc,p)=>{(p.comments||[]).forEach(c=>{if((c.user&&c.user.uid)===uid||(c.user&&c.user.handle)===u.handle)acc.push({...c,postId:p.id,postCaption:p.caption});});return acc;},[]);
+  const likeCount=userPosts.reduce((s,p)=>s+(p.likes||0),0);
+  const pres=_presence[uid];
+  document.getElementById('ddAv').innerHTML=avatarHTML(u,60);
+  document.getElementById('ddName').textContent=u.name||'Unknown';
+  document.getElementById('ddHandle').textContent='@'+(u.handle||uid)+(pres&&pres.online?' 🟢 Online':'');
+  document.getElementById('ddPosts').textContent=userPosts.length;
+  document.getElementById('ddComments').textContent=userComments.length;
+  document.getElementById('ddLikes').textContent=likeCount;
+  let html='';
   if(userPosts.length){
-    html += `<div style="padding:12px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);">Posts (${userPosts.length})</div>`;
-    html += `<div class="tbl-wrap"><table><thead><tr><th>Post</th><th>Caption</th><th>Type</th><th>Likes</th><th>Comments</th><th>Posted</th></tr></thead><tbody>`;
-    html += userPosts.map(p=>{
-      const imgs=p.images||(p.image?[p.image]:[]);
-      return `<tr>
-        <td>${imgs[0]?`<img class="img-thumb" src="${esc(imgs[0])}" alt="">`:`<div class="no-img">${p.isStatus?'✍️':'📄'}</div>`}</td>
-        <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc((p.caption||'').slice(0,80))}</td>
-        <td>${p.isStatus?'<span class="badge badge-yellow">Status</span>':'<span class="badge badge-blue">Photo</span>'}</td>
-        <td>❤️ ${p.likes||0}</td>
-        <td>💬 ${(p.comments||[]).length}</td>
-        <td>${timeAgo(p.createdAt)}</td>
-      </tr>`;
-    }).join('')+'</tbody></table></div>';
+    html+=`<div style="padding:12px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);">Posts (${userPosts.length})</div>`;
+    html+=`<div class="tbl-wrap"><table><thead><tr><th>Post</th><th>Caption</th><th>Type</th><th>Likes</th><th>Posted</th><th>Action</th></tr></thead><tbody>`;
+    html+=userPosts.map(p=>{const imgs=p.images||(p.image?[p.image]:[]);return`<tr>
+      <td>${imgs[0]?`<img class="img-thumb" src="${esc(imgs[0])}" alt="">`:`<div class="no-img">${p.isStatus?'✍️':p.isVideo?'🎬':p.isYoutube?'▶️':'📄'}</div>`}</td>
+      <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc((p.caption||'').slice(0,80))}</td>
+      <td>${p.isStatus?'<span class="badge badge-yellow">Status</span>':p.isVideo?'<span class="badge badge-orange">Video</span>':p.isYoutube?'<span class="badge badge-red">YouTube</span>':'<span class="badge badge-blue">Photo</span>'}</td>
+      <td>❤ ${p.likes||0}</td><td>${timeAgo(p.createdAt)}</td>
+      <td><button class="action-btn danger" onclick="deletePostAdmin('${esc(String(p.id))}')">Delete</button></td></tr>`;}).join('')+'</tbody></table></div>';
   }
   if(userComments.length){
-    html += `<div style="padding:12px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);border-top:1px solid var(--border);">Comments Left by This User (${userComments.length})</div>`;
-    html += userComments.map(c=>`
-      <div class="comment-row">
-        <div class="comment-meta">
-          <span class="badge badge-gray">on post: ${esc((c.postCaption||c.postId||'').slice(0,40))}</span>
-        </div>
-        <div class="comment-text">"${esc(c.text)}"</div>
-      </div>`).join('');
+    html+=`<div style="padding:12px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);border-top:1px solid var(--border);">Comments (${userComments.length})</div>`;
+    html+=userComments.map(c=>`<div class="comment-row"><div class="comment-meta"><span class="badge badge-gray">on: ${esc((c.postCaption||c.postId||'').slice(0,40))}</span></div><div class="comment-text">"${esc(c.text)}"</div></div>`).join('');
   }
-  if(!userPosts.length && !userComments.length) html='<div class="empty">No activity found for this user.</div>';
+  if(!userPosts.length&&!userComments.length) html='<div class="empty">No activity found.</div>';
+  document.getElementById('ddPostList').innerHTML=html;
+  dd.classList.add('open'); dd.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function closeDrilldown(){document.getElementById('userDrilldown').classList.remove('open');}
 
-  document.getElementById('ddPostList').innerHTML = html;
-  dd.classList.add('open');
-  dd.scrollIntoView({behavior:'smooth',block:'start'});
+async function banUser(uid, name, isBanned){
+  if(!confirm((isBanned?'Unban ':'Ban ')+name+'?')) return;
+  await db.collection('profiles').doc(uid).update({banned:!isBanned}).catch(e=>alert('Error: '+e.message));
+  await loadUsers(); renderUsers();
 }
 
-function closeDrilldown(){
-  document.getElementById('userDrilldown').classList.remove('open');
+async function restoreUserPosts(uid, handle){
+  if(!confirm('Restore all deleted posts for @'+handle+'?')) return;
+  try{
+    const snap=await db.collection('posts').where('uid','==',uid).where('hidden','==',true).get();
+    if(snap.empty){alert('No deleted posts found for this user.');return;}
+    const batch=db.batch();
+    snap.docs.forEach(d=>batch.update(d.ref,{hidden:false,hiddenAt:firebase.firestore.FieldValue.delete(),hiddenBy:firebase.firestore.FieldValue.delete(),restoredAt:firebase.firestore.FieldValue.serverTimestamp(),restoredBy:'admin'}));
+    await batch.commit();
+    await loadPosts(); updateBadges(); renderUsers();
+    alert(snap.docs.length+' post(s) restored for @'+handle);
+  }catch(e){alert('Error: '+e.message);}
 }
 
-// ── POSTS TABLE ────────────────────────────────────────
-function filterPosts(type,btn){
-  _postsFilter=type;
-  document.querySelectorAll('#postsFilters .filter-btn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  renderPosts();
-}
+// ── POSTS ─────────────────────────────────────────────
+function filterPosts(type,btn){_postsFilter=type;document.querySelectorAll('#postsFilters .filter-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderPosts();}
 
 function renderPosts(){
-  let data = [..._posts];
-  if(_postsFilter==='photo') data=data.filter(p=>!p.isStatus&&(p.images||p.image));
+  let data=[..._posts];
+  if(_postsFilter==='photo') data=data.filter(p=>!p.isStatus&&!p.isVideo&&!p.isYoutube&&(p.images||p.image));
   else if(_postsFilter==='status') data=data.filter(p=>p.isStatus);
+  else if(_postsFilter==='video') data=data.filter(p=>p.isVideo);
+  else if(_postsFilter==='youtube') data=data.filter(p=>p.isYoutube);
   else if(_postsFilter==='liked') data=data.sort((a,b)=>(b.likes||0)-(a.likes||0));
-  if(_searchQ) data=data.filter(p=>
-    (p.caption||'').toLowerCase().includes(_searchQ)||
-    (p.uid||'').toLowerCase().includes(_searchQ)||
-    (p.user&&(p.user.handle||p.user.name||'').toLowerCase().includes(_searchQ))
-  );
+  if(_searchQ) data=data.filter(p=>(p.caption||'').toLowerCase().includes(_searchQ)||(p.uid||'').toLowerCase().includes(_searchQ)||(p.user&&(p.user.handle||p.user.name||'').toLowerCase().includes(_searchQ)));
   document.getElementById('postsCount').textContent=data.length+' posts';
   const tbody=document.getElementById('postsTable');
   if(!data.length){tbody.innerHTML='<tr><td colspan="8"><div class="empty">No posts found.</div></td></tr>';return;}
   tbody.innerHTML=data.map(p=>{
     const u=getUserByUid(p.uid)||p.user||{};
     const imgs=p.images||(p.image?[p.image]:[]);
-    const postId=String(p.id);
     return `<tr>
-      <td>${imgs[0]?`<img class="img-thumb" src="${esc(imgs[0])}" alt="">`:`<div class="no-img">${p.isStatus?'✍️':'📄'}</div>`}</td>
+      <td>${imgs[0]?`<img class="img-thumb" src="${esc(imgs[0])}" alt="">`:`<div class="no-img">${p.isStatus?'✍️':p.isVideo?'🎬':p.isYoutube?'▶️':'📄'}</div>`}</td>
       <td><div class="td-av">${avatarHTML(u)}<div><div class="td-name">${esc(u.name||'?')}</div><div class="td-sub">@${esc(u.handle||'—')}</div></div></div></td>
       <td style="max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc((p.caption||'').slice(0,80))}</td>
-      <td>${p.isStatus?'<span class="badge badge-yellow">Status</span>':imgs.length>1?`<span class="badge badge-blue">Album (${imgs.length})</span>`:'<span class="badge badge-green">Photo</span>'}</td>
-      <td><span class="badge badge-pink">❤️ ${p.likes||0}</span></td>
+      <td>${p.isStatus?'<span class="badge badge-yellow">Status</span>':p.isVideo?'<span class="badge badge-orange">Video</span>':p.isYoutube?'<span class="badge badge-red">YouTube</span>':imgs.length>1?`<span class="badge badge-blue">Album(${imgs.length})</span>`:'<span class="badge badge-green">Photo</span>'}</td>
+      <td><span class="badge badge-pink">❤ ${p.likes||0}</span></td>
       <td>💬 ${(p.comments||[]).length}</td>
       <td title="${fullDate(p.createdAt)}">${timeAgo(p.createdAt)}</td>
-      <td><button class="action-btn danger" onclick="deletePost('${esc(postId)}')">🗑 Delete</button></td>
-    </tr>`;
+      <td><button class="action-btn danger" onclick="deletePostAdmin('${esc(String(p.id))}')">Delete</button></td></tr>`;
   }).join('');
 }
 
-async function deletePost(id){
-  if(!confirm('Delete this post permanently? This cannot be undone.')) return;
-  await db.collection('posts').doc(id).delete();
-  _posts=_posts.filter(p=>String(p.id)!==id);
-  updateBadges();
-  renderPosts();
+async function deletePostAdmin(id){
+  if(!confirm('Soft-delete this post? It will be hidden but recoverable.')) return;
+  await db.collection('posts').doc(id).update({hidden:true,hiddenAt:firebase.firestore.FieldValue.serverTimestamp(),hiddenBy:'admin'}).catch(e=>alert('Error: '+e.message));
+  await loadPosts(); updateBadges(); renderPosts();
 }
 
-// ── COMMENTS TABLE ─────────────────────────────────────
+// ── DELETED POSTS ─────────────────────────────────────
+async function renderDeletedPosts(){
+  const panel=document.getElementById('deletedPostsPanel');
+  document.getElementById('deletedPostsCount').textContent=_deletedPosts.length+' deleted';
+  if(!_deletedPosts.length){panel.innerHTML='<div class="empty">No deleted posts — all clear!</div>';return;}
+  let html=`<div class="tbl-wrap"><table><thead><tr><th>Post</th><th>Author</th><th>Caption</th><th>Deleted By</th><th>Deleted When</th><th>Actions</th></tr></thead><tbody>`;
+  html+=_deletedPosts.map(p=>{
+    const u=getUserByUid(p.uid)||p.user||{};
+    const imgs=p.images||(p.image?[p.image]:[]);
+    const delBy=p.hiddenBy==='admin'?'Admin':'User';
+    return `<tr class="deleted-row">
+      <td>${imgs[0]?`<img class="img-thumb" src="${esc(imgs[0])}" alt="" style="opacity:.6;">`:`<div class="no-img" style="opacity:.6;">${p.isStatus?'✍️':p.isVideo?'🎬':p.isYoutube?'▶️':'📄'}</div>`}</td>
+      <td><div class="td-av">${avatarHTML(u)}<div><div class="td-name">${esc(u.name||'?')}</div><div class="td-sub">@${esc(u.handle||'—')}</div></div></div></td>
+      <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc((p.caption||'[no caption]').slice(0,60))}</td>
+      <td><span class="badge ${delBy==='Admin'?'badge-red':'badge-gray'}">${delBy}</span></td>
+      <td title="${fullDate(p.hiddenAt)}">${timeAgo(p.hiddenAt)}</td>
+      <td style="display:flex;gap:4px;">
+        <button class="action-btn success" onclick="restorePost('${esc(String(p.id))}',this)">Restore</button>
+        <button class="action-btn danger" onclick="wipePost('${esc(String(p.id))}',this)">Wipe Forever</button>
+      </td></tr>`;
+  }).join('');
+  html+='</tbody></table></div>';
+  panel.innerHTML=html;
+}
+
+async function restorePost(id, btn){
+  btn.textContent='Restoring...'; btn.disabled=true;
+  await db.collection('posts').doc(id).update({hidden:false,hiddenAt:firebase.firestore.FieldValue.delete(),hiddenBy:firebase.firestore.FieldValue.delete(),restoredAt:firebase.firestore.FieldValue.serverTimestamp(),restoredBy:'admin'}).catch(e=>alert('Error: '+e.message));
+  await loadPosts(); updateBadges(); renderDeletedPosts();
+}
+
+async function wipePost(id, btn){
+  if(!confirm('PERMANENTLY delete this post forever? This CANNOT be undone.')) return;
+  btn.textContent='Wiping...'; btn.disabled=true;
+  await db.collection('posts').doc(id).delete().catch(e=>alert('Error: '+e.message));
+  await loadPosts(); updateBadges(); renderDeletedPosts();
+}
+
+// ── COMMENTS ─────────────────────────────────────────
 function renderComments(){
-  const allComments=[];
-  _posts.forEach(p=>{
-    (p.comments||[]).forEach((c,ci)=>{
-      allComments.push({...c,postId:p.id,postCaption:p.caption,postUid:p.uid,ci});
-    });
-  });
-  let data=allComments;
-  if(_searchQ) data=data.filter(c=>
-    (c.text||'').toLowerCase().includes(_searchQ)||
-    (c.user&&(c.user.handle||c.user.name||'').toLowerCase().includes(_searchQ))
-  );
+  const all=[];
+  _posts.forEach(p=>(p.comments||[]).forEach((c,ci)=>all.push({...c,postId:p.id,postCaption:p.caption,postUid:p.uid,ci})));
+  let data=all;
+  if(_searchQ) data=data.filter(c=>(c.text||'').toLowerCase().includes(_searchQ)||(c.user&&(c.user.handle||c.user.name||'').toLowerCase().includes(_searchQ)));
   document.getElementById('commentsCount').textContent=data.length+' comments';
   const tbody=document.getElementById('commentsTable');
-  if(!data.length){tbody.innerHTML='<tr><td colspan="5"><div class="empty">No comments found.</div></td></tr>';return;}
+  if(!data.length){tbody.innerHTML='<tr><td colspan="5"><div class="empty">No comments.</div></td></tr>';return;}
   tbody.innerHTML=data.map(c=>{
-    const cu=c.user||{};
-    const pu=getUserByUid(c.postUid)||{};
-    return `<tr>
-      <td><span class="tag">#${esc(String(c.ci+1))}</span></td>
+    const cu=c.user||{}, pu=getUserByUid(c.postUid)||{};
+    return `<tr><td><span class="tag">#${esc(String(c.ci+1))}</span></td>
       <td><div class="td-av">${avatarHTML(cu)}<div><div class="td-name">${esc(cu.name||'Unknown')}</div><div class="td-sub">@${esc(cu.handle||'—')}</div></div></div></td>
       <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;color:var(--text2);">${esc((c.postCaption||c.postId||'').slice(0,50))}</td>
       <td><div class="td-av">${avatarHTML(pu)}<div class="td-sub">@${esc(pu.handle||'—')}</div></div></td>
-      <td style="max-width:280px;">"${esc(c.text)}"</td>
-    </tr>`;
+      <td>"${esc(c.text)}"</td></tr>`;
   }).join('');
 }
 
-// ── NOTIFICATIONS TABLE ────────────────────────────────
-function filterNotifs(type,btn){
-  _notifsFilter=type;
-  document.querySelectorAll('#section-notifications .filter-btn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  renderNotifs();
-}
+// ── NOTIFICATIONS ─────────────────────────────────────
+function filterNotifs(type,btn){_notifsFilter=type;document.querySelectorAll('#section-notifications .filter-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderNotifs();}
 
 function renderNotifs(){
-  const icons={like:'❤️',comment:'💬',follow:'👤',message:'✉️'};
-  const labels={like:'Like',comment:'Comment',follow:'Follow',message:'Message'};
-  const badgeCls={like:'badge-pink',comment:'badge-green',follow:'badge-blue',message:'badge-yellow'};
+  const icons={like:'❤',comment:'💬',follow:'👤',message:'✉',mention:'@',repost:'🔁'};
+  const labels={like:'Like',comment:'Comment',follow:'Follow',message:'Message',mention:'Mention',repost:'Repost'};
+  const badgeCls={like:'badge-pink',comment:'badge-green',follow:'badge-blue',message:'badge-yellow',mention:'badge-orange',repost:'badge-blue'};
   let data=[..._notifs];
   if(_notifsFilter!=='all'&&_notifsFilter!=='unread') data=data.filter(n=>n.type===_notifsFilter);
   if(_notifsFilter==='unread') data=data.filter(n=>!n.read);
-  if(_searchQ) data=data.filter(n=>
-    (n.fromName||'').toLowerCase().includes(_searchQ)||
-    (n.fromHandle||'').toLowerCase().includes(_searchQ)||
-    (n.extra||'').toLowerCase().includes(_searchQ)
-  );
+  if(_searchQ) data=data.filter(n=>(n.fromName||'').toLowerCase().includes(_searchQ)||(n.fromHandle||'').toLowerCase().includes(_searchQ)||(n.extra||'').toLowerCase().includes(_searchQ));
   document.getElementById('notifsCount').textContent=data.length+' notifications';
   const tbody=document.getElementById('notifsTable');
-  if(!data.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty">No notifications found.</div></td></tr>';return;}
+  if(!data.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty">No notifications.</div></td></tr>';return;}
   tbody.innerHTML=data.map(n=>{
     const toUser=getUserByUid(n.toUid)||{};
     return `<tr>
       <td><span class="badge ${badgeCls[n.type]||'badge-gray'}">${icons[n.type]||'🔔'} ${labels[n.type]||n.type}</span></td>
       <td><div class="td-av"><div class="av-circle" style="width:26px;height:26px;background:${esc(n.fromColor||'#e2688a')};font-size:10px;">${n.fromAvatar?`<img src="${esc(n.fromAvatar)}" alt="">`:esc(n.fromInitial||'?')}</div><div><div class="td-name">${esc(n.fromName||'?')}</div><div class="td-sub">@${esc(n.fromHandle||'—')}</div></div></div></td>
-      <td><div class="td-av">${avatarHTML(toUser)}<div class="td-sub">@${esc(toUser.handle||n.toUid?.slice(0,8)||'—')}</div></div></td>
-      <td style="max-width:180px;font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${n.extra?`"${esc(n.extra.slice(0,60))}"`:'-'}</td>
+      <td><div class="td-av">${avatarHTML(toUser)}<div class="td-sub">@${esc(toUser.handle||'—')}</div></div></td>
+      <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;">${n.extra?`"${esc(n.extra.slice(0,60))}"`:'-'}</td>
       <td>${n.read?'<span class="badge badge-gray">Read</span>':'<span class="badge badge-pink">Unread</span>'}</td>
-      <td title="${fullDate(n.ts)}">${timeAgo(n.ts)}</td>
-    </tr>`;
+      <td title="${fullDate(n.ts)}">${timeAgo(n.ts)}</td></tr>`;
   }).join('');
 }
 
-// ── FEEDBACK TABLE ─────────────────────────────────────
-function filterFeedback(type,btn){
-  _feedbackFilter=type;
-  document.querySelectorAll('#section-feedback .filter-btn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  renderFeedback();
-}
+// ── FEEDBACK ─────────────────────────────────────────
+function filterFeedback(type,btn){_feedbackFilter=type;document.querySelectorAll('#section-feedback .filter-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderFeedback();}
 
 function renderFeedback(){
-  const icons={idea:'💡',bug:'🐛',report:'🚩'};
+  const icons={idea:'💡',bug:'🐛',report:'🚩',restore_request:'♻️'};
   let data=[..._feedback];
   if(_feedbackFilter!=='all'&&_feedbackFilter!=='unread') data=data.filter(f=>f.type===_feedbackFilter);
   if(_feedbackFilter==='unread') data=data.filter(f=>!f.read);
-  if(_searchQ) data=data.filter(f=>
-    (f.text||'').toLowerCase().includes(_searchQ)||
-    (f.fromHandle||'').toLowerCase().includes(_searchQ)||
-    (f.fromName||'').toLowerCase().includes(_searchQ)
-  );
+  if(_searchQ) data=data.filter(f=>(f.text||f.message||'').toLowerCase().includes(_searchQ)||(f.handle||'').toLowerCase().includes(_searchQ)||(f.name||'').toLowerCase().includes(_searchQ));
   document.getElementById('feedbackCount').textContent=data.length+' items';
   const tbody=document.getElementById('feedbackTable');
   if(!data.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty">No feedback yet.</div></td></tr>';return;}
   tbody.innerHTML=data.map(f=>{
+    const isRestore=f.type==='restore_request';
+    const uid=f.uid||'';
     return `<tr style="${!f.read?'border-left:3px solid var(--pink);':''}" id="fb-row-${esc(f.id)}">
-      <td><span class="badge ${f.type==='bug'?'badge-red':f.type==='report'?'badge-yellow':'badge-blue'}">${icons[f.type]||'📝'} ${f.type||'feedback'}</span></td>
-      <td><div class="td-name">${esc(f.fromName||'?')}</div><div class="td-sub">@${esc(f.fromHandle||'—')}</div></td>
-      <td style="max-width:300px;">${esc(f.text)}</td>
+      <td><span class="badge ${isRestore?'badge-green':f.type==='bug'?'badge-red':f.type==='report'?'badge-yellow':'badge-blue'}">${icons[f.type]||'📝'} ${isRestore?'Restore Request':f.type||'feedback'}</span></td>
+      <td><div class="td-name">${esc(f.name||f.fromName||'?')}</div><div class="td-sub">@${esc(f.handle||f.fromHandle||'—')}</div></td>
+      <td style="max-width:300px;">${esc(f.message||f.text||'')}</td>
       <td>${f.read?'<span class="badge badge-gray">Read</span>':'<span class="badge badge-pink">New</span>'}</td>
       <td title="${fullDate(f.ts)}">${timeAgo(f.ts)}</td>
-      <td>${!f.read?`<button class="action-btn" onclick="markFeedbackRead('${esc(f.id)}')">Mark Read</button>`:'—'}</td>
-    </tr>`;
+      <td style="display:flex;gap:4px;">
+        ${!f.read?`<button class="action-btn" onclick="markFeedbackRead('${esc(f.id)}')">Mark Read</button>`:''}
+        ${isRestore&&uid?`<button class="action-btn success" onclick="restoreUserPosts('${esc(uid)}','${esc(f.handle||uid)}')">Restore Posts</button>`:''}
+      </td></tr>`;
   }).join('');
 }
 
 async function markFeedbackRead(id){
   await db.collection('feedback').doc(id).update({read:true}).catch(()=>{});
-  const f=_feedback.find(x=>x.id===id);
-  if(f) f.read=true;
-  renderFeedback();
-  updateBadges();
+  const f=_feedback.find(x=>x.id===id); if(f) f.read=true;
+  renderFeedback(); updateBadges();
 }
 
-// ── USER ACTIVITY ──────────────────────────────────────
+// ── SESSIONS & LOGINS ─────────────────────────────────
+function filterSessions(type,btn){_sessionsFilter=type;document.querySelectorAll('#section-sessions .filter-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderSessions();}
+
+function renderSessions(){
+  const eventIcons={signin:'🟢',signout:'🔴',post:'📝',repost:'🔁',mention:'@',restore_request:'♻️',group_created:'👥'};
+  const eventBadge={signin:'badge-green',signout:'badge-red',post:'badge-blue',repost:'badge-blue',mention:'badge-orange',restore_request:'badge-yellow',group_created:'badge-blue'};
+  let data=[..._sessions];
+  if(_sessionsFilter!=='all') data=data.filter(s=>s.type===_sessionsFilter);
+  if(_searchQ) data=data.filter(s=>(s.name||'').toLowerCase().includes(_searchQ)||(s.handle||'').toLowerCase().includes(_searchQ)||(s.email||'').toLowerCase().includes(_searchQ));
+  document.getElementById('sessionsCount').textContent=data.length+' events';
+  const tbody=document.getElementById('sessionsTable');
+  if(!data.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty">No session events yet. They appear after users sign in.</div></td></tr>';return;}
+  tbody.innerHTML=data.map(s=>{
+    const u=getUserByUid(s.uid)||{};
+    return `<tr>
+      <td><span class="badge ${eventBadge[s.type]||'badge-gray'}">${eventIcons[s.type]||'•'} ${s.type||'event'}</span></td>
+      <td><div class="td-av">${avatarHTML(u,24)}<div class="td-name">${esc(s.name||u.name||'?')}</div></div></td>
+      <td>@${esc(s.handle||u.handle||'—')}</td>
+      <td style="font-size:11px;color:var(--text3);">${esc(s.email||'—')}</td>
+      <td style="font-size:11px;color:var(--text3);max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc((s.userAgent||'—').slice(0,60))}</td>
+      <td title="${fullDate(s.ts)}">${timeAgo(s.ts)}</td></tr>`;
+  }).join('');
+}
+
+// ── ONLINE NOW ────────────────────────────────────────
+function renderOnline(){
+  const online=Object.entries(_presence).filter(e=>e[1].online);
+  document.getElementById('onlineCount').textContent=online.length+' online';
+  const panel=document.getElementById('onlinePanel');
+  if(!online.length){panel.innerHTML='<div class="empty">No users online right now.</div>';return;}
+  panel.innerHTML=`<div class="tbl-wrap"><table>
+    <thead><tr><th>User</th><th>Handle</th><th>Status</th><th>Last Seen</th></tr></thead>
+    <tbody>`+online.map(e=>{
+      const uid=e[0],pres=e[1];
+      const u=getUserByUid(uid)||pres||{};
+      return `<tr>
+        <td><div class="td-av">${avatarHTML(u,32)}<div><div class="td-name">${esc(pres.name||u.name||'?')}</div></div></div></td>
+        <td>@${esc(pres.handle||u.handle||'—')}</td>
+        <td><span class="badge badge-green"><span class="online-dot"></span>Online</span></td>
+        <td>${timeAgo(pres.lastSeen)}</td></tr>`;
+    }).join('')+`</tbody></table></div>`;
+}
+
+// ── USER ACTIVITY ─────────────────────────────────────
 function populateUserSelect(){
   const sel=document.getElementById('activityUserSelect');
   const current=sel.value;
@@ -1117,7 +981,7 @@ function populateUserSelect(){
   _users.forEach(u=>{
     const uid=u.id||u.uid||'';
     const opt=document.createElement('option');
-    opt.value=uid; opt.textContent=(u.name||'Unknown')+' (@'+(u.handle||uid.slice(0,8))+')'
+    opt.value=uid; opt.textContent=(u.name||'Unknown')+' (@'+(u.handle||uid.slice(0,8))+')';
     sel.appendChild(opt);
   });
   if(current) sel.value=current;
@@ -1127,345 +991,200 @@ async function loadUserActivity(uid){
   if(!uid){document.getElementById('activityPanel').innerHTML='<div class="empty">Select a user above.</div>';return;}
   const panel=document.getElementById('activityPanel');
   panel.innerHTML='<div class="loading"><div class="spinner"></div>Loading activity...</div>';
-
   const u=getUserByUid(uid)||{};
   const userPosts=_posts.filter(p=>p.uid===uid);
   const userComments=[];
-  _posts.forEach(p=>{
-    (p.comments||[]).forEach(c=>{
-      if((c.user&&c.user.uid)===uid||(c.user&&c.user.handle===u.handle))
-        userComments.push({...c,postId:p.id,postCaption:p.caption});
-    });
-  });
+  _posts.forEach(p=>{(p.comments||[]).forEach(c=>{if((c.user&&c.user.uid)===uid||(c.user&&c.user.handle===u.handle))userComments.push({...c,postId:p.id,postCaption:p.caption});});});
   const sentNotifs=_notifs.filter(n=>n.fromUid===uid);
-  const recvNotifs=_notifs.filter(n=>n.toUid===uid);
-  const userFb=_feedback.filter(f=>f.fromUid===uid);
+  const userSessions=_sessions.filter(s=>s.uid===uid);
+  const pres=_presence[uid];
+  const lastLogin=u.lastLogin;
   const totalLikes=userPosts.reduce((s,p)=>s+(p.likes||0),0);
+  const deletedCount=_deletedPosts.filter(p=>p.uid===uid).length;
 
-  let html=`
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px;border-bottom:1px solid var(--border);">
-    <div class="stat-card" style="margin:0;"><div class="stat-num">${userPosts.length}</div><div class="stat-label">Posts made</div></div>
-    <div class="stat-card" style="margin:0;"><div class="stat-num">${userComments.length}</div><div class="stat-label">Comments left</div></div>
-    <div class="stat-card" style="margin:0;"><div class="stat-num">${totalLikes}</div><div class="stat-label">Likes received</div></div>
-    <div class="stat-card" style="margin:0;"><div class="stat-num">${sentNotifs.length}</div><div class="stat-label">Actions (notifs sent)</div></div>
+  let html=`<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:16px;border-bottom:1px solid var(--border);">
+    <div class="stat-card" style="margin:0;"><div class="stat-num">${userPosts.length}</div><div class="stat-label">Active Posts</div></div>
+    <div class="stat-card" style="margin:0;"><div class="stat-num">${deletedCount}</div><div class="stat-label">Deleted Posts</div></div>
+    <div class="stat-card" style="margin:0;"><div class="stat-num">${userComments.length}</div><div class="stat-label">Comments</div></div>
+    <div class="stat-card" style="margin:0;"><div class="stat-num">${totalLikes}</div><div class="stat-label">Likes Received</div></div>
+    <div class="stat-card" style="margin:0;"><div class="stat-num">${userSessions.filter(s=>s.type==='signin').length}</div><div class="stat-label">Total Logins</div></div>
+  </div>
+  <div style="padding:12px 18px;background:var(--bg);border-bottom:1px solid var(--border);font-size:12.5px;color:var(--text2);">
+    Last Login: <strong>${fullDate(lastLogin)||'Never'}</strong> &nbsp;·&nbsp;
+    Device: <span style="font-size:11px;">${esc((u.lastLoginDevice||'—').slice(0,80))}</span> &nbsp;·&nbsp;
+    Status: ${pres&&pres.online?'<span class="badge badge-green">Online Now</span>':'<span class="badge badge-gray">Offline</span>'}
   </div>`;
 
-  // Timeline
+  // Login history
+  const logins=userSessions.filter(s=>s.type==='signin').slice(0,10);
+  if(logins.length){
+    html+=`<div style="padding:12px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);">Recent Login History (${logins.length})</div>`;
+    html+=logins.map(s=>`<div class="timeline-item">
+      <div class="tl-icon" style="background:#dcfce7;">🟢</div>
+      <div class="tl-body"><div class="tl-text">Signed in</div><div class="tl-time">${fullDate(s.ts)} &nbsp;·&nbsp; ${esc((s.userAgent||'').slice(0,80))}</div></div>
+    </div>`).join('');
+  }
+
+  // All activity timeline
   const timeline=[];
   userPosts.forEach(p=>timeline.push({type:'post',ts:p.createdAt,data:p}));
   userComments.forEach(c=>timeline.push({type:'comment',ts:null,data:c}));
   sentNotifs.forEach(n=>timeline.push({type:'notif',ts:n.ts,data:n}));
-  userFb.forEach(f=>timeline.push({type:'feedback',ts:f.ts,data:f}));
-
-  const tlIcons={post:'📝',comment:'💬',notif:'🔔',feedback:'📩'};
-
-  html+=`<div style="padding:12px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);">Activity Timeline (${timeline.length} events)</div>`;
-  if(!timeline.length){html+='<div class="empty">No activity recorded for this user.</div>';}
+  const tlIcons={post:'📝',comment:'💬',notif:'🔔'};
+  html+=`<div style="padding:12px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);border-top:1px solid var(--border);">Full Activity Timeline (${timeline.length} events)</div>`;
+  if(!timeline.length){html+='<div class="empty">No activity recorded.</div>';}
   else{
     html+=timeline.slice(0,50).map(item=>{
       let text='';
-      if(item.type==='post') text=`Posted: "${esc((item.data.caption||'').slice(0,60)||'[photo]')}"`;
-      else if(item.type==='comment') text=`Commented on post "${esc((item.data.postCaption||item.data.postId||'').slice(0,40))}": "${esc(item.data.text)}"`;
-      else if(item.type==='notif'){
-        const icons={like:'❤️',comment:'💬',follow:'👤',message:'✉️'};
-        text=`Sent a ${icons[item.data.type]||'🔔'} ${item.data.type} notification`+(item.data.extra?` — "${esc(item.data.extra.slice(0,40))}"`:'')+` to @${esc(item.data.toUid?.slice(0,8)||'?')}`;
-      }
-      else if(item.type==='feedback') text=`Submitted ${item.data.type}: "${esc(item.data.text.slice(0,60))}"`;
+      if(item.type==='post') text=`Posted: "${esc((item.data.caption||'').slice(0,60)||'[photo/video]')}"`;
+      else if(item.type==='comment') text=`Commented: "${esc(item.data.text)}"`;
+      else if(item.type==='notif'){const icons={like:'❤',comment:'💬',follow:'👤',message:'✉',mention:'@'};text=`Sent ${icons[item.data.type]||'🔔'} ${item.data.type}`+(item.data.extra?` — "${esc(item.data.extra.slice(0,40))}"`:'')+` to @${esc(item.data.toUid?.slice(0,8)||'?')}`;}
       return `<div class="timeline-item">
         <div class="tl-icon" style="background:var(--pink-pale);">${tlIcons[item.type]||'•'}</div>
         <div class="tl-body"><div class="tl-text">${text}</div><div class="tl-time">${timeAgo(item.ts)}</div></div>
       </div>`;
     }).join('');
   }
-
   panel.innerHTML=html;
 }
 
-// ── STORAGE BROWSER ──────────────────────────────────
-// Build an index from all posts: every image URL → {user, post, type, ts}
-let _storageFiles = [];   // flat list of all media files
-let _storageView  = 'folders';
-let _lbFiles      = [];   // current lightbox array
-let _lbIdx        = 0;
-
+// ── STORAGE BROWSER ───────────────────────────────────
+let _storageFiles=[],_storageView='folders',_lbFiles=[],_lbIdx=0;
 function buildStorageIndex(){
-  _storageFiles = [];
-
+  _storageFiles=[];
   _posts.forEach(function(p){
-    const u = getUserByUid(p.uid) || p.user || {};
-    const ts = p.createdAt;
-
-    // Post images
-    const imgs = p.images || (p.image ? [p.image] : []);
-    imgs.forEach(function(url, i){
-      if(!url) return;
-      _storageFiles.push({
-        url, type:'post', subtype: imgs.length>1?'album':'photo',
-        uid: p.uid||'', user: u,
-        postId: String(p.id), caption: p.caption||'',
-        ts, label: 'Post image '+(i+1)+' of '+(imgs.length)
-      });
-    });
+    const u=getUserByUid(p.uid)||p.user||{};
+    const ts=p.createdAt;
+    const imgs=p.images||(p.image?[p.image]:[]);
+    imgs.forEach(function(url,i){if(url&&url.startsWith('http'))_storageFiles.push({url,type:'post',user:u,caption:p.caption,ts,label:`Post image ${i+1}`});});
+    if(u.avatar&&u.avatar.startsWith('http')) _storageFiles.push({url:u.avatar,type:'avatar',user:u,caption:'',ts,label:'Profile avatar'});
+    if(u.bannerImage&&u.bannerImage.startsWith('http')) _storageFiles.push({url:u.bannerImage,type:'banner',user:u,caption:'',ts,label:'Banner image'});
   });
-
-  // Avatars from user profiles
-  _users.forEach(function(u){
-    if(u.avatar && u.avatar.startsWith('http')){
-      _storageFiles.push({
-        url: u.avatar, type:'avatar', subtype:'avatar',
-        uid: u.id||u.uid||'', user: u,
-        postId:'', caption:'Profile avatar',
-        ts: u.createdAt, label:'Profile avatar'
-      });
-    }
-    if(u.bannerImage && u.bannerImage.startsWith('http')){
-      _storageFiles.push({
-        url: u.bannerImage, type:'banner', subtype:'banner',
-        uid: u.id||u.uid||'', user: u,
-        postId:'', caption:'Cover photo',
-        ts: u.createdAt, label:'Cover photo'
-      });
-    }
-  });
-
-  // Update stats
-  const postImgs  = _storageFiles.filter(f=>f.type==='post').length;
-  const avatars   = _storageFiles.filter(f=>f.type==='avatar').length;
-  const banners   = _storageFiles.filter(f=>f.type==='banner').length;
-  document.getElementById('stTotalFiles').textContent  = _storageFiles.length;
-  document.getElementById('stPostImgs').textContent    = postImgs;
-  document.getElementById('stAvatars').textContent     = avatars;
-  document.getElementById('stBanners').textContent     = banners;
-  document.getElementById('nb-storage').textContent    = _storageFiles.length;
-  document.getElementById('storageCount').textContent  = _storageFiles.length + ' files';
+  const st=document.getElementById('stTotalFiles');if(st)st.textContent=_storageFiles.length;
+  const sp=document.getElementById('stPostImgs');if(sp)sp.textContent=_storageFiles.filter(f=>f.type==='post').length;
+  const sa=document.getElementById('stAvatars');if(sa)sa.textContent=_storageFiles.filter(f=>f.type==='avatar').length;
+  const sb2=document.getElementById('stBanners');if(sb2)sb2.textContent=_storageFiles.filter(f=>f.type==='banner').length;
+  document.getElementById('storageCount').textContent=_storageFiles.length+' files';
 }
-
-function setStorageView(view, btn){
-  _storageView = view;
+function setStorageView(view,btn){
+  _storageView=view;
   document.querySelectorAll('.storage-view-btn').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
   renderStorage();
 }
-
 function renderStorage(){
-  if(!_storageFiles.length){ buildStorageIndex(); }
-  const sort  = (document.getElementById('storageSort')||{}).value || 'newest';
-  const panel = document.getElementById('storageBrowser');
-  if(!panel) return;
-
-  if(_storageView === 'folders') renderStorageFolders(sort, panel);
-  else if(_storageView === 'all') renderStorageAll(sort, panel);
-  else if(_storageView === 'type') renderStorageByType(sort, panel);
+  const sort=document.getElementById('storageSort')?.value||'newest';
+  const panel=document.getElementById('storageBrowser');
+  if(_storageView==='folders') renderStorageFolders(sort,panel);
+  else if(_storageView==='all') renderStorageAll(sort,panel);
+  else renderStorageByType(sort,panel);
 }
-
-// ── FOLDER VIEW (grouped by user) ─────────────────────
-function renderStorageFolders(sort, panel){
-  // Group by uid
-  const groups = {};
-  _storageFiles.forEach(function(f){
-    const uid = f.uid || '__unknown__';
-    if(!groups[uid]) groups[uid] = {uid, user:f.user, files:[]};
-    groups[uid].files.push(f);
-  });
-
-  let grouped = Object.values(groups);
-
-  // Sort groups
-  if(sort==='most')   grouped.sort((a,b)=>b.files.length-a.files.length);
-  else if(sort==='user') grouped.sort((a,b)=>(a.user.name||'').localeCompare(b.user.name||''));
-  else if(sort==='newest') grouped.sort((a,b)=>b.files.length-a.files.length); // fallback
-  else grouped.sort((a,b)=>a.files.length-b.files.length);
-
-  if(!grouped.length){panel.innerHTML='<div class="empty">No media files found.</div>';return;}
-
-  let html = '<div class="folder-grid">';
-  grouped.forEach(function(g){
-    const u = g.user||{};
-    const uid = g.uid;
-    const postFiles = g.files.filter(f=>f.type==='post');
-    const avFile    = g.files.find(f=>f.type==='avatar');
-    const bnFile    = g.files.find(f=>f.type==='banner');
-    const thumbs    = g.files.filter(f=>f.type==='post').slice(0,3);
-    const more      = g.files.length - 3;
-    const bgColor   = u.color||'#e2688a';
-    const init      = u.initial||(u.name?u.name[0]:'?')||'?';
-
-    html += `<div class="folder-card" id="folder-${esc(uid)}" onclick="toggleFolder('${esc(uid)}')">
+function renderStorageFolders(sort,panel){
+  const byUser={};
+  _storageFiles.forEach(function(f){const uid=(f.user&&(f.user.uid||f.user.id))||'unknown';if(!byUser[uid]){byUser[uid]={user:f.user,files:[]};}byUser[uid].files.push(f);});
+  let entries=Object.entries(byUser);
+  if(sort==='most') entries.sort((a,b)=>b[1].files.length-a[1].files.length);
+  else if(sort==='user') entries.sort((a,b)=>(a[1].user.name||'').localeCompare(b[1].user.name||''));
+  window._folderFileMap={};
+  entries.forEach(e=>{window._folderFileMap[e[0]]=e[1].files;});
+  if(!entries.length){panel.innerHTML='<div class="empty">No media found.</div>';return;}
+  panel.innerHTML='<div class="folder-grid">'+entries.map(e=>{
+    const uid=e[0],{user,files}=e[1];
+    const preview=files.slice(0,3).map(f=>`<img class="folder-thumb" src="${esc(f.url)}" alt="" loading="lazy" onerror="this.style.display='none'">`).join('');
+    const more=files.length>3?`<div class="folder-thumb-more">+${files.length-3}</div>`:'';
+    return `<div class="folder-card" id="folder-${esc(uid)}" onclick="toggleFolder('${esc(uid)}')">
       <div class="folder-top">
-        <div class="folder-icon" style="background:${esc(bgColor)};">`
-          +(avFile?`<img src="${esc(avFile.url)}" alt="">`:`${esc(init)}`)
-        +`</div>
-        <div>
-          <div class="folder-name">${esc(u.name||'Unknown User')}</div>
-          <div class="folder-meta">@${esc(u.handle||uid.slice(0,10))} · ${g.files.length} file${g.files.length!==1?'s':''}</div>
-          <div class="folder-meta">${postFiles.length} posts${avFile?' · avatar':''}${bnFile?' · banner':''}</div>
-        </div>
+        <div class="folder-icon" style="background:${esc(user.color||'#e2688a')}">${user.avatar?`<img src="${esc(user.avatar)}" alt="">`:esc(user.initial||(user.name?user.name[0]:'?')||'?')}</div>
+        <div><div class="folder-name">${esc(user.name||'Unknown')}</div><div class="folder-meta">@${esc(user.handle||'—')} · ${files.length} file${files.length!==1?'s':''}</div></div>
       </div>
-      ${thumbs.length?`<div class="folder-preview">
-        ${thumbs.map(f=>`<img class="folder-thumb" src="${esc(f.url)}" alt="" onerror="this.style.display='none'">`).join('')}
-        ${more>0?`<div class="folder-thumb-more">+${more}</div>`:''}
-      </div>`:''}
+      <div class="folder-preview">${preview}${more}</div>
       <div class="file-gallery" id="gallery-${esc(uid)}">
-        <div style="padding:10px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);">
-          All files (${g.files.length})
-        </div>
-        <div class="file-gallery-inner">
-          ${g.files.map((f,i)=>`
-            <div class="file-item" onclick="event.stopPropagation();openLightboxForUser('${esc(uid)}',${i})">
-              <span class="file-type-badge">${f.type==='post'?'📷':f.type==='avatar'?'👤':'🖼'}</span>
-              <img class="file-img" src="${esc(f.url)}" alt="" loading="lazy" onerror="this.style.background='#f1f5f9';this.src=''">
-              <div class="file-info">
-                <div class="file-name">${esc(f.label)}</div>
-                <div class="file-date">${timeAgo(f.ts)}</div>
-                ${f.caption?`<div class="file-caption">${esc(f.caption.slice(0,40))}</div>`:''}
-              </div>
-            </div>`).join('')}
-        </div>
+        <div class="file-gallery-inner">${files.map((f,i)=>`<div class="file-item" onclick="event.stopPropagation();openLightboxForUser('${esc(uid)}',${i})">
+          <span class="file-type-badge">${f.type==='post'?'📷':f.type==='avatar'?'👤':'🖼'}</span>
+          <img class="file-img" src="${esc(f.url)}" alt="" loading="lazy" onerror="this.style.background='#f1f5f9';this.src=''">
+          <div class="file-info"><div class="file-name">${esc((f.user.name||'?').slice(0,16))}</div><div class="file-date">${timeAgo(f.ts)}</div></div>
+        </div>`).join('')}</div>
       </div>
     </div>`;
-  });
-  html += '</div>';
-  panel.innerHTML = html;
-
-  // Cache per-user file arrays for lightbox navigation
-  window._folderFileMap = {};
-  grouped.forEach(function(g){ window._folderFileMap[g.uid] = g.files; });
+  }).join('')+'</div>';
 }
-
 function toggleFolder(uid){
-  const card    = document.getElementById('folder-'+uid);
-  const gallery = document.getElementById('gallery-'+uid);
-  if(!card||!gallery) return;
-  const isOpen  = gallery.classList.contains('open');
-  // Close all others
-  document.querySelectorAll('.file-gallery.open').forEach(function(g){g.classList.remove('open');});
-  document.querySelectorAll('.folder-card.open').forEach(function(c){c.classList.remove('open');});
-  if(!isOpen){
-    gallery.classList.add('open');
-    card.classList.add('open');
-  }
+  const card=document.getElementById('folder-'+uid),gallery=document.getElementById('gallery-'+uid);
+  if(!card||!gallery)return;
+  const isOpen=gallery.classList.contains('open');
+  document.querySelectorAll('.file-gallery.open').forEach(g=>g.classList.remove('open'));
+  document.querySelectorAll('.folder-card.open').forEach(c=>c.classList.remove('open'));
+  if(!isOpen){gallery.classList.add('open');card.classList.add('open');}
 }
-
-function openLightboxForUser(uid, idx){
-  const files = (window._folderFileMap||{})[uid] || [];
-  _lbFiles = files;
-  _lbIdx   = idx;
-  openLightbox();
-}
-
-// ── ALL FILES FLAT VIEW ────────────────────────────────
-function renderStorageAll(sort, panel){
-  let files = [..._storageFiles];
-  if(sort==='newest')    files.sort((a,b)=>{const ta=a.ts?a.ts.toMillis?a.ts.toMillis():a.ts.seconds*1000:0,tb=b.ts?b.ts.toMillis?b.ts.toMillis():b.ts.seconds*1000:0;return tb-ta;});
+function openLightboxForUser(uid,idx){const files=(window._folderFileMap||{})[uid]||[];_lbFiles=files;_lbIdx=idx;openLightbox();}
+function renderStorageAll(sort,panel){
+  let files=[..._storageFiles];
+  if(sort==='newest') files.sort((a,b)=>{const ta=a.ts?a.ts.toMillis?a.ts.toMillis():a.ts.seconds*1000:0,tb=b.ts?b.ts.toMillis?b.ts.toMillis():b.ts.seconds*1000:0;return tb-ta;});
   else if(sort==='oldest') files.sort((a,b)=>{const ta=a.ts?a.ts.toMillis?a.ts.toMillis():a.ts.seconds*1000:0,tb=b.ts?b.ts.toMillis?b.ts.toMillis():b.ts.seconds*1000:0;return ta-tb;});
   else if(sort==='user') files.sort((a,b)=>(a.user.name||'').localeCompare(b.user.name||''));
-
   if(!files.length){panel.innerHTML='<div class="empty">No media files found.</div>';return;}
-
-  _lbFiles = files;
-  let html = '<div class="file-gallery-inner" style="padding:18px;">';
-  files.forEach(function(f,i){
-    html += `<div class="file-item" onclick="openLightboxAt(${i})">
-      <span class="file-type-badge">${f.type==='post'?'📷':f.type==='avatar'?'👤':'🖼'}</span>
+  _lbFiles=files;
+  panel.innerHTML='<div class="file-gallery-inner" style="padding:18px;">'+files.map((f,i)=>`<div class="file-item" onclick="openLightboxAt(${i})">
+    <span class="file-type-badge">${f.type==='post'?'📷':f.type==='avatar'?'👤':'🖼'}</span>
+    <img class="file-img" src="${esc(f.url)}" alt="" loading="lazy" onerror="this.style.background='#f1f5f9';this.src=''">
+    <div class="file-info"><div class="file-name">${esc((f.user.name||'?').slice(0,16))}</div><div class="file-date">${timeAgo(f.ts)}</div>${f.caption?`<div class="file-caption">${esc(f.caption.slice(0,40))}</div>`:''}</div>
+  </div>`).join('')+'</div>';
+}
+function renderStorageByType(sort,panel){
+  const types=['post','avatar','banner'];
+  const typeLabels={post:'Post Images',avatar:'Profile Avatars',banner:'Cover Photos'};
+  let html='';
+  types.forEach(type=>{
+    const files=_storageFiles.filter(f=>f.type===type);
+    if(!files.length)return;
+    html+=`<div style="padding:12px 18px 6px;font-size:13px;font-weight:700;color:var(--text);border-bottom:1px solid var(--border);">${typeLabels[type]} <span style="font-weight:400;color:var(--text3);">(${files.length})</span></div>`;
+    html+='<div class="file-gallery-inner" style="padding:14px;">';
+    files.forEach((f,i)=>{html+=`<div class="file-item" onclick="openLightboxByType('${type}',${i})">
       <img class="file-img" src="${esc(f.url)}" alt="" loading="lazy" onerror="this.style.background='#f1f5f9';this.src=''">
-      <div class="file-info">
-        <div class="file-name">${esc((f.user.name||'?').slice(0,16))}</div>
-        <div class="file-date">${timeAgo(f.ts)}</div>
-        ${f.caption?`<div class="file-caption">${esc(f.caption.slice(0,40))}</div>`:''}
-      </div>
-    </div>`;
+      <div class="file-info"><div class="file-name">${esc((f.user.name||'?').slice(0,16))}</div><div class="file-date">${timeAgo(f.ts)}</div></div>
+    </div>`;});
+    html+='</div>';
   });
-  html += '</div>';
-  panel.innerHTML = html;
+  if(!html) html='<div class="empty">No media found.</div>';
+  panel.innerHTML=html;
+  window._typeFileMap={};
+  types.forEach(t=>{window._typeFileMap[t]=_storageFiles.filter(f=>f.type===t);});
 }
-
-// ── BY TYPE VIEW ───────────────────────────────────────
-function renderStorageByType(sort, panel){
-  const types = ['post','avatar','banner'];
-  const typeLabels = {post:'📷 Post Images', avatar:'👤 Profile Avatars', banner:'🖼 Cover Photos'};
-  let html = '';
-  types.forEach(function(type){
-    const files = _storageFiles.filter(f=>f.type===type);
-    if(!files.length) return;
-    _lbFiles = files; // will be overridden per-type but used for global nav
-    html += `<div style="padding:12px 18px 6px;font-size:13px;font-weight:700;color:var(--text);border-bottom:1px solid var(--border);">${typeLabels[type]} <span style="font-weight:400;color:var(--text3);">(${files.length})</span></div>`;
-    html += '<div class="file-gallery-inner" style="padding:14px;">';
-    const typeKey = type;
-    files.forEach(function(f,i){
-      html += `<div class="file-item" onclick="openLightboxByType('${typeKey}',${i})">
-        <img class="file-img" src="${esc(f.url)}" alt="" loading="lazy" onerror="this.style.background='#f1f5f9';this.src=''">
-        <div class="file-info">
-          <div class="file-name">${esc((f.user.name||'?').slice(0,16))}</div>
-          <div class="file-date">${timeAgo(f.ts)}</div>
-        </div>
-      </div>`;
-    });
-    html += '</div>';
-  });
-  if(!html) html='<div class="empty">No media files found.</div>';
-  panel.innerHTML = html;
-  // Cache type arrays for lightbox
-  window._typeFileMap = {};
-  types.forEach(function(t){ window._typeFileMap[t] = _storageFiles.filter(f=>f.type===t); });
-}
-
-function openLightboxByType(type, idx){
-  _lbFiles = (window._typeFileMap||{})[type] || [];
-  _lbIdx   = idx;
-  openLightbox();
-}
-
-// ── LIGHTBOX ───────────────────────────────────────────
-function openLightboxAt(idx){
-  _lbIdx = idx;
-  openLightbox();
-}
-
+function openLightboxByType(type,idx){_lbFiles=(window._typeFileMap||{})[type]||[];_lbIdx=idx;openLightbox();}
+function openLightboxAt(idx){_lbIdx=idx;openLightbox();}
 function openLightbox(){
-  const f = _lbFiles[_lbIdx];
-  if(!f) return;
-  document.getElementById('slbImg').src        = f.url;
-  document.getElementById('slbCaption').textContent = f.caption ? '"'+f.caption.slice(0,120)+'"' : f.label;
-  document.getElementById('slbMeta').textContent    = (f.user.name||'?')+' · @'+(f.user.handle||'—')+' · '+timeAgo(f.ts);
-  document.getElementById('slbCounter').textContent = (_lbIdx+1)+' / '+_lbFiles.length;
+  const f=_lbFiles[_lbIdx];if(!f)return;
+  document.getElementById('slbImg').src=f.url;
+  document.getElementById('slbCaption').textContent=f.caption?'"'+f.caption.slice(0,120)+'"':f.label;
+  document.getElementById('slbMeta').textContent=(f.user.name||'?')+' · @'+(f.user.handle||'—')+' · '+timeAgo(f.ts);
+  document.getElementById('slbCounter').textContent=(_lbIdx+1)+' / '+_lbFiles.length;
   document.getElementById('storageLightbox').classList.add('open');
-  document.onkeydown = function(e){
-    if(e.key==='ArrowRight') lbNav(1);
-    else if(e.key==='ArrowLeft') lbNav(-1);
-    else if(e.key==='Escape') closeLightbox();
-  };
+  document.onkeydown=function(e){if(e.key==='ArrowRight')lbNav(1);else if(e.key==='ArrowLeft')lbNav(-1);else if(e.key==='Escape')closeLightbox();};
 }
-
-function lbNav(dir){
-  _lbIdx = (_lbIdx + dir + _lbFiles.length) % _lbFiles.length;
-  openLightbox();
-}
-
-function closeLightbox(){
-  document.getElementById('storageLightbox').classList.remove('open');
-  document.onkeydown = null;
-}
+function lbNav(dir){_lbIdx=(_lbIdx+dir+_lbFiles.length)%_lbFiles.length;openLightbox();}
+function closeLightbox(){document.getElementById('storageLightbox').classList.remove('open');document.onkeydown=null;}
 
 // ── EXPORT ────────────────────────────────────────────
 function exportData(){
   const data={
-    exported: new Date().toISOString(),
-    users: _users,
-    posts: _posts.map(p=>({...p})),
-    notifications: _notifs,
-    feedback: _feedback,
+    exported:new Date().toISOString(),
+    users:_users,
+    posts:_posts,
+    deletedPosts:_deletedPosts,
+    sessions:_sessions.slice(0,200),
+    notifications:_notifs,
+    feedback:_feedback,
     summary:{
-      totalUsers: _users.length,
-      totalPosts: _posts.length,
-      totalComments: _posts.reduce((s,p)=>s+(p.comments?p.comments.length:0),0),
-      totalLikes: _posts.reduce((s,p)=>s+(p.likes||0),0),
+      totalUsers:_users.length,
+      totalPosts:_posts.length,
+      deletedPosts:_deletedPosts.length,
+      totalComments:_posts.reduce((s,p)=>s+(p.comments?p.comments.length:0),0),
+      totalLikes:_posts.reduce((s,p)=>s+(p.likes||0),0),
+      onlineNow:Object.values(_presence).filter(p=>p.online).length,
     }
   };
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='kez-media-export-'+new Date().toISOString().slice(0,10)+'.json';
-  a.click();
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='kez-media-export-'+new Date().toISOString().slice(0,10)+'.json';a.click();
 }
 </script>
 </body>
