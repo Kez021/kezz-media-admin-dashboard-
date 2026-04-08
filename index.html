@@ -54,7 +54,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .content{padding:24px;}
 
 /* ── STATS ROW ───────────────────────────────────────── */
-.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px;}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:24px;}
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
 .stat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
 .stat-num{font-size:24px;font-weight:800;color:var(--text);}
@@ -228,7 +228,41 @@ tbody td{padding:10px 14px;vertical-align:middle;}
 .ssb-num{font-size:20px;font-weight:800;color:var(--text);}
 .ssb-label{font-size:11px;color:var(--text3);}
 
+/* ── GROUP CHAT DRILLDOWN ────────────────────────────── */
+.gc-msg-bubble{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:12px;padding:8px 12px;font-size:12.5px;
+  max-width:100%;word-break:break-word;
+}
+.gc-msg-sticker{
+  font-size:32px;line-height:1.2;
+}
+.gc-msg-gif img{
+  max-height:60px;border-radius:8px;
+}
+
+/* ── MENTIONS TABLE ──────────────────────────────────── */
+#section-mentions .tbl-wrap table td{
+  vertical-align:middle;
+}
+
+/* ── STORAGE TOOLBAR FIX ─────────────────────────────── */
+.storage-toolbar{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 18px;border-bottom:1px solid var(--border);
+  flex-wrap:wrap;
+}
+
+/* ── STAT CARD HIGHLIGHT ─────────────────────────────── */
+.stat-card.highlight{
+  border-color:var(--pink);
+  box-shadow:0 0 0 2px rgba(226,104,138,.12);
+}
+
 /* ── RESPONSIVE ──────────────────────────────────────── */
+@media(max-width:1100px){
+  .stats-row{grid-template-columns:repeat(4,1fr);}
+}
 @media(max-width:900px){
   .stats-row{grid-template-columns:repeat(3,1fr);}
 }
@@ -294,6 +328,16 @@ tbody td{padding:10px 14px;vertical-align:middle;}
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="13" y2="14"/></svg>
       <span>Feedback</span>
       <span class="nb" id="nb-feedback" style="background:#f59e0b;">—</span>
+    </div>
+    <div class="nav-item" onclick="showSection('groups')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Group Chats</span>
+      <span class="nb" id="nb-groups">—</span>
+    </div>
+    <div class="nav-item" onclick="showSection('mentions')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg>
+      <span>Mentions</span>
+      <span class="nb" id="nb-mentions">—</span>
     </div>
     <div class="nav-section">Storage</div>
     <div class="nav-item" onclick="showSection('storage')">
@@ -369,6 +413,22 @@ tbody td{padding:10px 14px;vertical-align:middle;}
           <div class="stat-icon" style="background:#fee2e2;"><svg width="18" height="18" fill="none" stroke="#ef4444" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/></svg></div>
           <div class="stat-num" id="ov-feedback">—</div>
           <div class="stat-label">Reports / Suggestions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#ede9fe;"><svg width="18" height="18" fill="none" stroke="#7c3aed" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <div class="stat-num" id="ov-groups">—</div>
+          <div class="stat-label">Group Chats</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#f0fdf4;"><svg width="18" height="18" fill="none" stroke="#16a34a" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg></div>
+          <div class="stat-num" id="ov-mentions">—</div>
+          <div class="stat-label">Total Mentions</div>
+        </div>
+        <div class="stat-card highlight">
+          <div class="stat-icon" style="background:#dcfce7;"><svg width="18" height="18" fill="none" stroke="#22c55e" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></div>
+          <div class="stat-num" id="ov-online" style="color:#22c55e;">—</div>
+          <div class="stat-label">🟢 Online Now</div>
+          <div class="stat-delta delta-info" id="ov-online-sub">Loading...</div>
         </div>
       </div>
 
@@ -502,6 +562,7 @@ tbody td{padding:10px 14px;vertical-align:middle;}
           <button class="filter-btn" onclick="filterNotifs('comment',this)">💬 Comments</button>
           <button class="filter-btn" onclick="filterNotifs('follow',this)">👤 Follows</button>
           <button class="filter-btn" onclick="filterNotifs('message',this)">✉️ Messages</button>
+          <button class="filter-btn" onclick="filterNotifs('mention',this)">@ Mentions</button>
           <button class="filter-btn" onclick="filterNotifs('unread',this)">🔴 Unread</button>
         </div>
         <div class="tbl-wrap">
@@ -634,6 +695,73 @@ tbody td{padding:10px 14px;vertical-align:middle;}
       </div>
     </div>
 
+
+    <!-- ── GROUP CHATS ── -->
+    <div class="section" id="section-groups">
+      <div class="card">
+        <div class="card-head">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <div class="card-head-title">All Group Chats</div>
+          <div class="card-head-count" id="groupsCount">—</div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>Group Name</th>
+              <th>Members</th>
+              <th>Created By</th>
+              <th>Last Message</th>
+              <th>Theme</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr></thead>
+            <tbody id="groupsTable"><tr><td colspan="7"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <!-- Group Messages Drilldown -->
+      <div class="drilldown" id="groupDrilldown">
+        <div class="drilldown-header">
+          <div class="drilldown-av" id="gdAv" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);">G</div>
+          <div>
+            <div class="drilldown-name" id="gdName">—</div>
+            <div class="drilldown-handle" id="gdMeta">—</div>
+          </div>
+          <button class="close-dd" onclick="closeGroupDrilldown()">✕ Close</button>
+        </div>
+        <div id="gdMessages"></div>
+      </div>
+    </div>
+
+    <!-- ── MENTIONS LOG ── -->
+    <div class="section" id="section-mentions">
+      <div class="card">
+        <div class="card-head">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg>
+          <div class="card-head-title">All @Mentions</div>
+          <div class="card-head-count" id="mentionsCount">—</div>
+        </div>
+        <div class="filters">
+          <button class="filter-btn on" onclick="filterMentions('all',this)">All</button>
+          <button class="filter-btn" onclick="filterMentions('post',this)">📝 Post Mentions</button>
+          <button class="filter-btn" onclick="filterMentions('comment',this)">💬 Comment Mentions</button>
+          <button class="filter-btn" onclick="filterMentions('gc',this)">👥 GC @everyone</button>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>Type</th>
+              <th>From</th>
+              <th>Mentioned</th>
+              <th>Context</th>
+              <th>Time</th>
+            </tr></thead>
+            <tbody id="mentionsTable"><tr><td colspan="5"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /content -->
 </div><!-- /main -->
 
@@ -661,12 +789,32 @@ const auth = firebase.auth();
 const ADMIN_EMAIL = 'keshamaebangcoyo9@gmail.com';
 
 // ── RAW DATA CACHE ────────────────────────────────────
-let _users = [], _posts = [], _notifs = [], _feedback = [], _trash = [];
+let _users = [], _posts = [], _notifs = [], _feedback = [], _trash = [], _groups = [], _mentions = [], _mentionsFilter = 'all';
 let _activeSection = 'overview';
 let _searchQ = '';
 let _postsFilter = 'all';
 let _notifsFilter = 'all';
 let _feedbackFilter = 'all';
+
+// ── REAL-TIME PRESENCE WATCHER ───────────────────────
+function watchOnlinePresence(){
+  db.collection('presence').onSnapshot(function(snap){
+    const online = snap.docs.filter(d=>{
+      const data = d.data();
+      return data.online === true;
+    });
+    const el = document.getElementById('ov-online');
+    const sub = document.getElementById('ov-online-sub');
+    if(el) el.textContent = online.length;
+    if(sub){
+      const names = online.slice(0,3).map(d=>{
+        const u = getUserByUid(d.id) || {};
+        return u.handle ? '@'+u.handle : d.id.slice(0,8);
+      });
+      sub.textContent = names.length ? names.join(', ')+(online.length>3?' +more':'') : 'Nobody online';
+    }
+  });
+}
 
 // ── AUTH ──────────────────────────────────────────────
 function signIn(){
@@ -681,7 +829,7 @@ function signIn(){
       document.getElementById('sbName').textContent = cred.user.displayName || 'Admin';
       document.getElementById('sbEmail').textContent = cred.user.email;
       document.getElementById('sbAv').textContent = (cred.user.email||'A')[0].toUpperCase();
-      loadAll();
+      loadAll().then(function(){ watchOnlinePresence(); });
     })
     .catch(function(e){ err.textContent = e.message; });
 }
@@ -696,7 +844,7 @@ auth.onAuthStateChanged(function(u){
     document.getElementById('sbName').textContent = u.displayName || 'Admin';
     document.getElementById('sbEmail').textContent = u.email;
     document.getElementById('sbAv').textContent = (u.email||'A')[0].toUpperCase();
-    loadAll();
+    loadAll().then(function(){ watchOnlinePresence(); });
   }
 });
 
@@ -720,7 +868,7 @@ function showSection(name){
 // ── LOAD ALL DATA ─────────────────────────────────────
 async function loadAll(){
   try{
-    await Promise.all([loadUsers(), loadPosts(), loadNotifs(), loadFeedback(), loadTrash()]);
+    await Promise.all([loadUsers(), loadPosts(), loadNotifs(), loadFeedback(), loadTrash(), loadGroups(), loadMentions()]);
     buildStorageIndex();
     updateBadges();
     renderCurrentSection();
@@ -765,6 +913,31 @@ async function loadFeedback(){
   }catch(e){ _feedback=[]; }
 }
 
+async function loadGroups(){
+  try{
+    const snap = await db.collection('groups').where('deleted','!=',true).get();
+    _groups = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    _groups.sort((a,b)=>{
+      const ta=a.lastTs?(a.lastTs.toMillis?a.lastTs.toMillis():a.lastTs.seconds*1000):0;
+      const tb=b.lastTs?(b.lastTs.toMillis?b.lastTs.toMillis():b.lastTs.seconds*1000):0;
+      return tb-ta;
+    });
+  }catch(e){ _groups=[]; }
+}
+
+async function loadMentions(){
+  try{
+    // Mentions are stored in activityLog with type='mention'
+    const snap = await db.collection('activityLog').where('type','==','mention').get();
+    _mentions = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    _mentions.sort((a,b)=>{
+      const ta=a.ts?(a.ts.toMillis?a.ts.toMillis():a.ts.seconds*1000):0;
+      const tb=b.ts?(b.ts.toMillis?b.ts.toMillis():b.ts.seconds*1000):0;
+      return tb-ta;
+    });
+  }catch(e){ _mentions=[]; }
+}
+
 function updateBadges(){
   const totalComments = _posts.reduce((sum,p)=>sum+(p.comments?p.comments.length:0),0);
   const unreadFb = _feedback.filter(f=>!f.read).length;
@@ -777,6 +950,16 @@ function updateBadges(){
   document.getElementById('nb-feedback').textContent = unreadFb || _feedback.length;
   if(unreadFb) document.getElementById('nb-feedback').style.background='#ef4444';
   else document.getElementById('nb-feedback').style.background='#f59e0b';
+
+  // groups and mentions badges
+  const el_nbg = document.getElementById('nb-groups');
+  if(el_nbg) el_nbg.textContent = _groups.length;
+  const el_nbm = document.getElementById('nb-mentions');
+  if(el_nbm) el_nbm.textContent = _mentions.length;
+  const el_ovg = document.getElementById('ov-groups');
+  if(el_ovg) el_ovg.textContent = _groups.length;
+  const el_ovm = document.getElementById('ov-mentions');
+  if(el_ovm) el_ovm.textContent = _mentions.length;
 
   const trashBadge = document.getElementById('nb-trash');
   if(trashBadge){
@@ -801,6 +984,8 @@ function renderCurrentSection(){
   else if(_activeSection==='user-activity') populateUserSelect();
   else if(_activeSection==='storage') renderStorage();
   else if(_activeSection==='trash') renderTrash();
+  else if(_activeSection==='groups') renderGroups();
+  else if(_activeSection==='mentions') renderMentions();
 }
 
 // ── HELPERS ───────────────────────────────────────────
@@ -1122,9 +1307,9 @@ function filterNotifs(type,btn){
 }
 
 function renderNotifs(){
-  const icons={like:'❤️',comment:'💬',follow:'👤',message:'✉️'};
-  const labels={like:'Like',comment:'Comment',follow:'Follow',message:'Message'};
-  const badgeCls={like:'badge-pink',comment:'badge-green',follow:'badge-blue',message:'badge-yellow'};
+  const icons={like:'❤️',comment:'💬',follow:'👤',message:'✉️',mention:'@',repost:'🔁',share:'📤'};
+  const labels={like:'Like',comment:'Comment',follow:'Follow',message:'Message',mention:'Mention',repost:'Repost',share:'Share'};
+  const badgeCls={like:'badge-pink',comment:'badge-green',follow:'badge-blue',message:'badge-yellow',mention:'badge-blue',repost:'badge-gray',share:'badge-gray'};
   let data=[..._notifs];
   if(_notifsFilter!=='all'&&_notifsFilter!=='unread') data=data.filter(n=>n.type===_notifsFilter);
   if(_notifsFilter==='unread') data=data.filter(n=>!n.read);
@@ -1806,6 +1991,181 @@ function closePostViewer(){
   if(modal) modal.classList.remove('open');
 }
 
+
+// ── GROUP CHATS SECTION ────────────────────────────────
+const GC_THEMES_ADMIN = ['Default Pink','Ocean Blue','Sunset','Forest','Midnight','Bubblegum'];
+
+function renderGroups(){
+  let data = [..._groups];
+  if(_searchQ) data = data.filter(g=>
+    (g.name||'').toLowerCase().includes(_searchQ) ||
+    (g.createdBy||'').toLowerCase().includes(_searchQ)
+  );
+  document.getElementById('groupsCount').textContent = data.length + ' groups';
+  const tbody = document.getElementById('groupsTable');
+  if(!data.length){ tbody.innerHTML='<tr><td colspan="7"><div class="empty">No group chats found.</div></td></tr>'; return; }
+  tbody.innerHTML = data.map(g => {
+    const members = Array.isArray(g.members) ? g.members : [];
+    const creator = getUserByUid(g.createdBy) || {};
+    const theme = GC_THEMES_ADMIN[g.theme] || 'Default Pink';
+    const lastMsg = g.lastMsg ? (g.lastMsg.length > 40 ? g.lastMsg.slice(0,40)+'…' : g.lastMsg) : '—';
+    const lastTs = g.lastTs ? timeAgo(g.lastTs) : '—';
+    const memberAvatars = members.slice(0,4).map(uid=>{
+      const u = getUserByUid(uid) || {};
+      return avatarHTML(u, 22);
+    }).join('');
+    return `<tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;flex-shrink:0;overflow:hidden;">
+            ${g.coverPhoto ? `<img src="${esc(g.coverPhoto)}" style="width:100%;height:100%;object-fit:cover;">` : esc((g.name||'G').charAt(0))}
+          </div>
+          <div>
+            <div class="td-name">${esc(g.name||'Unnamed Group')}</div>
+            <div class="td-sub" style="font-family:monospace;font-size:10px;">${esc(g.id||'')}</div>
+          </div>
+        </div>
+      </td>
+      <td>
+        <div style="display:flex;align-items:center;gap:-4px;">${memberAvatars}</div>
+        <div class="td-sub">${members.length} member${members.length!==1?'s':''}</div>
+      </td>
+      <td><div class="td-av">${avatarHTML(creator)}<div><div class="td-name">${esc(creator.name||g.createdBy?.slice(0,10)||'—')}</div><div class="td-sub">@${esc(creator.handle||'—')}</div></div></div></td>
+      <td style="max-width:180px;font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(g.lastMsg||'')}">
+        ${esc(lastMsg)}<br><span class="td-sub">${lastTs}</span>
+      </td>
+      <td><span class="badge badge-blue">${esc(theme)}</span></td>
+      <td>${timeAgo(g.createdAt)}</td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="action-btn" onclick="drilldownGroup('${esc(g.id||'')}')">💬 Messages</button>
+        <button class="action-btn danger" onclick="deleteGroup('${esc(g.id||'')}')" style="border-color:#ef4444;color:#ef4444;">🗑 Delete</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function drilldownGroup(gcId){
+  const g = _groups.find(x=>x.id===gcId) || {};
+  const dd = document.getElementById('groupDrilldown');
+  document.getElementById('gdName').textContent = g.name || 'Unknown Group';
+  document.getElementById('gdMeta').textContent = (Array.isArray(g.members)?g.members.length:0)+' members · ID: '+(gcId.slice(0,18)||'—');
+  document.getElementById('gdMessages').innerHTML = '<div class="loading"><div class="spinner"></div>Loading messages...</div>';
+  dd.classList.add('open');
+  dd.scrollIntoView({behavior:'smooth',block:'start'});
+  try{
+    const snap = await db.collection('groups').doc(gcId).collection('messages').orderBy('ts','desc').limit(50).get();
+    if(snap.empty){ document.getElementById('gdMessages').innerHTML='<div class="empty">No messages in this group yet.</div>'; return; }
+    const msgs = snap.docs.map(d=>({id:d.id,...d.data()}));
+    let html = '<div style="padding:12px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);">Last 50 Messages (newest first)</div>';
+    html += '<div class="tbl-wrap"><table><thead><tr><th>From</th><th>Message</th><th>Type</th><th>Time</th><th>Actions</th></tr></thead><tbody>';
+    html += msgs.map(m=>{
+      const u = getUserByUid(m.from) || {name:m.fromName||'?',handle:m.fromHandle||'',color:'#e2688a',initial:m.fromName?m.fromName[0]:'?'};
+      const isGif = m.stickerUrl ? true : false;
+      const isEmoji = m.isEmoji && m.text && [...m.text].length <= 2;
+      const isEvery = (m.text||'').includes('@everyone');
+      let typeLabel = '<span class="badge badge-gray">Text</span>';
+      if(isGif) typeLabel = '<span class="badge badge-blue">🎬 GIF</span>';
+      else if(isEmoji) typeLabel = '<span class="badge badge-pink">🎭 Sticker</span>';
+      else if(isEvery) typeLabel = '<span class="badge badge-yellow">👥 @everyone</span>';
+      const preview = isGif
+        ? `<img src="${esc(m.stickerUrl)}" style="max-height:48px;border-radius:6px;">`
+        : esc((m.text||'').slice(0,80));
+      return `<tr>
+        <td><div class="td-av">${avatarHTML(u)}<div><div class="td-name">${esc(u.name||'?')}</div><div class="td-sub">@${esc(u.handle||'—')}</div></div></div></td>
+        <td style="max-width:240px;">${preview}</td>
+        <td>${typeLabel}</td>
+        <td>${timeAgo(m.ts)}</td>
+        <td><button class="action-btn danger" onclick="deleteGroupMsg('${esc(gcId)}','${esc(m.id)}')" style="border-color:#ef4444;color:#ef4444;font-size:11px;padding:3px 8px;">Delete</button></td>
+      </tr>`;
+    }).join('');
+    html += '</tbody></table></div>';
+    document.getElementById('gdMessages').innerHTML = html;
+  }catch(e){
+    document.getElementById('gdMessages').innerHTML = '<div class="empty" style="color:#ef4444;">Could not load messages: '+esc(e.message)+'</div>';
+  }
+}
+
+function closeGroupDrilldown(){
+  document.getElementById('groupDrilldown').classList.remove('open');
+}
+
+async function deleteGroup(gcId){
+  if(!confirm('Delete this group chat? Members will no longer see it. Messages are preserved in Firestore.')) return;
+  try{
+    await db.collection('groups').doc(gcId).update({deleted:true,deletedAt:firebase.firestore.FieldValue.serverTimestamp(),deletedBy:'admin'});
+    _groups = _groups.filter(g=>g.id!==gcId);
+    updateBadges();
+    renderGroups();
+    alert('Group deleted.');
+  }catch(e){ alert('Error: '+e.message); }
+}
+
+async function deleteGroupMsg(gcId, msgId){
+  if(!confirm('Delete this message permanently?')) return;
+  try{
+    await db.collection('groups').doc(gcId).collection('messages').doc(msgId).delete();
+    await drilldownGroup(gcId);
+    alert('Message deleted.');
+  }catch(e){ alert('Error: '+e.message); }
+}
+
+// ── MENTIONS SECTION ───────────────────────────────────
+function filterMentions(type, btn){
+  _mentionsFilter = type;
+  document.querySelectorAll('#section-mentions .filter-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderMentions();
+}
+
+function renderMentions(){
+  // Build mentions list from two sources:
+  // 1. activityLog (type='mention') - explicit @user mention notifications
+  // 2. notifications (type='mention') - generated when someone is mentioned
+  let data = [..._mentions];
+
+  if(_mentionsFilter === 'post'){
+    data = data.filter(m => m.postId && m.postId !== '');
+  } else if(_mentionsFilter === 'comment'){
+    data = data.filter(m => !m.postId || m.postId === '');
+  } else if(_mentionsFilter === 'gc'){
+    // @everyone mentions are in notifications
+    data = _notifs.filter(n => n.type === 'mention' && (n.extra||'').includes('@everyone'));
+  }
+
+  if(_searchQ) data = data.filter(m=>
+    (m.fromHandle||'').toLowerCase().includes(_searchQ) ||
+    (m.toHandle||'').toLowerCase().includes(_searchQ) ||
+    (m.text||'').toLowerCase().includes(_searchQ)
+  );
+
+  document.getElementById('mentionsCount').textContent = data.length + ' mentions';
+  const tbody = document.getElementById('mentionsTable');
+  if(!data.length){ tbody.innerHTML='<tr><td colspan="5"><div class="empty">No mentions found.</div></td></tr>'; return; }
+
+  tbody.innerHTML = data.map(m => {
+    const fromUser = getUserByUid(m.fromUid) || {name:m.fromName||'?',handle:m.fromHandle||'',color:'#e2688a',initial:'?'};
+    const toUser = getUserByUid(m.toUid) || {name:m.toHandle||'?',handle:m.toHandle||'',color:'#7c3aed',initial:'?'};
+    const isEveryone = (m.text||'').includes('@everyone') || (m.extra||'').includes('@everyone');
+    const typeLabel = isEveryone
+      ? '<span class="badge badge-yellow">👥 @everyone</span>'
+      : m.postId
+        ? '<span class="badge badge-blue">📝 Post</span>'
+        : '<span class="badge badge-green">💬 Comment</span>';
+    const context = esc((m.text||m.extra||'').slice(0,60));
+    return `<tr>
+      <td>${typeLabel}</td>
+      <td><div class="td-av">${avatarHTML(fromUser)}<div><div class="td-name">${esc(fromUser.name||'?')}</div><div class="td-sub">@${esc(fromUser.handle||'—')}</div></div></div></td>
+      <td>${isEveryone
+        ? '<span class="badge badge-yellow">Everyone in group</span>'
+        : `<div class="td-av">${avatarHTML(toUser)}<div><div class="td-name">${esc(toUser.name||toUser.handle||'?')}</div><div class="td-sub">@${esc(toUser.handle||'—')}</div></div></div>`
+      }</td>
+      <td style="max-width:240px;font-size:12px;color:var(--text2);">${context}</td>
+      <td>${timeAgo(m.ts)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── EXPORT (update to include groups/mentions) ─────────
 // ── EXPORT ────────────────────────────────────────────
 function exportData(){
   const data={
@@ -1814,11 +2174,15 @@ function exportData(){
     posts: _posts.map(p=>({...p})),
     notifications: _notifs,
     feedback: _feedback,
+    groups: _groups.map(g=>({id:g.id,name:g.name,members:g.members,createdBy:g.createdBy,lastMsg:g.lastMsg,theme:g.theme})),
+    mentions: _mentions,
     summary:{
       totalUsers: _users.length,
       totalPosts: _posts.length,
       totalComments: _posts.reduce((s,p)=>s+(p.comments?p.comments.length:0),0),
       totalLikes: _posts.reduce((s,p)=>s+(p.likes||0),0),
+      totalGroups: _groups.length,
+      totalMentions: _mentions.length,
     }
   };
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
