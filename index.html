@@ -54,7 +54,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .content{padding:24px;}
 
 /* ── STATS ROW ───────────────────────────────────────── */
-.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:24px;}
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px;}
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
 .stat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
 .stat-num{font-size:24px;font-weight:800;color:var(--text);}
@@ -150,30 +150,8 @@ tbody td{padding:10px 14px;vertical-align:middle;}
 .tl-text{font-size:12.5px;color:var(--text);}
 .tl-time{font-size:11px;color:var(--text3);margin-top:2px;}
 
-/* ── TRASH / DELETED POSTS ────────────────────────────── */
-.trash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:18px;}
-.trash-card{background:var(--card);border:1px solid rgba(239,68,68,.25);border-radius:14px;overflow:hidden;transition:box-shadow .2s;}
-.trash-card:hover{box-shadow:0 4px 20px rgba(239,68,68,.12);}
-.trash-thumb{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#111;}
-.trash-thumb-placeholder{width:100%;aspect-ratio:16/9;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:36px;}
-.trash-body{padding:12px 14px;}
-.trash-user{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-.trash-caption{font-size:13px;color:var(--text);margin-bottom:8px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.trash-meta{font-size:11px;color:var(--text3);margin-bottom:10px;}
-.trash-cloudinary{background:var(--bg);border-radius:8px;padding:8px 10px;font-size:11px;font-family:monospace;color:var(--text2);word-break:break-all;margin-bottom:10px;border:1px solid var(--border);}
-.trash-actions{display:flex;gap:8px;}
-
-/* ── POST VIEWER MODAL ────────────────────────────────── */
-#postViewerModal{display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.8);align-items:center;justify-content:center;}
-#postViewerModal.open{display:flex;}
-.pvm-inner{background:var(--card);border-radius:18px;max-width:700px;width:95vw;max-height:90vh;overflow-y:auto;position:relative;}
-.pvm-close{position:absolute;top:12px;right:14px;background:none;border:1px solid var(--border);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:13px;color:var(--text2);}
-.pvm-media{width:100%;max-height:50vh;object-fit:contain;display:block;border-radius:12px 12px 0 0;background:#111;}
-.pvm-body{padding:18px;}
-.pvm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-bottom:14px;}
-.pvm-grid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;cursor:pointer;}
-
 /* ── STORAGE BROWSER ─────────────────────────────────── */
+.storage-toolbar{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
 .storage-view-btn{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text2);transition:all .15s;}
 .storage-view-btn.on{background:var(--pink);color:white;border-color:var(--pink);}
 .storage-sort{padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text2);font-size:12px;outline:none;cursor:pointer;}
@@ -228,41 +206,7 @@ tbody td{padding:10px 14px;vertical-align:middle;}
 .ssb-num{font-size:20px;font-weight:800;color:var(--text);}
 .ssb-label{font-size:11px;color:var(--text3);}
 
-/* ── GROUP CHAT DRILLDOWN ────────────────────────────── */
-.gc-msg-bubble{
-  background:var(--bg);border:1px solid var(--border);
-  border-radius:12px;padding:8px 12px;font-size:12.5px;
-  max-width:100%;word-break:break-word;
-}
-.gc-msg-sticker{
-  font-size:32px;line-height:1.2;
-}
-.gc-msg-gif img{
-  max-height:60px;border-radius:8px;
-}
-
-/* ── MENTIONS TABLE ──────────────────────────────────── */
-#section-mentions .tbl-wrap table td{
-  vertical-align:middle;
-}
-
-/* ── STORAGE TOOLBAR FIX ─────────────────────────────── */
-.storage-toolbar{
-  display:flex;align-items:center;gap:8px;
-  padding:10px 18px;border-bottom:1px solid var(--border);
-  flex-wrap:wrap;
-}
-
-/* ── STAT CARD HIGHLIGHT ─────────────────────────────── */
-.stat-card.highlight{
-  border-color:var(--pink);
-  box-shadow:0 0 0 2px rgba(226,104,138,.12);
-}
-
 /* ── RESPONSIVE ──────────────────────────────────────── */
-@media(max-width:1100px){
-  .stats-row{grid-template-columns:repeat(4,1fr);}
-}
 @media(max-width:900px){
   .stats-row{grid-template-columns:repeat(3,1fr);}
 }
@@ -329,26 +273,16 @@ tbody td{padding:10px 14px;vertical-align:middle;}
       <span>Feedback</span>
       <span class="nb" id="nb-feedback" style="background:#f59e0b;">—</span>
     </div>
-    <div class="nav-item" onclick="showSection('groups')">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <span>Group Chats</span>
-      <span class="nb" id="nb-groups">—</span>
-    </div>
-    <div class="nav-item" onclick="showSection('mentions')">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg>
-      <span>Mentions</span>
-      <span class="nb" id="nb-mentions">—</span>
-    </div>
     <div class="nav-section">Storage</div>
+    <div class="nav-item" onclick="showSection('polls')">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span>Polls</span>
+      <span class="nb" id="nb-polls">0</span>
+    </div>
     <div class="nav-item" onclick="showSection('storage')">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
       <span>Media Storage</span>
       <span class="nb" id="nb-storage">—</span>
-    </div>
-    <div class="nav-item" onclick="showSection('trash')" style="color:#ef4444;">
-      <svg width="15" height="15" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-      <span>Deleted Posts</span>
-      <span class="nb" id="nb-trash" style="background:#ef4444;display:none;">0</span>
     </div>
     <div class="nav-section">Tools</div>
     <div class="nav-item" onclick="showSection('user-activity')">
@@ -415,20 +349,14 @@ tbody td{padding:10px 14px;vertical-align:middle;}
           <div class="stat-label">Reports / Suggestions</div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon" style="background:#ede9fe;"><svg width="18" height="18" fill="none" stroke="#7c3aed" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-          <div class="stat-num" id="ov-groups">—</div>
-          <div class="stat-label">Group Chats</div>
+          <div class="stat-icon" style="background:#ede9fe;"><svg width="18" height="18" fill="none" stroke="#7c3aed" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+          <div class="stat-num" id="ov-polls">—</div>
+          <div class="stat-label">Total Polls</div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon" style="background:#f0fdf4;"><svg width="18" height="18" fill="none" stroke="#16a34a" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg></div>
-          <div class="stat-num" id="ov-mentions">—</div>
-          <div class="stat-label">Total Mentions</div>
-        </div>
-        <div class="stat-card highlight">
-          <div class="stat-icon" style="background:#dcfce7;"><svg width="18" height="18" fill="none" stroke="#22c55e" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></div>
-          <div class="stat-num" id="ov-online" style="color:#22c55e;">—</div>
-          <div class="stat-label">🟢 Online Now</div>
-          <div class="stat-delta delta-info" id="ov-online-sub">Loading...</div>
+          <div class="stat-icon" style="background:#ecfdf5;"><svg width="18" height="18" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
+          <div class="stat-num" id="ov-reposts">—</div>
+          <div class="stat-label">Total Reposts</div>
         </div>
       </div>
 
@@ -505,23 +433,49 @@ tbody td{padding:10px 14px;vertical-align:middle;}
           <button class="filter-btn" onclick="filterPosts('photo',this)">📷 Photos</button>
           <button class="filter-btn" onclick="filterPosts('status',this)">✍️ Status</button>
           <button class="filter-btn" onclick="filterPosts('poll',this)">📊 Polls</button>
-          <button class="filter-btn" onclick="filterPosts('video',this)">🎬 Videos</button>
           <button class="filter-btn" onclick="filterPosts('liked',this)">❤️ Most Liked</button>
-          <button class="filter-btn" onclick="filterPosts('hidden',this)" style="color:#ef4444;">🗑 Hidden</button>
+          <button class="filter-btn" onclick="filterPosts('mostVoted',this)">🗳️ Most Voted</button>
+          <button class="filter-btn" onclick="filterPosts('repost',this)">🔁 Reposts</button>
         </div>
         <div class="tbl-wrap">
           <table>
             <thead><tr>
               <th>Post</th>
               <th>Author</th>
-              <th>Caption</th>
+              <th>Caption / Question</th>
               <th>Type</th>
-              <th>Likes</th>
+              <th>Likes / Votes</th>
               <th>Comments</th>
+              <th>Reposts</th>
               <th>Posted</th>
               <th>Actions</th>
             </tr></thead>
             <tbody id="postsTable"><tr><td colspan="8"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── POLLS ── -->
+    <div class="section" id="section-polls">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title">All Polls</div>
+          <div class="card-head-count" id="pollsCount">—</div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>Question</th>
+              <th>Author</th>
+              <th>Options</th>
+              <th>Total Votes</th>
+              <th>Leading Option</th>
+              <th>Ends</th>
+              <th>Posted</th>
+              <th>Actions</th>
+            </tr></thead>
+            <tbody id="pollsTable"><tr><td colspan="8"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
           </table>
         </div>
       </div>
@@ -562,6 +516,9 @@ tbody td{padding:10px 14px;vertical-align:middle;}
           <button class="filter-btn" onclick="filterNotifs('comment',this)">💬 Comments</button>
           <button class="filter-btn" onclick="filterNotifs('follow',this)">👤 Follows</button>
           <button class="filter-btn" onclick="filterNotifs('message',this)">✉️ Messages</button>
+          <button class="filter-btn" onclick="filterNotifs('vote',this)">🗳️ Poll Votes</button>
+          <button class="filter-btn" onclick="filterNotifs('repost',this)">🔁 Reposts</button>
+          <button class="filter-btn" onclick="filterNotifs('share',this)">📤 Shares</button>
           <button class="filter-btn" onclick="filterNotifs('mention',this)">@ Mentions</button>
           <button class="filter-btn" onclick="filterNotifs('unread',this)">🔴 Unread</button>
         </div>
@@ -679,99 +636,8 @@ tbody td{padding:10px 14px;vertical-align:middle;}
       </div>
     </div>
 
-    <!-- ── DELETED POSTS (TRASH) ── -->
-    <div class="section" id="section-trash">
-      <div class="card">
-        <div class="card-head">
-          <svg width="15" height="15" fill="none" stroke="#ef4444" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-          <div class="card-head-title" style="color:#ef4444;">Deleted Posts — Review Before Purging</div>
-          <div class="card-head-count" id="trashCount">Loading...</div>
-          <button class="action-btn danger" onclick="purgeAllTrash()" style="margin-left:auto;border-color:#ef4444;color:#ef4444;">🗑 Purge All</button>
-        </div>
-        <div style="padding:12px 18px;background:#fff5f5;border-bottom:1px solid rgba(239,68,68,.15);font-size:12.5px;color:#b91c1c;">
-          ⚠️ These posts were soft-deleted by users or admin. Media is still on Cloudinary. Review each post and decide to <strong>Restore</strong> (put back live) or <strong>Purge</strong> (remove record permanently). You must manually delete media from Cloudinary using the public IDs shown.
-        </div>
-        <div class="trash-grid" id="trashGrid"><div class="loading"><div class="spinner"></div>Loading deleted posts...</div></div>
-      </div>
-    </div>
-
-
-    <!-- ── GROUP CHATS ── -->
-    <div class="section" id="section-groups">
-      <div class="card">
-        <div class="card-head">
-          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <div class="card-head-title">All Group Chats</div>
-          <div class="card-head-count" id="groupsCount">—</div>
-        </div>
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr>
-              <th>Group Name</th>
-              <th>Members</th>
-              <th>Created By</th>
-              <th>Last Message</th>
-              <th>Theme</th>
-              <th>Created</th>
-              <th>Actions</th>
-            </tr></thead>
-            <tbody id="groupsTable"><tr><td colspan="7"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
-          </table>
-        </div>
-      </div>
-      <!-- Group Messages Drilldown -->
-      <div class="drilldown" id="groupDrilldown">
-        <div class="drilldown-header">
-          <div class="drilldown-av" id="gdAv" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);">G</div>
-          <div>
-            <div class="drilldown-name" id="gdName">—</div>
-            <div class="drilldown-handle" id="gdMeta">—</div>
-          </div>
-          <button class="close-dd" onclick="closeGroupDrilldown()">✕ Close</button>
-        </div>
-        <div id="gdMessages"></div>
-      </div>
-    </div>
-
-    <!-- ── MENTIONS LOG ── -->
-    <div class="section" id="section-mentions">
-      <div class="card">
-        <div class="card-head">
-          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg>
-          <div class="card-head-title">All @Mentions</div>
-          <div class="card-head-count" id="mentionsCount">—</div>
-        </div>
-        <div class="filters">
-          <button class="filter-btn on" onclick="filterMentions('all',this)">All</button>
-          <button class="filter-btn" onclick="filterMentions('post',this)">📝 Post Mentions</button>
-          <button class="filter-btn" onclick="filterMentions('comment',this)">💬 Comment Mentions</button>
-          <button class="filter-btn" onclick="filterMentions('gc',this)">👥 GC @everyone</button>
-        </div>
-        <div class="tbl-wrap">
-          <table>
-            <thead><tr>
-              <th>Type</th>
-              <th>From</th>
-              <th>Mentioned</th>
-              <th>Context</th>
-              <th>Time</th>
-            </tr></thead>
-            <tbody id="mentionsTable"><tr><td colspan="5"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
   </div><!-- /content -->
 </div><!-- /main -->
-
-<!-- POST VIEWER MODAL -->
-<div id="postViewerModal" onclick="if(event.target===this)closePostViewer()">
-  <div class="pvm-inner">
-    <button class="pvm-close" onclick="closePostViewer()">✕ Close</button>
-    <div id="pvmContent"></div>
-  </div>
-</div>
 
 <script>
 // ── FIREBASE ──────────────────────────────────────────
@@ -789,32 +655,12 @@ const auth = firebase.auth();
 const ADMIN_EMAIL = 'keshamaebangcoyo9@gmail.com';
 
 // ── RAW DATA CACHE ────────────────────────────────────
-let _users = [], _posts = [], _notifs = [], _feedback = [], _trash = [], _groups = [], _mentions = [], _mentionsFilter = 'all';
+let _users = [], _posts = [], _notifs = [], _feedback = [];
 let _activeSection = 'overview';
 let _searchQ = '';
 let _postsFilter = 'all';
 let _notifsFilter = 'all';
 let _feedbackFilter = 'all';
-
-// ── REAL-TIME PRESENCE WATCHER ───────────────────────
-function watchOnlinePresence(){
-  db.collection('presence').onSnapshot(function(snap){
-    const online = snap.docs.filter(d=>{
-      const data = d.data();
-      return data.online === true;
-    });
-    const el = document.getElementById('ov-online');
-    const sub = document.getElementById('ov-online-sub');
-    if(el) el.textContent = online.length;
-    if(sub){
-      const names = online.slice(0,3).map(d=>{
-        const u = getUserByUid(d.id) || {};
-        return u.handle ? '@'+u.handle : d.id.slice(0,8);
-      });
-      sub.textContent = names.length ? names.join(', ')+(online.length>3?' +more':'') : 'Nobody online';
-    }
-  });
-}
 
 // ── AUTH ──────────────────────────────────────────────
 function signIn(){
@@ -829,7 +675,7 @@ function signIn(){
       document.getElementById('sbName').textContent = cred.user.displayName || 'Admin';
       document.getElementById('sbEmail').textContent = cred.user.email;
       document.getElementById('sbAv').textContent = (cred.user.email||'A')[0].toUpperCase();
-      loadAll().then(function(){ watchOnlinePresence(); });
+      loadAll();
     })
     .catch(function(e){ err.textContent = e.message; });
 }
@@ -844,7 +690,7 @@ auth.onAuthStateChanged(function(u){
     document.getElementById('sbName').textContent = u.displayName || 'Admin';
     document.getElementById('sbEmail').textContent = u.email;
     document.getElementById('sbAv').textContent = (u.email||'A')[0].toUpperCase();
-    loadAll().then(function(){ watchOnlinePresence(); });
+    loadAll();
   }
 });
 
@@ -856,8 +702,7 @@ function showSection(name){
   const ni = document.querySelector('.nav-item[onclick*="'+name+'"]');
   if(ni) ni.classList.add('active');
   const titles = {overview:'Overview',users:'Users',posts:'Posts',comments:'Comments',
-    notifications:'Notifications',feedback:'Reports & Suggestions','user-activity':'User Activity',
-    storage:'Media Storage', trash:'🗑 Deleted Posts (Trash)'};
+    notifications:'Notifications',feedback:'Reports & Suggestions','user-activity':'User Activity',storage:'Media Storage'};
   document.getElementById('topbarTitle').textContent = titles[name] || name;
   _activeSection = name;
   document.getElementById('searchInput').value = '';
@@ -868,7 +713,7 @@ function showSection(name){
 // ── LOAD ALL DATA ─────────────────────────────────────
 async function loadAll(){
   try{
-    await Promise.all([loadUsers(), loadPosts(), loadNotifs(), loadFeedback(), loadTrash(), loadGroups(), loadMentions()]);
+    await Promise.all([loadUsers(), loadPosts(), loadNotifs(), loadFeedback()]);
     buildStorageIndex();
     updateBadges();
     renderCurrentSection();
@@ -913,79 +758,67 @@ async function loadFeedback(){
   }catch(e){ _feedback=[]; }
 }
 
-async function loadGroups(){
-  try{
-    const snap = await db.collection('groups').where('deleted','!=',true).get();
-    _groups = snap.docs.map(d=>({id:d.id, ...d.data()}));
-    _groups.sort((a,b)=>{
-      const ta=a.lastTs?(a.lastTs.toMillis?a.lastTs.toMillis():a.lastTs.seconds*1000):0;
-      const tb=b.lastTs?(b.lastTs.toMillis?b.lastTs.toMillis():b.lastTs.seconds*1000):0;
-      return tb-ta;
-    });
-  }catch(e){ _groups=[]; }
-}
-
-async function loadMentions(){
-  try{
-    // Mentions are stored in activityLog with type='mention'
-    const snap = await db.collection('activityLog').where('type','==','mention').get();
-    _mentions = snap.docs.map(d=>({id:d.id, ...d.data()}));
-    _mentions.sort((a,b)=>{
-      const ta=a.ts?(a.ts.toMillis?a.ts.toMillis():a.ts.seconds*1000):0;
-      const tb=b.ts?(b.ts.toMillis?b.ts.toMillis():b.ts.seconds*1000):0;
-      return tb-ta;
-    });
-  }catch(e){ _mentions=[]; }
-}
-
 function updateBadges(){
   const totalComments = _posts.reduce((sum,p)=>sum+(p.comments?p.comments.length:0),0);
   const unreadFb = _feedback.filter(f=>!f.read).length;
-  const trashCount = _trash.length;
 
   document.getElementById('nb-users').textContent    = _users.length;
-  document.getElementById('nb-posts').textContent    = _posts.filter(p=>!p.hidden).length;
+  document.getElementById('nb-posts').textContent    = _posts.length;
   document.getElementById('nb-comments').textContent = totalComments;
   document.getElementById('nb-notifs').textContent   = _notifs.length;
   document.getElementById('nb-feedback').textContent = unreadFb || _feedback.length;
   if(unreadFb) document.getElementById('nb-feedback').style.background='#ef4444';
   else document.getElementById('nb-feedback').style.background='#f59e0b';
 
-  // groups and mentions badges
-  const el_nbg = document.getElementById('nb-groups');
-  if(el_nbg) el_nbg.textContent = _groups.length;
-  const el_nbm = document.getElementById('nb-mentions');
-  if(el_nbm) el_nbm.textContent = _mentions.length;
-  const el_ovg = document.getElementById('ov-groups');
-  if(el_ovg) el_ovg.textContent = _groups.length;
-  const el_ovm = document.getElementById('ov-mentions');
-  if(el_ovm) el_ovm.textContent = _mentions.length;
-
-  const trashBadge = document.getElementById('nb-trash');
-  if(trashBadge){
-    trashBadge.textContent = trashCount;
-    trashBadge.style.display = trashCount ? '' : 'none';
-  }
-
+  const totalPolls = _posts.filter(p=>p.isPoll).length;
+  const totalReposts = _posts.reduce((s,p)=>s+((p.repostedBy||[]).length),0);
+  const totalVotes = _posts.filter(p=>p.isPoll).reduce((s,p)=>s+(p.pollOptions?p.pollOptions.reduce((a,o)=>a+(o.votes||0),0):0),0);
   document.getElementById('ov-users').textContent    = _users.length;
-  document.getElementById('ov-posts').textContent    = _posts.filter(p=>!p.hidden).length;
+  document.getElementById('ov-posts').textContent    = _posts.length;
   document.getElementById('ov-comments').textContent = totalComments;
   document.getElementById('ov-likes').textContent    = _posts.reduce((s,p)=>s+(p.likes||0),0);
   document.getElementById('ov-feedback').textContent = _feedback.length;
+  document.getElementById('ov-polls').textContent    = totalPolls + ' (' + totalVotes + ' votes)';
+  document.getElementById('ov-reposts').textContent  = totalReposts;
+  const nbPolls = document.getElementById('nb-polls'); if(nbPolls) nbPolls.textContent = totalPolls;
+}
+
+function renderPolls(){
+  const pollPosts = _posts.filter(p=>p.isPoll);
+  document.getElementById('pollsCount').textContent = pollPosts.length+' polls';
+  const tbody = document.getElementById('pollsTable');
+  if(!pollPosts.length){tbody.innerHTML='<tr><td colspan="8"><div class="empty">No polls yet.</div></td></tr>';return;}
+  tbody.innerHTML = pollPosts.map(p=>{
+    const u = getUserByUid(p.uid)||p.user||{};
+    const totalVotes = (p.pollOptions||[]).reduce((s,o)=>s+(o.votes||0),0);
+    const leader = totalVotes>0 ? (p.pollOptions||[]).reduce((best,o)=>((o.votes||0)>(best.votes||0)?o:best),{text:'—',votes:0}) : null;
+    const endsMs = p.pollEnds||(p.pollEndsAt?p.pollEndsAt:0);
+    const ended = endsMs && Date.now() > endsMs;
+    const optList = (p.pollOptions||[]).map(o=>`<span class="badge badge-gray">${esc(typeof o==='object'?o.text:o)} (${o.votes||0})</span>`).join(' ');
+    const postId = String(p.id);
+    return `<tr>
+      <td style="max-width:200px;font-weight:600;color:var(--text);">📊 ${esc((p.pollQuestion||'').slice(0,70))}</td>
+      <td><div class="td-av">${avatarHTML(u)}<div><div class="td-name">${esc(u.name||'?')}</div><div class="td-sub">@${esc(u.handle||'—')}</div></div></div></td>
+      <td style="max-width:220px;">${optList}</td>
+      <td><span class="badge" style="background:#ede9fe;color:#7c3aed;">🗳️ ${totalVotes}</span></td>
+      <td>${leader?`<strong>${esc(typeof leader==='object'?leader.text:leader)}</strong> (${leader.votes||0})`:'—'}</td>
+      <td>${ended?'<span class="badge badge-red">Ended</span>':endsMs?`<span class="badge badge-green">Active · ${timeAgo(endsMs)} left</span>`:'<span class="badge badge-gray">No end</span>'}</td>
+      <td title="${fullDate(p.createdAt)}">${timeAgo(p.createdAt)}</td>
+      <td><button class="action-btn danger" onclick="deletePost('${esc(postId)}')">🗑 Delete</button></td>
+    </tr>`;
+  }).join('');
 }
 
 function renderCurrentSection(){
   if(_activeSection==='overview')       renderOverview();
   else if(_activeSection==='users')     renderUsers();
   else if(_activeSection==='posts')     renderPosts();
+  else if(_activeSection==='polls')     renderPolls();
   else if(_activeSection==='comments')  renderComments();
   else if(_activeSection==='notifications') renderNotifs();
   else if(_activeSection==='feedback')  renderFeedback();
   else if(_activeSection==='user-activity') populateUserSelect();
   else if(_activeSection==='storage') renderStorage();
-  else if(_activeSection==='trash') renderTrash();
-  else if(_activeSection==='groups') renderGroups();
-  else if(_activeSection==='mentions') renderMentions();
 }
 
 // ── HELPERS ───────────────────────────────────────────
@@ -1041,8 +874,9 @@ function renderOverview(){
           <td>${imgs[0]?`<img class="img-thumb" src="${esc(imgs[0])}" alt="">`:`<div class="no-img">${p.isStatus?'✍️':'📄'}</div>`}</td>
           <td><div class="td-av">${avatarHTML(u)}<div><div class="td-name">${esc(u.name||'Unknown')}</div><div class="td-sub">@${esc(u.handle||'—')}</div></div></div></td>
           <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc((p.caption||'').slice(0,60))}</td>
-          <td><span class="badge badge-pink">❤️ ${p.likes||0}</span></td>
+          <td>${p.isPoll?`<span class="badge" style="background:#ede9fe;color:#7c3aed;">🗳️ ${(p.pollOptions||[]).reduce((s,o)=>s+(o.votes||0),0)} votes</span>`:`<span class="badge badge-pink">❤️ ${p.likes||0}</span>`}</td>
           <td>${(p.comments||[]).length}</td>
+          <td>${(p.repostedBy||[]).length>0?`<span class="badge badge-green">🔁 ${(p.repostedBy||[]).length}</span>`:'-'}</td>
           <td title="${fullDate(p.createdAt)}">${timeAgo(p.createdAt)}</td>
         </tr>`;
       }).join('')+`</tbody></table></div>`;
@@ -1167,13 +1001,16 @@ function filterPosts(type,btn){
 
 function renderPosts(){
   let data = [..._posts];
-  if(_postsFilter==='photo') data=data.filter(p=>!p.isStatus&&!p.isPoll&&!p.isVideo&&!p.isYoutube&&(p.images&&p.images.length||p.image));
+  if(_postsFilter==='photo') data=data.filter(p=>!p.isStatus&&!p.isPoll&&(p.images||p.image));
   else if(_postsFilter==='status') data=data.filter(p=>p.isStatus);
   else if(_postsFilter==='poll') data=data.filter(p=>p.isPoll);
-  else if(_postsFilter==='video') data=data.filter(p=>p.isVideo||p.isYoutube);
-  else if(_postsFilter==='liked') data=[...data].sort((a,b)=>(b.likes||0)-(a.likes||0));
-  else if(_postsFilter==='hidden') data=data.filter(p=>p.hidden);
-  else data=data.filter(p=>!p.hidden); // default: only show visible posts
+  else if(_postsFilter==='repost') data=data.filter(p=>(p.repostedBy||[]).length>0);
+  else if(_postsFilter==='liked') data=data.sort((a,b)=>(b.likes||0)-(a.likes||0));
+  else if(_postsFilter==='mostVoted') data=data.filter(p=>p.isPoll).sort((a,b)=>{
+    const va=(a.pollOptions||[]).reduce((s,o)=>s+(o.votes||0),0);
+    const vb=(b.pollOptions||[]).reduce((s,o)=>s+(o.votes||0),0);
+    return vb-va;
+  });
   if(_searchQ) data=data.filter(p=>
     (p.caption||'').toLowerCase().includes(_searchQ)||
     (p.uid||'').toLowerCase().includes(_searchQ)||
@@ -1181,92 +1018,30 @@ function renderPosts(){
   );
   document.getElementById('postsCount').textContent=data.length+' posts';
   const tbody=document.getElementById('postsTable');
-  if(!data.length){tbody.innerHTML='<tr><td colspan="8"><div class="empty">No posts found.</div></td></tr>';return;}
+  if(!data.length){tbody.innerHTML='<tr><td colspan="9"><div class="empty">No posts found.</div></td></tr>';return;}
   tbody.innerHTML=data.map(p=>{
     const u=getUserByUid(p.uid)||p.user||{};
     const imgs=p.images||(p.image?[p.image]:[]);
     const postId=String(p.id);
-    let typeLabel='';
-    if(p.isStatus) typeLabel='<span class="badge badge-yellow">✍️ Status</span>';
-    else if(p.isPoll) typeLabel='<span class="badge badge-blue">📊 Poll</span>';
-    else if(p.isVideo) typeLabel='<span class="badge badge-yellow">🎬 Video</span>';
-    else if(p.isYoutube) typeLabel='<span class="badge badge-red">▶️ YouTube</span>';
-    else if(imgs.length>1) typeLabel=`<span class="badge badge-blue">📷 Album (${imgs.length})</span>`;
-    else typeLabel='<span class="badge badge-green">📷 Photo</span>';
-    const hiddenBadge = p.hidden ? '<span class="badge badge-red" style="margin-left:4px;">🗑 Hidden</span>' : '';
-    const thumb = imgs[0]||p.ytThumb||null;
-    return `<tr${p.hidden?' style="opacity:.6;background:#fff5f5;"':''}>
-      <td>${thumb?`<img class="img-thumb" src="${esc(thumb)}" alt="">`:`<div class="no-img">${p.isStatus?'✍️':p.isPoll?'📊':p.isVideo?'🎬':'📄'}</div>`}</td>
+    return `<tr>
+      <td>${imgs[0]?`<img class="img-thumb" src="${esc(imgs[0])}" alt="">`:`<div class="no-img">${p.isStatus?'✍️':'📄'}</div>`}</td>
       <td><div class="td-av">${avatarHTML(u)}<div><div class="td-name">${esc(u.name||'?')}</div><div class="td-sub">@${esc(u.handle||'—')}</div></div></div></td>
-      <td style="max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc((p.caption||p.pollQuestion||'').slice(0,80))}</td>
-      <td>${typeLabel}${hiddenBadge}</td>
+      <td style="max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.isPoll?'📊 '+esc((p.pollQuestion||'').slice(0,80)):esc((p.caption||'').slice(0,80))}</td>
+      <td>${p.isPoll?`<span class="badge badge-purple" style="background:#ede9fe;color:#7c3aed;">📊 Poll</span>`:p.isStatus?'<span class="badge badge-yellow">Status</span>':p.isVideo?'<span class="badge badge-blue">🎬 Video</span>':imgs.length>1?`<span class="badge badge-blue">Album (${imgs.length})</span>`:'<span class="badge badge-green">Photo</span>'}</td>
       <td><span class="badge badge-pink">❤️ ${p.likes||0}</span></td>
       <td>💬 ${(p.comments||[]).length}</td>
       <td title="${fullDate(p.createdAt)}">${timeAgo(p.createdAt)}</td>
-      <td style="display:flex;gap:6px;flex-wrap:wrap;">
-        ${p.hidden
-          ? `<button class="action-btn" onclick="restorePost('${esc(postId)}','')">↺ Restore</button><button class="action-btn danger" onclick="purgePost('${esc(postId)}','')" style="border-color:#ef4444;color:#ef4444;">🗑 Purge</button>`
-          : `<button class="action-btn danger" onclick="deletePost('${esc(postId)}')">🗑 Delete</button>`
-        }
-      </td>
+      <td><button class="action-btn danger" onclick="deletePost('${esc(postId)}')">🗑 Delete</button></td>
     </tr>`;
   }).join('');
 }
 
 async function deletePost(id){
-  if(!confirm('Move this post to Trash for review? You can restore or permanently purge it from the Trash section.')) return;
-  const post = _posts.find(p=>String(p.id)===String(id));
-  if(!post){ alert('Post not found in cache.'); return; }
-
-  // Save full copy to deletedPosts collection with all metadata
-  const u = getUserByUid(post.uid) || post.user || {};
-  const imgs = post.images||(post.image?[post.image]:[]);
-  // Extract Cloudinary public IDs from URLs
-  const cloudinaryIds = imgs.map(function(url){
-    const m = url.match(/\/upload\/(?:v\d+\/)?(.+?)(?:\.\w+)?$/);
-    return m ? m[1] : url;
-  }).filter(Boolean);
-
-  const trashEntry = {
-    originalId: String(id),
-    uid: post.uid||'',
-    userName: u.name||post.user?.name||'Unknown',
-    userHandle: u.handle||post.user?.handle||'',
-    userColor: u.color||post.user?.color||'#e2688a',
-    userInitial: u.initial||post.user?.initial||'?',
-    userAvatar: u.avatar||post.user?.avatar||null,
-    caption: post.caption||'',
-    images: imgs,
-    cloudinaryIds: cloudinaryIds,
-    videoUrl: post.videoUrl||null,
-    ytThumb: post.ytThumb||null,
-    isPoll: post.isPoll||false,
-    isStatus: post.isStatus||false,
-    isVideo: post.isVideo||false,
-    isYoutube: post.isYoutube||false,
-    likes: post.likes||0,
-    commentCount: (post.comments||[]).length,
-    createdAt: post.createdAt||null,
-    deletedAt: firebase.firestore.FieldValue.serverTimestamp(),
-    deletedByAdmin: true
-  };
-
-  try{
-    await db.collection('deletedPosts').add(trashEntry);
-    // Soft-delete from posts (mark hidden)
-    await db.collection('posts').doc(String(id)).update({
-      hidden: true,
-      hiddenAt: firebase.firestore.FieldValue.serverTimestamp(),
-      hiddenBy: 'admin'
-    });
-    _posts = _posts.map(p=>String(p.id)===String(id)?{...p,hidden:true}:p);
-    await loadTrash();
-    updateBadges();
-    renderPosts();
-    alert('✓ Post moved to Trash. Go to "Deleted Posts" tab to restore or purge it.');
-  }catch(e){
-    alert('Error: '+e.message);
-  }
+  if(!confirm('Delete this post permanently? This cannot be undone.')) return;
+  await db.collection('posts').doc(id).delete();
+  _posts=_posts.filter(p=>String(p.id)!==id);
+  updateBadges();
+  renderPosts();
 }
 
 // ── COMMENTS TABLE ─────────────────────────────────────
@@ -1307,9 +1082,9 @@ function filterNotifs(type,btn){
 }
 
 function renderNotifs(){
-  const icons={like:'❤️',comment:'💬',follow:'👤',message:'✉️',mention:'@',repost:'🔁',share:'📤'};
-  const labels={like:'Like',comment:'Comment',follow:'Follow',message:'Message',mention:'Mention',repost:'Repost',share:'Share'};
-  const badgeCls={like:'badge-pink',comment:'badge-green',follow:'badge-blue',message:'badge-yellow',mention:'badge-blue',repost:'badge-gray',share:'badge-gray'};
+  const icons={like:'❤️',comment:'💬',follow:'👤',message:'✉️',repost:'🔁',share:'📤',mention:'@',vote:'🗳️'};
+  const labels={like:'Like',comment:'Comment',follow:'Follow',message:'Message',repost:'Repost',share:'Share',mention:'Mention',vote:'Poll Vote'};
+  const badgeCls={like:'badge-pink',comment:'badge-green',follow:'badge-blue',message:'badge-yellow',repost:'badge-green',share:'badge-blue',mention:'badge-gray',vote:'badge-purple'};
   let data=[..._notifs];
   if(_notifsFilter!=='all'&&_notifsFilter!=='unread') data=data.filter(n=>n.type===_notifsFilter);
   if(_notifsFilter==='unread') data=data.filter(n=>!n.read);
@@ -1460,100 +1235,48 @@ function buildStorageIndex(){
   _posts.forEach(function(p){
     const u = getUserByUid(p.uid) || p.user || {};
     const ts = p.createdAt;
-    const isDeleted = p.hidden||false;
 
     // Post images
     const imgs = p.images || (p.image ? [p.image] : []);
     imgs.forEach(function(url, i){
-      if(!url||!url.startsWith('http')) return;
-      const cloudId = (url.match(/\/upload\/(?:v\d+\/)?(.+?)(?:\.\w+)?$/)||[])[1]||'';
+      if(!url) return;
       _storageFiles.push({
         url, type:'post', subtype: imgs.length>1?'album':'photo',
         uid: p.uid||'', user: u,
         postId: String(p.id), caption: p.caption||'',
-        ts, label: 'Post image '+(i+1)+' of '+(imgs.length),
-        cloudinaryId: cloudId,
-        deleted: isDeleted
+        ts, label: 'Post image '+(i+1)+' of '+(imgs.length)
       });
     });
-
-    // Video posts
-    if(p.isVideo && p.videoUrl && p.videoUrl.startsWith('http')){
-      const cloudId = (p.videoUrl.match(/\/upload\/(?:v\d+\/)?(.+?)(?:\.\w+)?$/)||[])[1]||'';
-      _storageFiles.push({
-        url: p.videoUrl, type:'video', subtype:'video',
-        uid: p.uid||'', user: u,
-        postId: String(p.id), caption: p.caption||'',
-        ts, label:'Video post',
-        cloudinaryId: cloudId,
-        deleted: isDeleted
-      });
-    }
-  });
-
-  // Also index deleted posts' media from _trash
-  _trash.forEach(function(t){
-    const u = {name:t.userName,handle:t.userHandle,color:t.userColor,initial:t.userInitial,avatar:t.userAvatar};
-    (t.images||[]).forEach(function(url,i){
-      if(!url||!url.startsWith('http')) return;
-      const cloudId = (t.cloudinaryIds||[])[i]||'';
-      if(_storageFiles.find(f=>f.url===url)) return; // already indexed
-      _storageFiles.push({
-        url, type:'post', subtype:'deleted',
-        uid: t.uid||'', user: u,
-        postId: t.originalId||'', caption: t.caption||'',
-        ts: t.createdAt, label:'Deleted post image '+(i+1),
-        cloudinaryId: cloudId,
-        deleted: true
-      });
-    });
-    if(t.videoUrl && !_storageFiles.find(f=>f.url===t.videoUrl)){
-      _storageFiles.push({
-        url: t.videoUrl, type:'video', subtype:'deleted',
-        uid: t.uid||'', user: u,
-        postId: t.originalId||'', caption: t.caption||'',
-        ts: t.createdAt, label:'Deleted video',
-        cloudinaryId:'', deleted: true
-      });
-    }
   });
 
   // Avatars from user profiles
   _users.forEach(function(u){
     if(u.avatar && u.avatar.startsWith('http')){
-      const cloudId = (u.avatar.match(/\/upload\/(?:v\d+\/)?(.+?)(?:\.\w+)?$/)||[])[1]||'';
       _storageFiles.push({
         url: u.avatar, type:'avatar', subtype:'avatar',
         uid: u.id||u.uid||'', user: u,
         postId:'', caption:'Profile avatar',
-        ts: u.createdAt, label:'Profile avatar',
-        cloudinaryId: cloudId,
-        deleted: false
+        ts: u.createdAt, label:'Profile avatar'
       });
     }
     if(u.bannerImage && u.bannerImage.startsWith('http')){
-      const cloudId = (u.bannerImage.match(/\/upload\/(?:v\d+\/)?(.+?)(?:\.\w+)?$/)||[])[1]||'';
       _storageFiles.push({
         url: u.bannerImage, type:'banner', subtype:'banner',
         uid: u.id||u.uid||'', user: u,
         postId:'', caption:'Cover photo',
-        ts: u.createdAt, label:'Cover photo',
-        cloudinaryId: cloudId,
-        deleted: false
+        ts: u.createdAt, label:'Cover photo'
       });
     }
   });
 
   // Update stats
   const postImgs  = _storageFiles.filter(f=>f.type==='post').length;
-  const videos    = _storageFiles.filter(f=>f.type==='video').length;
   const avatars   = _storageFiles.filter(f=>f.type==='avatar').length;
   const banners   = _storageFiles.filter(f=>f.type==='banner').length;
-  const deleted   = _storageFiles.filter(f=>f.deleted).length;
   document.getElementById('stTotalFiles').textContent  = _storageFiles.length;
-  document.getElementById('stPostImgs').textContent    = postImgs + (videos?' + '+videos+' vid':'');
+  document.getElementById('stPostImgs').textContent    = postImgs;
   document.getElementById('stAvatars').textContent     = avatars;
-  document.getElementById('stBanners').textContent     = banners + (deleted?' ('+deleted+' deleted)':'');
+  document.getElementById('stBanners').textContent     = banners;
   document.getElementById('nb-storage').textContent    = _storageFiles.length;
   document.getElementById('storageCount').textContent  = _storageFiles.length + ' files';
 }
@@ -1744,11 +1467,7 @@ function openLightbox(){
   if(!f) return;
   document.getElementById('slbImg').src        = f.url;
   document.getElementById('slbCaption').textContent = f.caption ? '"'+f.caption.slice(0,120)+'"' : f.label;
-  document.getElementById('slbMeta').innerHTML  =
-    `<strong>${esc(f.user.name||'?')}</strong> · @${esc(f.user.handle||'—')} · UID: <span style="font-family:monospace;font-size:10px;">${esc(f.uid||'—')}</span>`
-    +(f.cloudinaryId?` · <span style="font-family:monospace;font-size:10px;color:#f59e0b;">☁️ ${esc(f.cloudinaryId)}</span>`:'')
-    +` · ${timeAgo(f.ts)}`
-    +(f.deleted?' · <span style="color:#ef4444;font-weight:700;">DELETED</span>':'');
+  document.getElementById('slbMeta').textContent    = (f.user.name||'?')+' · @'+(f.user.handle||'—')+' · '+timeAgo(f.ts);
   document.getElementById('slbCounter').textContent = (_lbIdx+1)+' / '+_lbFiles.length;
   document.getElementById('storageLightbox').classList.add('open');
   document.onkeydown = function(e){
@@ -1768,404 +1487,6 @@ function closeLightbox(){
   document.onkeydown = null;
 }
 
-// ── TRASH / DELETED POSTS ─────────────────────────────
-async function loadTrash(){
-  try{
-    const snap = await db.collection('deletedPosts').get();
-    _trash = snap.docs.map(d=>({_trashId:d.id, ...d.data()}));
-    _trash.sort(function(a,b){
-      const ta=a.deletedAt?(a.deletedAt.toMillis?a.deletedAt.toMillis():a.deletedAt.seconds*1000):0;
-      const tb=b.deletedAt?(b.deletedAt.toMillis?b.deletedAt.toMillis():b.deletedAt.seconds*1000):0;
-      return tb-ta;
-    });
-  }catch(e){ _trash=[]; }
-}
-
-function renderTrash(){
-  const grid = document.getElementById('trashGrid');
-  const countEl = document.getElementById('trashCount');
-  if(!grid) return;
-
-  // Also check _posts for hidden posts not yet in deletedPosts
-  const hiddenPosts = _posts.filter(p=>p.hidden);
-
-  // Merge trash + hidden posts not already in _trash
-  const trashIds = new Set(_trash.map(t=>String(t.originalId)));
-  const extraHidden = hiddenPosts.filter(p=>!trashIds.has(String(p.id))).map(function(p){
-    const u = getUserByUid(p.uid)||p.user||{};
-    const imgs = p.images||(p.image?[p.image]:[]);
-    return {
-      _trashId: null,
-      _fromHidden: true,
-      originalId: String(p.id),
-      uid: p.uid||'',
-      userName: u.name||'Unknown',
-      userHandle: u.handle||'',
-      userColor: u.color||'#e2688a',
-      userInitial: u.initial||'?',
-      userAvatar: u.avatar||null,
-      caption: p.caption||'',
-      images: imgs,
-      cloudinaryIds: imgs.map(function(url){
-        const m=url.match(/\/upload\/(?:v\d+\/)?(.+?)(?:\.\w+)?$/);
-        return m?m[1]:url;
-      }),
-      videoUrl: p.videoUrl||null,
-      ytThumb: p.ytThumb||null,
-      likes: p.likes||0,
-      commentCount: (p.comments||[]).length,
-      createdAt: p.createdAt||null,
-      deletedAt: p.hiddenAt||null
-    };
-  });
-
-  const allTrash = [..._trash, ...extraHidden];
-  if(countEl) countEl.textContent = allTrash.length + ' deleted posts';
-
-  if(!allTrash.length){
-    grid.innerHTML='<div style="padding:40px;text-align:center;color:var(--text3);font-size:14px;">🎉 No deleted posts. Trash is empty!</div>';
-    return;
-  }
-
-  grid.innerHTML='';
-  allTrash.forEach(function(t){
-    const imgs = t.images||[];
-    const thumb = t.ytThumb||(imgs[0]||null);
-    const card = document.createElement('div');
-    card.className='trash-card';
-
-    const mediaHTML = thumb
-      ? `<img class="trash-thumb" src="${esc(thumb)}" alt="" onerror="this.style.display='none'">`
-      : `<div class="trash-thumb-placeholder">${t.isVideo?'🎬':t.isStatus?'✍️':'📷'}</div>`;
-
-    const cloudIdsHTML = t.cloudinaryIds&&t.cloudinaryIds.length
-      ? `<div class="trash-cloudinary"><strong>☁️ Cloudinary IDs (to delete manually):</strong><br>${t.cloudinaryIds.map(id=>`<div>• ${esc(id)}</div>`).join('')}</div>`
-      : '';
-
-    const trashIdAttr = t._trashId ? `data-trashid="${esc(t._trashId)}"` : '';
-    const postIdAttr = `data-postid="${esc(t.originalId)}"`;
-
-    card.innerHTML = `
-      ${mediaHTML}
-      <div class="trash-body">
-        <div class="trash-user">
-          <div class="av-circle" style="width:28px;height:28px;background:${esc(t.userColor)};font-size:11px;">
-            ${t.userAvatar?`<img src="${esc(t.userAvatar)}" alt="">`:esc(t.userInitial)}
-          </div>
-          <div>
-            <div style="font-size:13px;font-weight:600;">${esc(t.userName)}</div>
-            <div style="font-size:11px;color:var(--text3);">@${esc(t.userHandle)}</div>
-          </div>
-          ${imgs.length>1?`<span class="badge badge-blue" style="margin-left:auto;">${imgs.length} photos</span>`:''}
-        </div>
-        ${t.caption?`<div class="trash-caption">"${esc(t.caption)}"</div>`:''}
-        <div class="trash-meta">
-          ❤️ ${t.likes||0} likes · 💬 ${t.commentCount||0} comments
-          · Posted ${timeAgo(t.createdAt)}
-          · Deleted ${timeAgo(t.deletedAt)}
-        </div>
-        ${cloudIdsHTML}
-        <div class="trash-actions">
-          <button class="action-btn" onclick="viewDeletedPost(${JSON.stringify(t).replace(/"/g,'&quot;')})" style="flex:1;">👁 View</button>
-          <button class="action-btn" onclick="restorePost('${esc(t.originalId)}','${esc(t._trashId||'')}')" style="flex:1;">↺ Restore</button>
-          <button class="action-btn danger" onclick="purgePost('${esc(t.originalId)}','${esc(t._trashId||'')}')" style="flex:1;border-color:#ef4444;color:#ef4444;">🗑 Purge</button>
-        </div>
-      </div>`;
-    grid.appendChild(card);
-  });
-}
-
-async function restorePost(postId, trashId){
-  if(!confirm('Restore this post? It will be visible again on the app.')) return;
-  try{
-    await db.collection('posts').doc(String(postId)).update({
-      hidden: false,
-      hiddenAt: null,
-      hiddenBy: null
-    });
-    if(trashId) await db.collection('deletedPosts').doc(trashId).delete();
-    _posts = _posts.map(p=>String(p.id)===String(postId)?{...p,hidden:false}:p);
-    _trash = _trash.filter(t=>t._trashId!==trashId&&String(t.originalId)!==String(postId));
-    updateBadges();
-    renderTrash();
-    alert('✓ Post restored and is live again!');
-  }catch(e){ alert('Error restoring: '+e.message); }
-}
-
-async function purgePost(postId, trashId){
-  if(!confirm('PERMANENTLY DELETE this post record? Media on Cloudinary will NOT be deleted automatically — use the Cloudinary IDs shown to delete them manually.\n\nThis cannot be undone.')) return;
-  try{
-    await db.collection('posts').doc(String(postId)).delete();
-    if(trashId) await db.collection('deletedPosts').doc(trashId).delete();
-    _posts = _posts.filter(p=>String(p.id)!==String(postId));
-    _trash = _trash.filter(t=>t._trashId!==trashId&&String(t.originalId)!==String(postId));
-    updateBadges();
-    renderTrash();
-    alert('✓ Post permanently purged from Firestore. Remember to delete Cloudinary files using the IDs that were shown.');
-  }catch(e){ alert('Error purging: '+e.message); }
-}
-
-async function purgeAllTrash(){
-  if(!_trash.length){ alert('Trash is empty.'); return; }
-  if(!confirm('Permanently purge ALL '+_trash.length+' deleted posts from Firestore? Media on Cloudinary will NOT be deleted automatically.\n\nThis cannot be undone.')) return;
-  try{
-    const batch = db.batch();
-    _trash.forEach(function(t){
-      if(t._trashId) batch.delete(db.collection('deletedPosts').doc(t._trashId));
-      batch.delete(db.collection('posts').doc(String(t.originalId)));
-    });
-    await batch.commit();
-    _posts = _posts.filter(p=>!p.hidden);
-    _trash = [];
-    updateBadges();
-    renderTrash();
-    alert('✓ All trash purged. Remember to clean up Cloudinary files.');
-  }catch(e){ alert('Error: '+e.message); }
-}
-
-// ── POST VIEWER MODAL ─────────────────────────────────
-function viewDeletedPost(t){
-  if(typeof t === 'string') try{ t=JSON.parse(t); }catch(e){ return; }
-  const modal = document.getElementById('postViewerModal');
-  const content = document.getElementById('pvmContent');
-  if(!modal||!content) return;
-
-  const imgs = t.images||[];
-  let mediaHTML='';
-  if(t.ytThumb){
-    mediaHTML=`<img class="pvm-media" src="${esc(t.ytThumb)}" alt="">`;
-  } else if(t.videoUrl){
-    mediaHTML=`<video class="pvm-media" src="${esc(t.videoUrl)}" controls></video>`;
-  } else if(imgs.length===1){
-    mediaHTML=`<img class="pvm-media" src="${esc(imgs[0])}" alt="">`;
-  } else if(imgs.length>1){
-    mediaHTML=`<div class="pvm-grid">${imgs.map(url=>`<img src="${esc(url)}" alt="" onerror="this.style.display='none'">`).join('')}</div>`;
-  }
-
-  const cloudIdsHTML = t.cloudinaryIds&&t.cloudinaryIds.length
-    ? `<div style="background:#fff5f5;border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:12px;margin-bottom:14px;">
-        <div style="font-size:12px;font-weight:700;color:#b91c1c;margin-bottom:8px;">☁️ Cloudinary File IDs (copy to delete manually)</div>
-        ${t.cloudinaryIds.map(id=>`<div style="font-family:monospace;font-size:11.5px;color:#7f1d1d;padding:2px 0;display:flex;align-items:center;gap:8px;">
-          <span>${esc(id)}</span>
-          <button onclick="navigator.clipboard.writeText('${esc(id)}').then(()=>this.textContent='✓').catch(()=>{})" style="background:#ef4444;color:white;border:none;border-radius:5px;padding:2px 7px;font-size:10px;cursor:pointer;">Copy</button>
-        </div>`).join('')}
-      </div>`
-    : '';
-
-  content.innerHTML=`
-    ${mediaHTML}
-    <div class="pvm-body">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-        <div class="av-circle" style="width:38px;height:38px;background:${esc(t.userColor)};font-size:14px;">
-          ${t.userAvatar?`<img src="${esc(t.userAvatar)}" alt="">`:esc(t.userInitial)}
-        </div>
-        <div>
-          <div style="font-size:14px;font-weight:700;">${esc(t.userName)}</div>
-          <div style="font-size:12px;color:var(--text3);">@${esc(t.userHandle)} · UID: <span style="font-family:monospace;font-size:11px;">${esc(t.uid)}</span></div>
-        </div>
-        <div style="margin-left:auto;text-align:right;">
-          <div style="font-size:12px;color:var(--text3);">Posted: ${timeAgo(t.createdAt)}</div>
-          <div style="font-size:12px;color:#ef4444;">Deleted: ${timeAgo(t.deletedAt)}</div>
-        </div>
-      </div>
-      ${t.caption?`<div style="font-size:14px;color:var(--text);background:var(--bg);border-radius:10px;padding:12px;margin-bottom:12px;line-height:1.6;">"${esc(t.caption)}"</div>`:''}
-      <div style="display:flex;gap:16px;margin-bottom:14px;">
-        <span class="badge badge-pink">❤️ ${t.likes||0} likes</span>
-        <span class="badge badge-green">💬 ${t.commentCount||0} comments</span>
-        ${t.isPoll?'<span class="badge badge-blue">📊 Poll</span>':''}
-        ${t.isVideo?'<span class="badge badge-yellow">🎬 Video</span>':''}
-        ${t.isYoutube?'<span class="badge badge-red">▶️ YouTube</span>':''}
-      </div>
-      ${cloudIdsHTML}
-      <div style="display:flex;gap:10px;">
-        <button class="action-btn" onclick="restorePost('${esc(t.originalId)}','${esc(t._trashId||'')}');closePostViewer();" style="flex:1;">↺ Restore Post</button>
-        <button class="action-btn danger" onclick="purgePost('${esc(t.originalId)}','${esc(t._trashId||'')}');closePostViewer();" style="flex:1;border-color:#ef4444;color:#ef4444;">🗑 Purge Permanently</button>
-      </div>
-    </div>`;
-
-  modal.classList.add('open');
-}
-
-function closePostViewer(){
-  const modal = document.getElementById('postViewerModal');
-  if(modal) modal.classList.remove('open');
-}
-
-
-// ── GROUP CHATS SECTION ────────────────────────────────
-const GC_THEMES_ADMIN = ['Default Pink','Ocean Blue','Sunset','Forest','Midnight','Bubblegum'];
-
-function renderGroups(){
-  let data = [..._groups];
-  if(_searchQ) data = data.filter(g=>
-    (g.name||'').toLowerCase().includes(_searchQ) ||
-    (g.createdBy||'').toLowerCase().includes(_searchQ)
-  );
-  document.getElementById('groupsCount').textContent = data.length + ' groups';
-  const tbody = document.getElementById('groupsTable');
-  if(!data.length){ tbody.innerHTML='<tr><td colspan="7"><div class="empty">No group chats found.</div></td></tr>'; return; }
-  tbody.innerHTML = data.map(g => {
-    const members = Array.isArray(g.members) ? g.members : [];
-    const creator = getUserByUid(g.createdBy) || {};
-    const theme = GC_THEMES_ADMIN[g.theme] || 'Default Pink';
-    const lastMsg = g.lastMsg ? (g.lastMsg.length > 40 ? g.lastMsg.slice(0,40)+'…' : g.lastMsg) : '—';
-    const lastTs = g.lastTs ? timeAgo(g.lastTs) : '—';
-    const memberAvatars = members.slice(0,4).map(uid=>{
-      const u = getUserByUid(uid) || {};
-      return avatarHTML(u, 22);
-    }).join('');
-    return `<tr>
-      <td>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;flex-shrink:0;overflow:hidden;">
-            ${g.coverPhoto ? `<img src="${esc(g.coverPhoto)}" style="width:100%;height:100%;object-fit:cover;">` : esc((g.name||'G').charAt(0))}
-          </div>
-          <div>
-            <div class="td-name">${esc(g.name||'Unnamed Group')}</div>
-            <div class="td-sub" style="font-family:monospace;font-size:10px;">${esc(g.id||'')}</div>
-          </div>
-        </div>
-      </td>
-      <td>
-        <div style="display:flex;align-items:center;gap:-4px;">${memberAvatars}</div>
-        <div class="td-sub">${members.length} member${members.length!==1?'s':''}</div>
-      </td>
-      <td><div class="td-av">${avatarHTML(creator)}<div><div class="td-name">${esc(creator.name||g.createdBy?.slice(0,10)||'—')}</div><div class="td-sub">@${esc(creator.handle||'—')}</div></div></div></td>
-      <td style="max-width:180px;font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(g.lastMsg||'')}">
-        ${esc(lastMsg)}<br><span class="td-sub">${lastTs}</span>
-      </td>
-      <td><span class="badge badge-blue">${esc(theme)}</span></td>
-      <td>${timeAgo(g.createdAt)}</td>
-      <td style="display:flex;gap:6px;flex-wrap:wrap;">
-        <button class="action-btn" onclick="drilldownGroup('${esc(g.id||'')}')">💬 Messages</button>
-        <button class="action-btn danger" onclick="deleteGroup('${esc(g.id||'')}')" style="border-color:#ef4444;color:#ef4444;">🗑 Delete</button>
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-async function drilldownGroup(gcId){
-  const g = _groups.find(x=>x.id===gcId) || {};
-  const dd = document.getElementById('groupDrilldown');
-  document.getElementById('gdName').textContent = g.name || 'Unknown Group';
-  document.getElementById('gdMeta').textContent = (Array.isArray(g.members)?g.members.length:0)+' members · ID: '+(gcId.slice(0,18)||'—');
-  document.getElementById('gdMessages').innerHTML = '<div class="loading"><div class="spinner"></div>Loading messages...</div>';
-  dd.classList.add('open');
-  dd.scrollIntoView({behavior:'smooth',block:'start'});
-  try{
-    const snap = await db.collection('groups').doc(gcId).collection('messages').orderBy('ts','desc').limit(50).get();
-    if(snap.empty){ document.getElementById('gdMessages').innerHTML='<div class="empty">No messages in this group yet.</div>'; return; }
-    const msgs = snap.docs.map(d=>({id:d.id,...d.data()}));
-    let html = '<div style="padding:12px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);">Last 50 Messages (newest first)</div>';
-    html += '<div class="tbl-wrap"><table><thead><tr><th>From</th><th>Message</th><th>Type</th><th>Time</th><th>Actions</th></tr></thead><tbody>';
-    html += msgs.map(m=>{
-      const u = getUserByUid(m.from) || {name:m.fromName||'?',handle:m.fromHandle||'',color:'#e2688a',initial:m.fromName?m.fromName[0]:'?'};
-      const isGif = m.stickerUrl ? true : false;
-      const isEmoji = m.isEmoji && m.text && [...m.text].length <= 2;
-      const isEvery = (m.text||'').includes('@everyone');
-      let typeLabel = '<span class="badge badge-gray">Text</span>';
-      if(isGif) typeLabel = '<span class="badge badge-blue">🎬 GIF</span>';
-      else if(isEmoji) typeLabel = '<span class="badge badge-pink">🎭 Sticker</span>';
-      else if(isEvery) typeLabel = '<span class="badge badge-yellow">👥 @everyone</span>';
-      const preview = isGif
-        ? `<img src="${esc(m.stickerUrl)}" style="max-height:48px;border-radius:6px;">`
-        : esc((m.text||'').slice(0,80));
-      return `<tr>
-        <td><div class="td-av">${avatarHTML(u)}<div><div class="td-name">${esc(u.name||'?')}</div><div class="td-sub">@${esc(u.handle||'—')}</div></div></div></td>
-        <td style="max-width:240px;">${preview}</td>
-        <td>${typeLabel}</td>
-        <td>${timeAgo(m.ts)}</td>
-        <td><button class="action-btn danger" onclick="deleteGroupMsg('${esc(gcId)}','${esc(m.id)}')" style="border-color:#ef4444;color:#ef4444;font-size:11px;padding:3px 8px;">Delete</button></td>
-      </tr>`;
-    }).join('');
-    html += '</tbody></table></div>';
-    document.getElementById('gdMessages').innerHTML = html;
-  }catch(e){
-    document.getElementById('gdMessages').innerHTML = '<div class="empty" style="color:#ef4444;">Could not load messages: '+esc(e.message)+'</div>';
-  }
-}
-
-function closeGroupDrilldown(){
-  document.getElementById('groupDrilldown').classList.remove('open');
-}
-
-async function deleteGroup(gcId){
-  if(!confirm('Delete this group chat? Members will no longer see it. Messages are preserved in Firestore.')) return;
-  try{
-    await db.collection('groups').doc(gcId).update({deleted:true,deletedAt:firebase.firestore.FieldValue.serverTimestamp(),deletedBy:'admin'});
-    _groups = _groups.filter(g=>g.id!==gcId);
-    updateBadges();
-    renderGroups();
-    alert('Group deleted.');
-  }catch(e){ alert('Error: '+e.message); }
-}
-
-async function deleteGroupMsg(gcId, msgId){
-  if(!confirm('Delete this message permanently?')) return;
-  try{
-    await db.collection('groups').doc(gcId).collection('messages').doc(msgId).delete();
-    await drilldownGroup(gcId);
-    alert('Message deleted.');
-  }catch(e){ alert('Error: '+e.message); }
-}
-
-// ── MENTIONS SECTION ───────────────────────────────────
-function filterMentions(type, btn){
-  _mentionsFilter = type;
-  document.querySelectorAll('#section-mentions .filter-btn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  renderMentions();
-}
-
-function renderMentions(){
-  // Build mentions list from two sources:
-  // 1. activityLog (type='mention') - explicit @user mention notifications
-  // 2. notifications (type='mention') - generated when someone is mentioned
-  let data = [..._mentions];
-
-  if(_mentionsFilter === 'post'){
-    data = data.filter(m => m.postId && m.postId !== '');
-  } else if(_mentionsFilter === 'comment'){
-    data = data.filter(m => !m.postId || m.postId === '');
-  } else if(_mentionsFilter === 'gc'){
-    // @everyone mentions are in notifications
-    data = _notifs.filter(n => n.type === 'mention' && (n.extra||'').includes('@everyone'));
-  }
-
-  if(_searchQ) data = data.filter(m=>
-    (m.fromHandle||'').toLowerCase().includes(_searchQ) ||
-    (m.toHandle||'').toLowerCase().includes(_searchQ) ||
-    (m.text||'').toLowerCase().includes(_searchQ)
-  );
-
-  document.getElementById('mentionsCount').textContent = data.length + ' mentions';
-  const tbody = document.getElementById('mentionsTable');
-  if(!data.length){ tbody.innerHTML='<tr><td colspan="5"><div class="empty">No mentions found.</div></td></tr>'; return; }
-
-  tbody.innerHTML = data.map(m => {
-    const fromUser = getUserByUid(m.fromUid) || {name:m.fromName||'?',handle:m.fromHandle||'',color:'#e2688a',initial:'?'};
-    const toUser = getUserByUid(m.toUid) || {name:m.toHandle||'?',handle:m.toHandle||'',color:'#7c3aed',initial:'?'};
-    const isEveryone = (m.text||'').includes('@everyone') || (m.extra||'').includes('@everyone');
-    const typeLabel = isEveryone
-      ? '<span class="badge badge-yellow">👥 @everyone</span>'
-      : m.postId
-        ? '<span class="badge badge-blue">📝 Post</span>'
-        : '<span class="badge badge-green">💬 Comment</span>';
-    const context = esc((m.text||m.extra||'').slice(0,60));
-    return `<tr>
-      <td>${typeLabel}</td>
-      <td><div class="td-av">${avatarHTML(fromUser)}<div><div class="td-name">${esc(fromUser.name||'?')}</div><div class="td-sub">@${esc(fromUser.handle||'—')}</div></div></div></td>
-      <td>${isEveryone
-        ? '<span class="badge badge-yellow">Everyone in group</span>'
-        : `<div class="td-av">${avatarHTML(toUser)}<div><div class="td-name">${esc(toUser.name||toUser.handle||'?')}</div><div class="td-sub">@${esc(toUser.handle||'—')}</div></div></div>`
-      }</td>
-      <td style="max-width:240px;font-size:12px;color:var(--text2);">${context}</td>
-      <td>${timeAgo(m.ts)}</td>
-    </tr>`;
-  }).join('');
-}
-
-// ── EXPORT (update to include groups/mentions) ─────────
 // ── EXPORT ────────────────────────────────────────────
 function exportData(){
   const data={
@@ -2174,15 +1495,11 @@ function exportData(){
     posts: _posts.map(p=>({...p})),
     notifications: _notifs,
     feedback: _feedback,
-    groups: _groups.map(g=>({id:g.id,name:g.name,members:g.members,createdBy:g.createdBy,lastMsg:g.lastMsg,theme:g.theme})),
-    mentions: _mentions,
     summary:{
       totalUsers: _users.length,
       totalPosts: _posts.length,
       totalComments: _posts.reduce((s,p)=>s+(p.comments?p.comments.length:0),0),
       totalLikes: _posts.reduce((s,p)=>s+(p.likes||0),0),
-      totalGroups: _groups.length,
-      totalMentions: _mentions.length,
     }
   };
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
