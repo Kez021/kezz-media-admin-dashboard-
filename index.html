@@ -273,6 +273,17 @@ tbody td{padding:10px 14px;vertical-align:middle;}
       <span>Feedback</span>
       <span class="nb" id="nb-feedback" style="background:#f59e0b;">—</span>
     </div>
+    <div class="nav-section">Stories</div>
+    <div class="nav-item" onclick="showSection('stories')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+      <span>Active Stories</span>
+      <span class="nb" id="nb-stories">—</span>
+    </div>
+    <div class="nav-item" onclick="showSection('story-archive')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+      <span>Story Archive</span>
+      <span class="nb" id="nb-archive" style="background:#64748b;">—</span>
+    </div>
     <div class="nav-section">Storage</div>
     <div class="nav-item" onclick="showSection('polls')">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
@@ -357,6 +368,16 @@ tbody td{padding:10px 14px;vertical-align:middle;}
           <div class="stat-icon" style="background:#ecfdf5;"><svg width="18" height="18" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
           <div class="stat-num" id="ov-reposts">—</div>
           <div class="stat-label">Total Reposts</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fef3c7;"><svg width="18" height="18" fill="none" stroke="#f59e0b" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg></div>
+          <div class="stat-num" id="ov-stories">—</div>
+          <div class="stat-label">Active Stories</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#f1f5f9;"><svg width="18" height="18" fill="none" stroke="#64748b" stroke-width="2" viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/></svg></div>
+          <div class="stat-num" id="ov-archived-stories">—</div>
+          <div class="stat-label">Archived Stories</div>
         </div>
       </div>
 
@@ -453,6 +474,55 @@ tbody td{padding:10px 14px;vertical-align:middle;}
             <tbody id="postsTable"><tr><td colspan="8"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
           </table>
         </div>
+      </div>
+    </div>
+
+    <!-- ── STORIES ── -->
+    <div class="section" id="section-stories">
+      <div class="card">
+        <div class="card-head">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+          <div class="card-head-title">Active Stories (last 24h)</div>
+          <div class="card-head-count" id="storiesCount">—</div>
+        </div>
+        <div class="filters" id="storiesFilters">
+          <button class="filter-btn on" onclick="filterStories('all',this)">All</button>
+          <button class="filter-btn" onclick="filterStories('image',this)">🖼 Photos</button>
+          <button class="filter-btn" onclick="filterStories('video',this)">🎬 Videos</button>
+          <button class="filter-btn" onclick="filterStories('text',this)">✍️ Text</button>
+          <button class="filter-btn" onclick="filterStories('mostViewed',this)">👁 Most Viewed</button>
+        </div>
+        <div class="tbl-wrap"><table>
+          <thead><tr>
+            <th>Media</th><th>Author</th><th>Caption</th><th>Type</th>
+            <th>Views</th><th>Reactions</th><th>Expires</th><th>Posted</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="storiesTable"><tr><td colspan="9"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ── STORY ARCHIVE ── -->
+    <div class="section" id="section-story-archive">
+      <div class="card">
+        <div class="card-head">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/></svg>
+          <div class="card-head-title">Story Archive (expired &amp; deleted)</div>
+          <div class="card-head-count" id="archiveCount">—</div>
+        </div>
+        <div class="storage-stats-bar" style="margin-bottom:0;">
+          <div class="ssb-item"><div class="ssb-num" id="archTotalViews">—</div><div class="ssb-label">Total Views</div></div>
+          <div class="ssb-item"><div class="ssb-num" id="archTotalReact">—</div><div class="ssb-label">Total Reactions</div></div>
+          <div class="ssb-item"><div class="ssb-num" id="archExpired">—</div><div class="ssb-label">Expired</div></div>
+          <div class="ssb-item"><div class="ssb-num" id="archDeleted">—</div><div class="ssb-label">Deleted</div></div>
+        </div>
+        <div class="tbl-wrap"><table>
+          <thead><tr>
+            <th>Media</th><th>Author</th><th>Caption</th>
+            <th>Views</th><th>Reactions</th><th>Archived</th><th>Reason</th>
+          </tr></thead>
+          <tbody id="archiveTable"><tr><td colspan="7"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
+        </table></div>
       </div>
     </div>
 
@@ -612,9 +682,9 @@ tbody td{padding:10px 14px;vertical-align:middle;}
         <!-- Stats bar -->
         <div class="storage-stats-bar">
           <div class="ssb-item"><div class="ssb-num" id="stTotalFiles">—</div><div class="ssb-label">Total Files</div></div>
-          <div class="ssb-item"><div class="ssb-num" id="stPostImgs">—</div><div class="ssb-label">Post Images</div></div>
+          <div class="ssb-item"><div class="ssb-num" id="stPostImgs">—</div><div class="ssb-label">Posts (imgs+vids)</div></div>
           <div class="ssb-item"><div class="ssb-num" id="stAvatars">—</div><div class="ssb-label">Avatars</div></div>
-          <div class="ssb-item"><div class="ssb-num" id="stBanners">—</div><div class="ssb-label">Banners</div></div>
+          <div class="ssb-item"><div class="ssb-num" id="stBanners">—</div><div class="ssb-label">Banners+Stories</div></div>
         </div>
 
         <!-- Toolbar -->
@@ -623,6 +693,7 @@ tbody td{padding:10px 14px;vertical-align:middle;}
           <button class="storage-view-btn on" id="stView-folders" onclick="setStorageView('folders',this)">📁 By User</button>
           <button class="storage-view-btn" id="stView-all" onclick="setStorageView('all',this)">🖼 All Files</button>
           <button class="storage-view-btn" id="stView-type" onclick="setStorageView('type',this)">📂 By Type</button>
+          <button class="storage-view-btn" id="stView-source" onclick="setStorageView('source',this)">🗂 By Source</button>
           <span style="margin-left:auto;font-size:12px;font-weight:700;color:var(--text2);">Sort:</span>
           <select class="storage-sort" id="storageSort" onchange="renderStorage()">
             <option value="newest">Newest First</option>
@@ -655,10 +726,11 @@ const auth = firebase.auth();
 const ADMIN_EMAIL = 'keshamaebangcoyo9@gmail.com';
 
 // ── RAW DATA CACHE ────────────────────────────────────
-let _users = [], _posts = [], _notifs = [], _feedback = [];
+let _users = [], _posts = [], _notifs = [], _feedback = [], _stories = [], _storyArchive = [];
 let _activeSection = 'overview';
 let _searchQ = '';
 let _postsFilter = 'all';
+let _storiesFilter = 'all';
 let _notifsFilter = 'all';
 let _feedbackFilter = 'all';
 
@@ -702,7 +774,8 @@ function showSection(name){
   const ni = document.querySelector('.nav-item[onclick*="'+name+'"]');
   if(ni) ni.classList.add('active');
   const titles = {overview:'Overview',users:'Users',posts:'Posts',comments:'Comments',
-    notifications:'Notifications',feedback:'Reports & Suggestions','user-activity':'User Activity',storage:'Media Storage'};
+    notifications:'Notifications',feedback:'Reports & Suggestions','user-activity':'User Activity',storage:'Media Storage',
+    stories:'Active Stories','story-archive':'Story Archive',polls:'Polls'};
   document.getElementById('topbarTitle').textContent = titles[name] || name;
   _activeSection = name;
   document.getElementById('searchInput').value = '';
@@ -713,11 +786,25 @@ function showSection(name){
 // ── LOAD ALL DATA ─────────────────────────────────────
 async function loadAll(){
   try{
-    await Promise.all([loadUsers(), loadPosts(), loadNotifs(), loadFeedback()]);
+    await Promise.all([loadUsers(), loadPosts(), loadNotifs(), loadFeedback(), loadStories(), loadStoryArchive()]);
     buildStorageIndex();
     updateBadges();
     renderCurrentSection();
   }catch(e){ console.error('Load error:', e); }
+}
+
+async function loadStories(){
+  try{
+    const snap = await db.collection('stories').orderBy('createdAt','desc').limit(200).get();
+    _stories = snap.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){ _stories=[]; }
+}
+
+async function loadStoryArchive(){
+  try{
+    const snap = await db.collection('storyArchive').orderBy('archivedAt','desc').limit(300).get();
+    _storyArchive = snap.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){ _storyArchive=[]; }
 }
 
 async function loadUsers(){
@@ -781,6 +868,10 @@ function updateBadges(){
   document.getElementById('ov-polls').textContent    = totalPolls + ' (' + totalVotes + ' votes)';
   document.getElementById('ov-reposts').textContent  = totalReposts;
   const nbPolls = document.getElementById('nb-polls'); if(nbPolls) nbPolls.textContent = totalPolls;
+  const nbStories = document.getElementById('nb-stories'); if(nbStories) nbStories.textContent = _stories.length;
+  const nbArchive = document.getElementById('nb-archive'); if(nbArchive) nbArchive.textContent = _storyArchive.length;
+  const ovStories = document.getElementById('ov-stories'); if(ovStories) ovStories.textContent = _stories.length;
+  const ovArch = document.getElementById('ov-archived-stories'); if(ovArch) ovArch.textContent = _storyArchive.length;
 }
 
 function renderPolls(){
@@ -814,6 +905,8 @@ function renderCurrentSection(){
   else if(_activeSection==='users')     renderUsers();
   else if(_activeSection==='posts')     renderPosts();
   else if(_activeSection==='polls')     renderPolls();
+  else if(_activeSection==='stories')   renderStories();
+  else if(_activeSection==='story-archive') renderStoryArchive();
   else if(_activeSection==='comments')  renderComments();
   else if(_activeSection==='notifications') renderNotifs();
   else if(_activeSection==='feedback')  renderFeedback();
@@ -1269,14 +1362,70 @@ function buildStorageIndex(){
     }
   });
 
+  // Post videos
+  _posts.forEach(function(p){
+    if(!p.videoUrl) return;
+    const u = getUserByUid(p.uid) || p.user || {};
+    _storageFiles.push({
+      url: p.videoUrl, type:'video', subtype:'post-video',
+      uid: p.uid||'', user: u,
+      postId: String(p.id), caption: p.caption||'',
+      ts: p.createdAt, label:'Post video', isVideo:true,
+      source:'post'
+    });
+  });
+
+  // Poll photos (pollPhotoA/B/C)
+  _posts.filter(p=>p.isPoll).forEach(function(p){
+    const u = getUserByUid(p.uid) || p.user || {};
+    ['pollPhotoA','pollPhotoB','pollPhotoC'].forEach(function(key,i){
+      if(!p[key]) return;
+      _storageFiles.push({
+        url: p[key], type:'poll-photo', subtype:'poll-photo',
+        uid: p.uid||'', user: u,
+        postId: String(p.id), caption: p.pollQuestion||'Poll',
+        ts: p.createdAt, label:'Poll photo '+(i+1), source:'poll'
+      });
+    });
+  });
+
+  // Active stories
+  _stories.forEach(function(s){
+    if(!s.mediaUrl && !s.imageUrl && !s.videoUrl) return;
+    const u = getUserByUid(s.uid) || s.user || {};
+    const url = s.mediaUrl || s.imageUrl || s.videoUrl || '';
+    _storageFiles.push({
+      url, type:'story', subtype: s.type==='video'?'story-video':'story-image',
+      uid: s.uid||'', user: u,
+      postId: s.id||'', caption: s.caption||s.text||'Story',
+      ts: s.createdAt, label:'Active story', isVideo: s.type==='video',
+      source:'story', storyId: s.id
+    });
+  });
+
+  // Archived stories
+  _storyArchive.forEach(function(s){
+    if(!s.mediaUrl && !s.imageUrl) return;
+    const u = getUserByUid(s.uid) || s.user || {};
+    const url = s.mediaUrl || s.imageUrl || '';
+    _storageFiles.push({
+      url, type:'story-archived', subtype:'story-archived',
+      uid: s.uid||'', user: u,
+      postId: s.storyId||s.id||'', caption: s.caption||s.text||'Archived story',
+      ts: s.archivedAt||s.createdAt, label:'Archived story', source:'story-archive'
+    });
+  });
+
   // Update stats
   const postImgs  = _storageFiles.filter(f=>f.type==='post').length;
+  const postVids  = _storageFiles.filter(f=>f.type==='video').length;
+  const storyMed  = _storageFiles.filter(f=>f.type==='story'||f.type==='story-archived').length;
   const avatars   = _storageFiles.filter(f=>f.type==='avatar').length;
   const banners   = _storageFiles.filter(f=>f.type==='banner').length;
   document.getElementById('stTotalFiles').textContent  = _storageFiles.length;
-  document.getElementById('stPostImgs').textContent    = postImgs;
+  document.getElementById('stPostImgs').textContent    = postImgs + ' imgs + ' + postVids + ' vids';
   document.getElementById('stAvatars').textContent     = avatars;
-  document.getElementById('stBanners').textContent     = banners;
+  document.getElementById('stBanners').textContent     = banners + ' + ' + storyMed + ' stories';
   document.getElementById('nb-storage').textContent    = _storageFiles.length;
   document.getElementById('storageCount').textContent  = _storageFiles.length + ' files';
 }
@@ -1297,6 +1446,53 @@ function renderStorage(){
   if(_storageView === 'folders') renderStorageFolders(sort, panel);
   else if(_storageView === 'all') renderStorageAll(sort, panel);
   else if(_storageView === 'type') renderStorageByType(sort, panel);
+  else if(_storageView === 'source') renderStorageBySource(sort, panel);
+}
+
+// ── BY SOURCE VIEW ─────────────────────────────────────
+function renderStorageBySource(sort, panel){
+  const sourceLabels = {
+    'post':   {icon:'📷', label:'Post Photos & Videos', color:'#dbeafe'},
+    'poll':   {icon:'📊', label:'Poll Photos', color:'#ede9fe'},
+    'story':  {icon:'⭕', label:'Active Stories', color:'#fef9c3'},
+    'story-archive': {icon:'📦', label:'Archived Stories', color:'#f1f5f9'},
+    'avatar': {icon:'👤', label:'Profile Avatars', color:'#dcfce7'},
+    'banner': {icon:'🖼', label:'Cover Photos', color:'#fce7f3'},
+  };
+  const groups = {};
+  _storageFiles.forEach(function(f){
+    const src = f.source || f.type;
+    if(!groups[src]) groups[src] = [];
+    groups[src].push(f);
+  });
+  let html = '';
+  Object.entries(sourceLabels).forEach(function([key, meta]){
+    const files = groups[key]||[];
+    if(!files.length) return;
+    html += \`<div style="margin-bottom:24px;">
+      <div style="padding:10px 14px;font-size:13px;font-weight:700;color:var(--text);background:\${meta.color};border-radius:10px 10px 0 0;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:18px;">\${meta.icon}</span>
+        <span>\${meta.label}</span>
+        <span style="margin-left:auto;font-size:11px;font-weight:500;opacity:.7;">\${files.length} file\${files.length!==1?'s':''}</span>
+      </div>
+      <div class="file-grid" style="border-radius:0 0 10px 10px;border:1px solid var(--border);border-top:none;padding:12px;">\`;
+    files.forEach(function(f,fi){
+      const isVid = f.isVideo || /\.mp4|\.mov|\.webm/i.test(f.url||'');
+      html += \`<div class="file-card" onclick="_lbFiles=groups['\${key}'];_lbIdx=\${fi};openLightbox()">
+        <div class="file-thumb">\${isVid?'<div style=\"width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:24px;background:#111;\">🎬</div>':\`<img src="\${esc(f.url)}" alt="">\`}</div>
+        <div class="file-meta">
+          <div class="file-user">\${esc(f.user.name||'?')}</div>
+          <div class="file-date">\${timeAgo(f.ts)}</div>
+        </div>
+      </div>\`;
+    });
+    html += '</div></div>';
+    // Cache for lightbox
+    if(!window._typeFileMap) window._typeFileMap = {};
+    window._typeFileMap[key] = files;
+  });
+  if(!html) html='<div class="empty">No media files found.</div>';
+  panel.innerHTML = html;
 }
 
 // ── FOLDER VIEW (grouped by user) ─────────────────────
@@ -1487,12 +1683,145 @@ function closeLightbox(){
   document.onkeydown = null;
 }
 
+// ── STORIES TABLE ────────────────────────────────────
+function filterStories(type, btn){
+  _storiesFilter = type;
+  document.querySelectorAll('#storiesFilters .filter-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderStories();
+}
+
+function renderStories(){
+  let data = [..._stories];
+  if(_storiesFilter==='image') data=data.filter(s=>s.type==='image'||(!s.type&&(s.mediaUrl||s.imageUrl)));
+  else if(_storiesFilter==='video') data=data.filter(s=>s.type==='video'||s.videoUrl);
+  else if(_storiesFilter==='text') data=data.filter(s=>s.type==='text'||(!s.mediaUrl&&!s.imageUrl&&!s.videoUrl));
+  else if(_storiesFilter==='mostViewed') data=data.sort((a,b)=>((b.seenBy||[]).length)-((a.seenBy||[]).length));
+  document.getElementById('storiesCount').textContent = data.length+' stories';
+  const tbody = document.getElementById('storiesTable');
+  if(!data.length){tbody.innerHTML='<tr><td colspan="9"><div class="empty">No active stories.</div></td></tr>';return;}
+  tbody.innerHTML = data.map(s=>{
+    const u = getUserByUid(s.uid)||s.user||{};
+    const url = s.mediaUrl||s.imageUrl||s.videoUrl||'';
+    const isVid = s.type==='video'||!!s.videoUrl;
+    const views = (s.seenBy||[]).length;
+    const reactions = Object.values(s.reactionCounts||{}).reduce((a,v)=>a+v,0);
+    const expiresMs = s.expiresAt?(s.expiresAt.toMillis?s.expiresAt.toMillis():s.expiresAt.seconds?s.expiresAt.seconds*1000:s.expiresAt):0;
+    const expired = expiresMs && Date.now()>expiresMs;
+    const timeLeft = expiresMs&&!expired ? msToHM(expiresMs-Date.now()) : null;
+    const mediaThumb = url
+      ? (isVid
+          ? \`<div style="width:48px;height:48px;background:#111;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;">🎬</div>\`
+          : \`<img src="\${esc(url)}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;cursor:pointer;" onclick="openSingleLightbox('\${esc(url)}')">\`)
+      : \`<div class="no-img">✍️</div>\`;
+    const storyId = String(s.id);
+    return \`<tr>
+      <td>\${mediaThumb}</td>
+      <td><div class="td-av">\${avatarHTML(u)}<div><div class="td-name">\${esc(u.name||'?')}</div><div class="td-sub">@\${esc(u.handle||'—')}</div></div></div></td>
+      <td style="max-width:160px;font-size:12px;">\${esc((s.caption||s.text||'').slice(0,60))}</td>
+      <td>\${isVid?'<span class="badge badge-blue">🎬 Video</span>':'<span class="badge badge-green">🖼 Photo</span>'}\${s.type==='text'?'<span class="badge badge-yellow">✍️ Text</span>':''}</td>
+      <td><span class="badge" style="background:#dbeafe;color:#1d4ed8;">👁 \${views}</span></td>
+      <td>\${reactions>0?\`<span class="badge badge-pink">❤️ \${reactions}</span>\`:'—'}</td>
+      <td>\${expired?'<span class="badge badge-red">Expired</span>':timeLeft?\`<span class="badge badge-green">⏱ \${timeLeft}</span>\`:'—'}</td>
+      <td title="\${fullDate(s.createdAt)}">\${timeAgo(s.createdAt)}</td>
+      <td>
+        <button class="action-btn" onclick="archiveStoryAdmin('\${esc(storyId)}')" title="Move to archive">📦 Archive</button>
+        <button class="action-btn danger" onclick="deleteStoryAdmin('\${esc(storyId)}')" style="margin-top:4px;">🗑 Delete</button>
+      </td>
+    </tr>\`;
+  }).join('');
+}
+
+function msToHM(ms){
+  const h = Math.floor(ms/3600000);
+  const m = Math.floor((ms%3600000)/60000);
+  return h>0 ? h+'h '+m+'m' : m+'m';
+}
+
+async function archiveStoryAdmin(storyId){
+  const s = _stories.find(x=>x.id===storyId);
+  if(!s||!confirm('Move this story to archive?')) return;
+  try{
+    await db.collection('storyArchive').add({
+      ...s, storyId: s.id, archivedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      archiveReason:'admin'
+    });
+    await db.collection('stories').doc(storyId).delete();
+    _stories = _stories.filter(x=>x.id!==storyId);
+    renderStories(); updateBadges();
+    alert('Moved to archive.');
+  }catch(e){ alert('Error: '+e.message); }
+}
+
+async function deleteStoryAdmin(storyId){
+  if(!confirm('Permanently delete this story? Cannot be undone.')) return;
+  try{
+    // Log to storyArchive before deleting so media is tracked
+    const s = _stories.find(x=>x.id===storyId);
+    if(s){
+      await db.collection('storyArchive').add({
+        ...s, storyId:s.id, archivedAt:firebase.firestore.FieldValue.serverTimestamp(),
+        archiveReason:'admin-deleted'
+      });
+    }
+    await db.collection('stories').doc(storyId).delete();
+    _stories = _stories.filter(x=>x.id!==storyId);
+    renderStories(); updateBadges();
+    alert('Story deleted and logged to archive.');
+  }catch(e){ alert('Error: '+e.message); }
+}
+
+function renderStoryArchive(){
+  const data = [..._storyArchive];
+  document.getElementById('archiveCount').textContent = data.length+' archived';
+  const totalViews = data.reduce((s,x)=>s+((x.seenBy||[]).length),0);
+  const totalReact = data.reduce((s,x)=>s+Object.values(x.reactionCounts||{}).reduce((a,v)=>a+v,0),0);
+  const expired    = data.filter(x=>x.archiveReason!=='admin'&&x.archiveReason!=='admin-deleted').length;
+  const deleted    = data.filter(x=>x.archiveReason==='admin'||x.archiveReason==='admin-deleted').length;
+  const stAV = document.getElementById('archTotalViews'); if(stAV) stAV.textContent=totalViews;
+  const stAR = document.getElementById('archTotalReact'); if(stAR) stAR.textContent=totalReact;
+  const stAE = document.getElementById('archExpired'); if(stAE) stAE.textContent=expired;
+  const stAD = document.getElementById('archDeleted'); if(stAD) stAD.textContent=deleted;
+
+  const tbody = document.getElementById('archiveTable');
+  if(!data.length){tbody.innerHTML='<tr><td colspan="7"><div class="empty">No archived stories yet.</div></td></tr>';return;}
+  tbody.innerHTML = data.map(s=>{
+    const u = getUserByUid(s.uid)||s.user||{};
+    const url = s.mediaUrl||s.imageUrl||s.videoUrl||'';
+    const views = (s.seenBy||[]).length;
+    const reactions = Object.values(s.reactionCounts||{}).reduce((a,v)=>a+v,0);
+    const reason = s.archiveReason==='admin'?'<span class="badge badge-yellow">👮 Admin archived</span>'
+      :s.archiveReason==='admin-deleted'?'<span class="badge badge-red">🗑 Admin deleted</span>'
+      :'<span class="badge badge-gray">⏰ Expired</span>';
+    const mediaThumb = url
+      ? \`<img src="\${esc(url)}" style="width:44px;height:44px;object-fit:cover;border-radius:8px;cursor:pointer;" onclick="openSingleLightbox('\${esc(url)}')">\`
+      : \`<div class="no-img">✍️</div>\`;
+    return \`<tr>
+      <td>\${mediaThumb}</td>
+      <td><div class="td-av">\${avatarHTML(u)}<div><div class="td-name">\${esc(u.name||'?')}</div><div class="td-sub">@\${esc(u.handle||'—')}</div></div></div></td>
+      <td style="max-width:160px;font-size:12px;">\${esc((s.caption||s.text||'').slice(0,60))}</td>
+      <td><span class="badge" style="background:#dbeafe;color:#1d4ed8;">👁 \${views}</span></td>
+      <td>\${reactions>0?\`<span class="badge badge-pink">❤️ \${reactions}</span>\`:'—'}</td>
+      <td title="\${fullDate(s.archivedAt)}">\${timeAgo(s.archivedAt)}</td>
+      <td>\${reason}</td>
+    </tr>\`;
+  }).join('');
+}
+
+function openSingleLightbox(url){
+  _lbFiles = [{url, type:'story', user:{}, caption:'Story media', label:'Story'}];
+  _lbIdx = 0;
+  openLightbox();
+}
+
 // ── EXPORT ────────────────────────────────────────────
 function exportData(){
   const data={
     exported: new Date().toISOString(),
     users: _users,
     posts: _posts.map(p=>({...p})),
+    stories: _stories,
+    storyArchive: _storyArchive,
     notifications: _notifs,
     feedback: _feedback,
     summary:{
