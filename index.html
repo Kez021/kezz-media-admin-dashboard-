@@ -1,0 +1,2380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kez Media — Admin Dashboard</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+<style>
+/* ── TOKENS ─────────────────────────────────────────── */
+:root{
+  --pink:#e2688a; --pink-soft:#f0a0b8; --pink-pale:#fceef3;
+  --bg:#f8f2f5; --card:#fff; --border:rgba(180,120,145,.15);
+  --text:#1a0d12; --text2:#7a5263; --text3:#b8909e;
+  --green:#22c55e; --yellow:#f59e0b; --red:#ef4444; --blue:#3b82f6;
+  --sidebar-w:220px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;}
+
+/* ── SIDEBAR ─────────────────────────────────────────── */
+#sidebar{
+  width:var(--sidebar-w);min-height:100vh;background:var(--card);
+  border-right:1px solid var(--border);position:fixed;top:0;left:0;bottom:0;
+  display:flex;flex-direction:column;z-index:100;
+}
+.sb-brand{padding:20px 18px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);}
+.sb-logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#e2688a,#f0a0b8);display:flex;align-items:center;justify-content:center;font-weight:900;color:white;font-size:16px;font-style:italic;}
+.sb-title{font-size:14px;font-weight:700;color:var(--text);}
+.sb-sub{font-size:10.5px;color:var(--text3);}
+.sb-nav{padding:12px 10px;flex:1;}
+.nav-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);padding:8px 8px 4px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .18s;margin-bottom:2px;}
+.nav-item:hover{background:var(--pink-pale);color:var(--pink);}
+.nav-item.active{background:var(--pink-pale);color:var(--pink);font-weight:600;}
+.nav-item svg{flex-shrink:0;opacity:.8;}
+.nav-item .nb{margin-left:auto;background:var(--pink);color:white;border-radius:99px;font-size:9px;font-weight:700;padding:1px 6px;}
+.sb-user{padding:14px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.sb-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--pink-soft));display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;}
+.sb-uname{font-size:12px;font-weight:600;}
+.sb-uemail{font-size:10.5px;color:var(--text3);}
+
+/* ── MAIN ────────────────────────────────────────────── */
+#main{margin-left:var(--sidebar-w);flex:1;min-height:100vh;}
+.topbar{height:54px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;position:sticky;top:0;z-index:50;}
+.topbar-title{font-size:16px;font-weight:700;flex:1;}
+.topbar-search{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:13px;color:var(--text2);}
+.topbar-search input{background:none;border:none;outline:none;font-size:13px;color:var(--text);width:200px;}
+.topbar-search input::placeholder{color:var(--text3);}
+.refresh-btn{padding:7px 14px;border-radius:10px;background:var(--pink-pale);color:var(--pink);border:none;font-size:12.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;}
+.refresh-btn:hover{background:var(--pink);color:white;}
+.content{padding:24px;}
+
+/* ── STATS ROW ───────────────────────────────────────── */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
+.stat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+.stat-num{font-size:24px;font-weight:800;color:var(--text);}
+.stat-label{font-size:11.5px;color:var(--text3);margin-top:2px;}
+.stat-delta{font-size:11px;margin-top:6px;font-weight:600;}
+.delta-up{color:var(--green);}
+.delta-info{color:var(--blue);}
+
+/* ── SECTION CARD ────────────────────────────────────── */
+.section{display:none;}
+.section.active{display:block;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px;}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.card-head-title{font-size:14px;font-weight:700;flex:1;}
+.card-head-count{font-size:12px;color:var(--text3);}
+
+/* ── TABLE ───────────────────────────────────────────── */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+thead th{padding:10px 14px;text-align:left;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);background:var(--bg);border-bottom:1px solid var(--border);}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--pink-pale);}
+tbody td{padding:10px 14px;vertical-align:middle;}
+.td-av{display:flex;align-items:center;gap:9px;}
+.av-circle{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;overflow:hidden;}
+.av-circle img{width:100%;height:100%;object-fit:cover;}
+.td-name{font-weight:600;color:var(--text);}
+.td-sub{font-size:11px;color:var(--text3);}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:99px;font-size:10.5px;font-weight:600;}
+.badge-green{background:#dcfce7;color:#15803d;}
+.badge-pink{background:var(--pink-pale);color:var(--pink);}
+.badge-yellow{background:#fef9c3;color:#a16207;}
+.badge-blue{background:#dbeafe;color:#1d4ed8;}
+.badge-red{background:#fee2e2;color:#b91c1c;}
+.badge-gray{background:#f1f5f9;color:#64748b;}
+.tag{display:inline-block;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:1px 7px;font-size:10.5px;color:var(--text2);margin:1px;}
+.action-btn{background:none;border:1px solid var(--border);border-radius:7px;padding:4px 10px;font-size:11.5px;cursor:pointer;color:var(--text2);transition:all .15s;}
+.action-btn:hover{border-color:var(--pink);color:var(--pink);}
+.action-btn.danger:hover{border-color:var(--red);color:var(--red);}
+.img-thumb{width:44px;height:44px;object-fit:cover;border-radius:7px;border:1px solid var(--border);}
+.no-img{width:44px;height:44px;border-radius:7px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;}
+
+/* ── USER DRILLDOWN ──────────────────────────────────── */
+.drilldown{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px;display:none;}
+.drilldown.open{display:block;}
+.drilldown-header{display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.drilldown-av{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:white;overflow:hidden;flex-shrink:0;}
+.drilldown-av img{width:100%;height:100%;object-fit:cover;}
+.drilldown-name{font-size:18px;font-weight:700;}
+.drilldown-handle{font-size:13px;color:var(--text2);margin-top:2px;}
+.drilldown-stats{display:flex;gap:18px;margin-top:8px;}
+.ds-item{text-align:center;}
+.ds-num{font-size:16px;font-weight:700;}
+.ds-label{font-size:10px;color:var(--text3);}
+.close-dd{margin-left:auto;background:none;border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px;color:var(--text2);}
+.close-dd:hover{border-color:var(--pink);color:var(--pink);}
+
+/* ── FILTERS ─────────────────────────────────────────── */
+.filters{display:flex;gap:8px;padding:12px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.filter-btn{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text2);transition:all .15s;}
+.filter-btn.on{background:var(--pink);color:white;border-color:var(--pink);}
+
+/* ── AUTH WALL ───────────────────────────────────────── */
+#authWall{position:fixed;inset:0;background:linear-gradient(135deg,#fff0f6,#fde8f2);display:flex;align-items:center;justify-content:center;z-index:999;}
+.auth-box{background:white;border-radius:20px;padding:32px;max-width:360px;width:90%;box-shadow:0 20px 60px rgba(180,100,140,.15);}
+.auth-brand{font-size:28px;font-weight:900;font-style:italic;background:linear-gradient(130deg,#d44f7a,#f4a8c0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;margin-bottom:4px;}
+.auth-sub{text-align:center;font-size:12.5px;color:#b8909e;margin-bottom:20px;}
+.auth-input{width:100%;background:#fdf6f8;border:1.5px solid rgba(180,120,145,.18);border-radius:9px;padding:11px 13px;color:#1a0d12;font-size:13.5px;outline:none;margin-bottom:10px;box-sizing:border-box;}
+.auth-input:focus{border-color:#e2688a;}
+.auth-btn{width:100%;padding:12px;border-radius:9px;border:none;background:linear-gradient(135deg,#e2688a,#f0a0b8);color:white;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:8px;}
+.auth-err{font-size:12px;color:var(--red);text-align:center;margin-top:6px;}
+
+/* ── LOADING ─────────────────────────────────────────── */
+.loading{padding:32px;text-align:center;color:var(--text3);font-size:13px;}
+.spinner{width:24px;height:24px;border:2.5px solid var(--border);border-top-color:var(--pink);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── EMPTY ───────────────────────────────────────────── */
+.empty{padding:32px;text-align:center;color:var(--text3);font-size:13px;}
+
+/* ── COMMENT PREVIEW ─────────────────────────────────── */
+.comment-row{padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;}
+.comment-row:last-child{border-bottom:none;}
+.comment-meta{display:flex;align-items:center;gap:6px;margin-bottom:3px;}
+.comment-text{color:var(--text);padding-left:24px;}
+
+/* ── ACTIVITY TIMELINE ───────────────────────────────── */
+.timeline-item{display:flex;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border);}
+.timeline-item:last-child{border-bottom:none;}
+.tl-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.tl-body{flex:1;}
+.tl-text{font-size:12.5px;color:var(--text);}
+.tl-time{font-size:11px;color:var(--text3);margin-top:2px;}
+
+/* ── STORAGE BROWSER ─────────────────────────────────── */
+.storage-toolbar{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.storage-view-btn{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text2);transition:all .15s;}
+.storage-view-btn.on{background:var(--pink);color:white;border-color:var(--pink);}
+.storage-sort{padding:5px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text2);font-size:12px;outline:none;cursor:pointer;}
+
+/* User folder cards */
+.folder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;padding:18px;}
+.folder-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:box-shadow .2s,transform .15s;}
+.folder-card:hover{box-shadow:0 6px 24px rgba(226,104,138,.13);transform:translateY(-2px);}
+.folder-card.open{border-color:var(--pink);box-shadow:0 6px 24px rgba(226,104,138,.18);}
+.folder-top{display:flex;align-items:center;gap:12px;padding:14px;}
+.folder-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;flex-shrink:0;overflow:hidden;}
+.folder-icon img{width:100%;height:100%;object-fit:cover;}
+.folder-name{font-size:14px;font-weight:700;}
+.folder-meta{font-size:11.5px;color:var(--text3);margin-top:2px;}
+.folder-preview{display:flex;gap:3px;padding:0 14px 14px;}
+.folder-thumb{width:60px;height:60px;border-radius:8px;object-fit:cover;border:1px solid var(--border);}
+.folder-thumb-more{width:60px;height:60px;border-radius:8px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text3);}
+
+/* Expanded file list */
+.file-gallery{display:none;border-top:1px solid var(--border);}
+.file-gallery.open{display:block;}
+.file-gallery-inner{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;padding:14px;}
+.file-item{border-radius:10px;overflow:hidden;border:1px solid var(--border);background:var(--bg);cursor:pointer;transition:all .15s;position:relative;}
+.file-item:hover{border-color:var(--pink);}
+.file-img{width:100%;aspect-ratio:1;object-fit:cover;display:block;}
+.file-video-badge{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);color:#fff;font-size:10px;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;pointer-events:none;}
+.file-info{padding:6px 8px;}
+.file-type-badge{position:absolute;top:6px;left:6px;background:rgba(0,0,0,.55);color:white;border-radius:6px;font-size:9.5px;font-weight:700;padding:2px 6px;}
+.file-name{font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.file-date{font-size:10.5px;color:var(--text3);}
+.file-caption{font-size:10.5px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+
+/* Flat list view */
+.flat-list-view{padding:0;}
+
+/* Image lightbox */
+#storageLightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:3000;align-items:center;justify-content:center;}
+#storageLightbox.open{display:flex;}
+.slb-inner{max-width:90vw;max-height:90vh;position:relative;}
+.slb-img{max-width:90vw;max-height:80vh;border-radius:12px;object-fit:contain;display:block;}
+.slb-info{background:rgba(0,0,0,.7);border-radius:0 0 12px 12px;padding:10px 16px;color:white;}
+.slb-caption{font-size:14px;font-weight:500;}
+.slb-meta{font-size:12px;opacity:.7;margin-top:3px;}
+.slb-close{position:absolute;top:-14px;right:-14px;width:32px;height:32px;border-radius:50%;background:white;border:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#333;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+.slb-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.18);border:none;color:white;font-size:22px;width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.slb-prev{left:-52px;}
+.slb-next{right:-52px;}
+.slb-counter{text-align:center;font-size:12px;color:rgba(255,255,255,.6);margin-top:8px;}
+
+/* Storage stats bar */
+.storage-stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 18px;border-bottom:1px solid var(--border);}
+.ssb-item{text-align:center;}
+.ssb-num{font-size:20px;font-weight:800;color:var(--text);}
+.ssb-label{font-size:11px;color:var(--text3);}
+
+/* ── RESPONSIVE ──────────────────────────────────────── */
+@media(max-width:900px){
+  .stats-row{grid-template-columns:repeat(3,1fr);}
+}
+@media(max-width:650px){
+  #sidebar{width:60px;}
+  .sb-title,.sb-sub,.nav-item span,.sb-uname,.sb-uemail,.nav-section{display:none;}
+  #main{margin-left:60px;}
+  .stats-row{grid-template-columns:repeat(2,1fr);}
+}
+
+.trash-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;gap:12px;margin-bottom:10px;transition:box-shadow .15s;}
+.trash-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.07);}
+.trash-thumb{width:68px;height:68px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:26px;overflow:hidden;}
+.trash-thumb img{width:100%;height:100%;object-fit:cover;border-radius:10px;}
+.trash-info{flex:1;min-width:0;}
+.trash-caption{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.trash-meta{font-size:11px;color:var(--text3);margin-bottom:7px;line-height:1.6;}
+.trash-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.tbtn{padding:4px 11px;border-radius:7px;border:none;font-size:11.5px;font-weight:600;cursor:pointer;font-family:Jost,sans-serif;}
+.tbtn.view{background:var(--bg2);color:var(--text);}
+.tbtn.restore{background:#dcfce7;color:#15803d;}
+.tbtn.purge{background:#fee2e2;color:#b91c1c;}
+</style>
+</head>
+<body>
+
+<!-- AUTH WALL -->
+<div id="authWall">
+  <div class="auth-box">
+    <div class="auth-brand">Kez Media</div>
+    <div class="auth-sub">Admin Dashboard — Sign in to continue</div>
+    <input class="auth-input" id="authEmail" type="email" placeholder="Admin email">
+    <input class="auth-input" id="authPass" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')signIn()">
+    <button class="auth-btn" onclick="signIn()">Sign In</button>
+    <div class="auth-err" id="authErr"></div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo">K</div>
+    <div>
+      <div class="sb-title">Kez Media</div>
+      <div class="sb-sub">Admin Dashboard</div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nav-section">Overview</div>
+    <div class="nav-item active" onclick="showSection('overview')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span>Overview</span>
+    </div>
+    <div class="nav-section">Collections</div>
+    <div class="nav-item" onclick="showSection('users')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Users</span>
+      <span class="nb" id="nb-users">—</span>
+    </div>
+    <div class="nav-item" onclick="showSection('posts')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+      <span>Posts</span>
+      <span class="nb" id="nb-posts">—</span>
+    </div>
+    <div class="nav-item" onclick="showSection('comments')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span>Comments</span>
+      <span class="nb" id="nb-comments">—</span>
+    </div>
+    <div class="nav-item" onclick="showSection('notifications')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span>Notifications</span>
+      <span class="nb" id="nb-notifs">—</span>
+    </div>
+    <div class="nav-item" onclick="showSection('feedback')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="13" y2="14"/></svg>
+      <span>Feedback</span>
+      <span class="nb" id="nb-feedback" style="background:#f59e0b;">—</span>
+    </div>
+    <div class="nav-section">Moderation</div>
+    <div class="nav-item" onclick="showSection('trash')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+      <span>Trash / Deleted</span>
+      <span class="nb" id="nb-trash" style="background:#ef4444;">0</span>
+    </div>
+    <div class="nav-section">Storage</div>
+    <div class="nav-item" onclick="showSection('stories')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+      <span>Active Stories</span>
+      <span class="nb" id="nb-stories">0</span>
+    </div>
+    <div class="nav-item" onclick="showSection('story-archive')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/></svg>
+      <span>Story Archive</span>
+      <span class="nb" id="nb-sarchive" style="background:#64748b;">0</span>
+    </div>
+    <div class="nav-item" onclick="showSection('polls')">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span>Polls</span>
+      <span class="nb" id="nb-polls">0</span>
+    </div>
+    <div class="nav-item" onclick="showSection('storage')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+      <span>Media Storage</span>
+      <span class="nb" id="nb-storage">—</span>
+    </div>
+    <div class="nav-section">Tools</div>
+    <div class="nav-item" onclick="showSection('badges')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5L17 22l-5-3-5 3 1.5-8.5"/></svg>
+      <span>Badge Management</span>
+      <span class="nb" id="nb-badges">—</span>
+    </div>
+    <div class="nav-item" onclick="showSection('presence')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Presence Monitor</span>
+      <span class="nb" id="nb-presence" style="background:#22c55e;">—</span>
+    </div>
+    <div class="nav-item" onclick="showSection('user-activity')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span>User Activity</span>
+    </div>
+    <div class="nav-item" onclick="exportData()">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span>Export JSON</span>
+    </div>
+  </nav>
+  <div class="sb-user">
+    <div class="sb-av" id="sbAv">A</div>
+    <div>
+      <div class="sb-uname" id="sbName">Admin</div>
+      <div class="sb-uemail" id="sbEmail">—</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">Overview</div>
+    <div class="topbar-search">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="Search any table..." oninput="handleSearch(this.value)">
+    </div>
+    <button class="refresh-btn" onclick="loadAll()">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      Refresh
+    </button>
+    <button onclick="doSignOut()" style="padding:7px 14px;border-radius:10px;background:none;border:1px solid var(--border);font-size:12px;cursor:pointer;color:var(--text2);">Sign Out</button>
+  </div>
+
+  <div class="content">
+
+    <!-- ── OVERVIEW ── -->
+    <div class="section active" id="section-overview">
+      <div class="stats-row" id="statsRow">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fce7f3;"><svg width="18" height="18" fill="none" stroke="#e2688a" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <div class="stat-num" id="ov-users">—</div>
+          <div class="stat-label">Total Users</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#dbeafe;"><svg width="18" height="18" fill="none" stroke="#3b82f6" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
+          <div class="stat-num" id="ov-posts">—</div>
+          <div class="stat-label">Total Posts</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#dcfce7;"><svg width="18" height="18" fill="none" stroke="#22c55e" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <div class="stat-num" id="ov-comments">—</div>
+          <div class="stat-label">Total Comments</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fef9c3;"><svg width="18" height="18" fill="none" stroke="#f59e0b" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+          <div class="stat-num" id="ov-likes">—</div>
+          <div class="stat-label">Total Likes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fee2e2;"><svg width="18" height="18" fill="none" stroke="#ef4444" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/></svg></div>
+          <div class="stat-num" id="ov-feedback">—</div>
+          <div class="stat-label">Reports / Suggestions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#ede9fe;"><svg width="18" height="18" fill="none" stroke="#7c3aed" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+          <div class="stat-num" id="ov-polls">—</div>
+          <div class="stat-label">Total Polls</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#ecfdf5;"><svg width="18" height="18" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
+          <div class="stat-num" id="ov-reposts">—</div>
+          <div class="stat-label">Total Reposts</div>
+        </div>
+      </div>
+
+      <!-- Recent activity -->
+      <div class="card">
+        <div class="card-head">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <div class="card-head-title">Recent Posts</div>
+        </div>
+        <div id="ovRecentPosts"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          <div class="card-head-title">Recently Joined Users</div>
+        </div>
+        <div id="ovRecentUsers"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- ── USERS ── -->
+    <div class="section" id="section-users">
+      <!-- User drilldown panel -->
+      <div class="drilldown" id="userDrilldown">
+        <div class="drilldown-header">
+          <div class="drilldown-av" id="ddAv">?</div>
+          <div>
+            <div class="drilldown-name" id="ddName">—</div>
+            <div class="drilldown-handle" id="ddHandle">—</div>
+            <div class="drilldown-stats">
+              <div class="ds-item"><div class="ds-num" id="ddPosts">0</div><div class="ds-label">Posts</div></div>
+              <div class="ds-item"><div class="ds-num" id="ddComments">0</div><div class="ds-label">Comments</div></div>
+              <div class="ds-item"><div class="ds-num" id="ddLikes">0</div><div class="ds-label">Likes</div></div>
+            </div>
+          </div>
+          <button class="close-dd" onclick="closeDrilldown()">✕ Close</button>
+        </div>
+        <div id="ddPostList"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title">All Users</div>
+          <div class="card-head-count" id="usersCount">—</div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>User</th>
+              <th>Handle</th>
+              <th>UID</th>
+              <th>Bio</th>
+              <th>Joined</th>
+              <th>Posts</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr></thead>
+            <tbody id="usersTable"><tr><td colspan="8"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── POSTS ── -->
+    <div class="section" id="section-posts">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title">All Posts</div>
+          <div class="card-head-count" id="postsCount">—</div>
+        </div>
+        <div class="filters" id="postsFilters">
+          <button class="filter-btn on" onclick="filterPosts('all',this)">All</button>
+          <button class="filter-btn" onclick="filterPosts('photo',this)">📷 Photos</button>
+          <button class="filter-btn" onclick="filterPosts('video',this)">🎬 Videos</button>
+          <button class="filter-btn" onclick="filterPosts('status',this)">✍️ Status</button>
+          <button class="filter-btn" onclick="filterPosts('poll',this)">📊 Polls</button>
+          <button class="filter-btn" onclick="filterPosts('liked',this)">❤️ Most Liked</button>
+          <button class="filter-btn" onclick="filterPosts('mostVoted',this)">🗳️ Most Voted</button>
+          <button class="filter-btn" onclick="filterPosts('repost',this)">🔁 Reposts</button>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>Post</th>
+              <th>Author</th>
+              <th>Caption / Question</th>
+              <th>Type</th>
+              <th>Likes / Votes</th>
+              <th>Comments</th>
+              <th>Reposts</th>
+              <th>Posted</th>
+              <th>Actions</th>
+            </tr></thead>
+            <tbody id="postsTable"><tr><td colspan="8"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRASH -->
+    <div class="section" id="section-trash">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title" style="color:#ef4444;">&#x1F5D1; Trash &mdash; Deleted Content</div>
+          <div class="card-head-count" id="trashCount">0</div>
+          <button onclick="purgeAllTrash()" style="margin-left:auto;padding:5px 14px;border-radius:8px;border:none;background:#fee2e2;color:#b91c1c;font-size:12px;font-weight:600;cursor:pointer;font-family:Jost,sans-serif;">Purge All</button>
+        </div>
+        <div class="filters" id="trashFilters" style="padding:0 0 12px;">
+          <button class="filter-btn on" onclick="filterTrash('all',this)">All</button>
+          <button class="filter-btn" onclick="filterTrash('photo',this)">&#x1F4F7; Photos</button>
+          <button class="filter-btn" onclick="filterTrash('status',this)">&#x270D; Status</button>
+          <button class="filter-btn" onclick="filterTrash('video',this)">&#x1F3AC; Video</button>
+          <button class="filter-btn" onclick="filterTrash('poll',this)">&#x1F4CA; Poll</button>
+          <button class="filter-btn" onclick="filterTrash('story',this)">&#x2B55; Story</button>
+          <button class="filter-btn" onclick="filterTrash('comment',this)">&#x1F4AC; Comment</button>
+        </div>
+        <div id="trashList"><div class="loading"><div class="spinner"></div>Loading trash...</div></div>
+      </div>
+    </div>
+
+    <!-- STORIES -->
+    <div class="section" id="section-stories">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title">Active Stories (last 24h)</div>
+          <div class="card-head-count" id="storiesCount">0</div>
+        </div>
+        <div class="filters" id="storiesFilters">
+          <button class="filter-btn on" onclick="filterStories('all',this)">All</button>
+          <button class="filter-btn" onclick="filterStories('image',this)">&#x1F5BC; Photos</button>
+          <button class="filter-btn" onclick="filterStories('video',this)">&#x1F3AC; Videos</button>
+          <button class="filter-btn" onclick="filterStories('text',this)">&#x270D; Text</button>
+        </div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Media</th><th>Author</th><th>Caption</th><th>Type</th><th>Views</th><th>Reactions</th><th>Expires</th><th>Posted</th><th>Actions</th></tr></thead>
+          <tbody id="storiesTable"><tr><td colspan="9"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- STORY ARCHIVE -->
+    <div class="section" id="section-story-archive">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title">Story Archive (expired + deleted)</div>
+          <div class="card-head-count" id="sarchiveCount">0</div>
+        </div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Media</th><th>Author</th><th>Caption</th><th>Views</th><th>Reactions</th><th>Archived</th><th>Reason</th></tr></thead>
+          <tbody id="sarchiveTable"><tr><td colspan="7"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ── POLLS ── -->
+    <div class="section" id="section-polls">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title">All Polls</div>
+          <div class="card-head-count" id="pollsCount">—</div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>Question</th>
+              <th>Author</th>
+              <th>Options</th>
+              <th>Total Votes</th>
+              <th>Leading Option</th>
+              <th>Ends</th>
+              <th>Posted</th>
+              <th>Actions</th>
+            </tr></thead>
+            <tbody id="pollsTable"><tr><td colspan="8"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── COMMENTS ── -->
+    <div class="section" id="section-comments">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title">All Comments</div>
+          <div class="card-head-count" id="commentsCount">—</div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>Comment</th>
+              <th>Author</th>
+              <th>On Post</th>
+              <th>Post Author</th>
+              <th>Text</th>
+            </tr></thead>
+            <tbody id="commentsTable"><tr><td colspan="5"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── NOTIFICATIONS ── -->
+    <div class="section" id="section-notifications">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title">All Notifications</div>
+          <div class="card-head-count" id="notifsCount">—</div>
+        </div>
+        <div class="filters">
+          <button class="filter-btn on" onclick="filterNotifs('all',this)">All</button>
+          <button class="filter-btn" onclick="filterNotifs('like',this)">❤️ Likes</button>
+          <button class="filter-btn" onclick="filterNotifs('comment',this)">💬 Comments</button>
+          <button class="filter-btn" onclick="filterNotifs('follow',this)">👤 Follows</button>
+          <button class="filter-btn" onclick="filterNotifs('message',this)">✉️ Messages</button>
+          <button class="filter-btn" onclick="filterNotifs('vote',this)">🗳️ Poll Votes</button>
+          <button class="filter-btn" onclick="filterNotifs('repost',this)">🔁 Reposts</button>
+          <button class="filter-btn" onclick="filterNotifs('share',this)">📤 Shares</button>
+          <button class="filter-btn" onclick="filterNotifs('mention',this)">@ Mentions</button>
+          <button class="filter-btn" onclick="filterNotifs('unread',this)">🔴 Unread</button>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>Type</th>
+              <th>From</th>
+              <th>To</th>
+              <th>Preview</th>
+              <th>Status</th>
+              <th>Time</th>
+            </tr></thead>
+            <tbody id="notifsTable"><tr><td colspan="6"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FEEDBACK ── -->
+    <div class="section" id="section-feedback">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title">Reports &amp; Suggestions</div>
+          <div class="card-head-count" id="feedbackCount">—</div>
+        </div>
+        <div class="filters">
+          <button class="filter-btn on" onclick="filterFeedback('all',this)">All</button>
+          <button class="filter-btn" onclick="filterFeedback('idea',this)">💡 Suggestions</button>
+          <button class="filter-btn" onclick="filterFeedback('bug',this)">🐛 Bugs</button>
+          <button class="filter-btn" onclick="filterFeedback('report',this)">🚩 Reports</button>
+          <button class="filter-btn" onclick="filterFeedback('unread',this)">🔴 Unread</button>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>Type</th>
+              <th>From</th>
+              <th>Message</th>
+              <th>Status</th>
+              <th>Time</th>
+              <th>Actions</th>
+            </tr></thead>
+            <tbody id="feedbackTable"><tr><td colspan="6"><div class="loading"><div class="spinner"></div>Loading...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── USER ACTIVITY ── -->
+    <div class="section" id="section-user-activity">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title">Per-User Activity</div>
+          <div class="card-head-count">Select a user to see everything they've done</div>
+        </div>
+        <div style="padding:14px 18px;">
+          <select id="activityUserSelect" style="width:100%;max-width:300px;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;outline:none;" onchange="loadUserActivity(this.value)">
+            <option value="">— Select a user —</option>
+          </select>
+        </div>
+        <div id="activityPanel"><div class="empty">Select a user above to see their full activity log.</div></div>
+      </div>
+    </div>
+
+    <!-- ── MEDIA STORAGE ── -->
+    <div class="section" id="section-storage">
+
+      <!-- Lightbox -->
+      <div id="storageLightbox" onclick="closeLightbox()">
+        <div class="slb-inner" onclick="event.stopPropagation()">
+          <button class="slb-close" onclick="closeLightbox()">×</button>
+          <button class="slb-nav slb-prev" onclick="lbNav(-1)">‹</button>
+          <button class="slb-nav slb-next" onclick="lbNav(1)">›</button>
+          <img class="slb-img" id="slbImg" alt="">
+          <video class="slb-img" id="slbVideo" controls playsinline style="display:none;"></video>
+          <div class="slb-info">
+            <div class="slb-caption" id="slbCaption">—</div>
+            <div class="slb-meta" id="slbMeta">—</div>
+          </div>
+          <div class="slb-counter" id="slbCounter"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+          <div class="card-head-title">Media Storage Browser</div>
+          <div class="card-head-count" id="storageCount">—</div>
+        </div>
+
+        <!-- Stats bar -->
+        <div class="storage-stats-bar">
+          <div class="ssb-item"><div class="ssb-num" id="stTotalFiles">—</div><div class="ssb-label">Total Files</div></div>
+          <div class="ssb-item"><div class="ssb-num" id="stPostImgs">—</div><div class="ssb-label">Post Photos</div></div>
+          <div class="ssb-item"><div class="ssb-num" id="stPostVideos">—</div><div class="ssb-label">Post Videos</div></div>
+          <div class="ssb-item"><div class="ssb-num" id="stAvatars">—</div><div class="ssb-label">Avatars</div></div>
+          <div class="ssb-item"><div class="ssb-num" id="stBanners">—</div><div class="ssb-label">Banners</div></div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="storage-toolbar">
+          <span style="font-size:12px;font-weight:700;color:var(--text2);">View:</span>
+          <button class="storage-view-btn on" id="stView-folders" onclick="setStorageView('folders',this)">📁 By User</button>
+          <button class="storage-view-btn" id="stView-all" onclick="setStorageView('all',this)">🖼 All Files</button>
+          <button class="storage-view-btn" id="stView-type" onclick="setStorageView('type',this)">📂 By Type</button>
+          <span style="margin-left:auto;font-size:12px;font-weight:700;color:var(--text2);">Sort:</span>
+          <select class="storage-sort" id="storageSort" onchange="renderStorage()">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="user">By User</option>
+            <option value="most">Most Files</option>
+          </select>
+        </div>
+
+        <div id="storageBrowser"><div class="loading"><div class="spinner"></div>Loading storage...</div></div>
+      </div>
+    </div>
+
+    <!-- ── BADGE MANAGEMENT (manual, admin-granted) ── -->
+    <div class="section" id="section-badges">
+
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-head">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5L17 22l-5-3-5 3 1.5-8.5"/></svg>
+          <div class="card-head-title">Badge Definitions</div>
+          <button class="action-btn" style="margin-left:auto;" onclick="openCreateBadgeForm()">+ New Badge</button>
+        </div>
+        <div id="badgeDefsList"><div class="loading"><div class="spinner"></div>Loading badges...</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <div class="card-head-title">Grant / Manage User Badges</div>
+        </div>
+        <div style="padding:14px 16px;border-bottom:1px solid var(--border);">
+          <input type="text" id="badgeUserSearch" placeholder="Search by name, username, or email..." oninput="searchUsersForBadges(this.value)" style="width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--border);font-size:13px;box-sizing:border-box;">
+          <div id="badgeUserResults" style="margin-top:8px;"></div>
+        </div>
+        <div id="badgeUserPanel"><div class="empty">Search for a user above to manage their badges.</div></div>
+      </div>
+
+    </div>
+
+    <!-- ── PRESENCE MONITOR (v1.4) ── -->
+    <div class="section" id="section-presence">
+      <div class="card">
+        <div class="card-head">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <div class="card-head-title">Live Presence</div>
+          <div class="card-head-count" id="presenceCount">—</div>
+        </div>
+        <div class="storage-stats-bar">
+          <div class="ssb-item"><div class="ssb-num" id="ps-online" style="color:#22c55e;">—</div><div class="ssb-label">Online</div></div>
+          <div class="ssb-item"><div class="ssb-num" id="ps-away" style="color:#f59e0b;">—</div><div class="ssb-label">Away</div></div>
+          <div class="ssb-item"><div class="ssb-num" id="ps-offline" style="color:#94a3b8;">—</div><div class="ssb-label">Offline (recent)</div></div>
+        </div>
+        <div class="tbl-wrap" style="overflow-x:auto;">
+          <table>
+            <thead><tr><th>User</th><th>Status</th><th>Current Page</th><th>Session Duration</th><th>Last Activity</th><th>Browser/Device</th></tr></thead>
+            <tbody id="presenceTableBody"><tr><td colspan="6" class="loading"><div class="spinner"></div>Loading...</td></tr></tbody>
+          </table>
+        </div>
+        <div style="padding:10px 16px;font-size:11px;color:var(--text3);">Auto-refreshes every 15 seconds. Status is derived from heartbeat freshness (self-healing against crashed/closed tabs), not a stored flag.</div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- Create/Edit Badge Definition Modal -->
+<div id="badgeFormModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:4000;align-items:center;justify-content:center;">
+  <div style="background:var(--bg);border-radius:14px;padding:22px;width:100%;max-width:420px;max-height:85vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div style="font-size:15px;font-weight:700;">New Badge</div>
+      <button onclick="document.getElementById('badgeFormModal').style.display='none'" style="background:none;border:none;font-size:20px;cursor:pointer;">×</button>
+    </div>
+    <input type="hidden" id="bfId">
+    <label style="font-size:11.5px;font-weight:700;color:var(--text2);">Name</label>
+    <input type="text" id="bfName" placeholder="e.g. Community Helper" style="width:100%;padding:8px 10px;margin:4px 0 10px;border-radius:8px;border:1px solid var(--border);box-sizing:border-box;">
+    <label style="font-size:11.5px;font-weight:700;color:var(--text2);">Description</label>
+    <textarea id="bfDescription" placeholder="What this badge represents..." style="width:100%;padding:8px 10px;margin:4px 0 10px;border-radius:8px;border:1px solid var(--border);box-sizing:border-box;min-height:60px;"></textarea>
+    <label style="font-size:11.5px;font-weight:700;color:var(--text2);">Icon</label>
+    <input type="hidden" id="bfIcon" value="trophy">
+    <div id="bfIconPicker" style="display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 10px;"></div>
+    <label style="font-size:11.5px;font-weight:700;color:var(--text2);">Color</label>
+    <input type="color" id="bfColor" value="#e2688a" oninput="renderBfIconPicker()" style="width:100%;height:36px;margin:4px 0 10px;border-radius:8px;border:1px solid var(--border);">
+    <label style="font-size:11.5px;font-weight:700;color:var(--text2);">Rarity</label>
+    <select id="bfRarity" style="width:100%;padding:8px 10px;margin:4px 0 10px;border-radius:8px;border:1px solid var(--border);box-sizing:border-box;">
+      <option>Common</option><option>Uncommon</option><option>Rare</option><option>Epic</option>
+      <option>Legendary</option><option>Mythic</option><option>Exclusive</option><option>Limited Edition</option>
+    </select>
+    <label style="font-size:11.5px;font-weight:700;color:var(--text2);">Category</label>
+    <input type="text" id="bfCategory" placeholder="e.g. Community, Staff, Event" style="width:100%;padding:8px 10px;margin:4px 0 14px;border-radius:8px;border:1px solid var(--border);box-sizing:border-box;">
+    <button class="action-btn" style="width:100%;justify-content:center;" onclick="saveBadgeDefinition()">Save Badge</button>
+  </div>
+</div>
+
+<!-- Grant Badge Modal -->
+<div id="grantBadgeModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:4000;align-items:center;justify-content:center;">
+  <div style="background:var(--bg);border-radius:14px;padding:22px;width:100%;max-width:420px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div style="font-size:15px;font-weight:700;">Grant Badge</div>
+      <button onclick="document.getElementById('grantBadgeModal').style.display='none'" style="background:none;border:none;font-size:20px;cursor:pointer;">×</button>
+    </div>
+    <input type="hidden" id="gbUid">
+    <label style="font-size:11.5px;font-weight:700;color:var(--text2);">Badge</label>
+    <select id="gbBadgeId" style="width:100%;padding:8px 10px;margin:4px 0 10px;border-radius:8px;border:1px solid var(--border);box-sizing:border-box;"></select>
+    <label style="font-size:11.5px;font-weight:700;color:var(--text2);">Reason for Award (shown to user)</label>
+    <textarea id="gbReason" placeholder="e.g. Awarded for winning the Summer Photography Contest" style="width:100%;padding:8px 10px;margin:4px 0 10px;border-radius:8px;border:1px solid var(--border);box-sizing:border-box;min-height:55px;"></textarea>
+    <label style="font-size:11.5px;font-weight:700;color:var(--text2);">Expiration (optional)</label>
+    <input type="date" id="gbExpires" style="width:100%;padding:8px 10px;margin:4px 0 14px;border-radius:8px;border:1px solid var(--border);box-sizing:border-box;">
+    <button class="action-btn" style="width:100%;justify-content:center;" onclick="grantBadgeToUser()">Grant Badge</button>
+  </div>
+</div>
+
+<script>
+// ── FIREBASE ──────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyCxDRIL9XOeA7d-yqXF84tndWPZY8JxLSY",
+  authDomain: "kezz-media.firebaseapp.com",
+  projectId: "kezz-media",
+  storageBucket: "kezz-media.firebasestorage.app",
+  messagingSenderId: "307892917050",
+  appId: "1:307892917050:web:5b318f4039affaa26b3603"
+};
+firebase.initializeApp(firebaseConfig);
+const db   = firebase.firestore();
+const auth = firebase.auth();
+const ADMIN_EMAIL = 'keshamaebangcoyo9@gmail.com';
+
+// ── RAW DATA CACHE ────────────────────────────────────
+let _users = [], _posts = [], _notifs = [], _feedback = [], _trash = [], _stories = [], _storyArchive = [];
+let _trashFilter = 'all', _storiesFilter = 'all';
+let _activeSection = 'overview';
+let _searchQ = '';
+let _postsFilter = 'all';
+let _notifsFilter = 'all';
+let _feedbackFilter = 'all';
+
+// ── AUTH ──────────────────────────────────────────────
+function signIn(){
+  const email = document.getElementById('authEmail').value.trim();
+  const pass  = document.getElementById('authPass').value;
+  const err   = document.getElementById('authErr');
+  err.textContent = '';
+  if(email !== ADMIN_EMAIL){ err.textContent = 'Access denied — admin only.'; return; }
+  auth.signInWithEmailAndPassword(email, pass)
+    .then(function(cred){
+      document.getElementById('authWall').style.display = 'none';
+      document.getElementById('sbName').textContent = cred.user.displayName || 'Admin';
+      document.getElementById('sbEmail').textContent = cred.user.email;
+      document.getElementById('sbAv').textContent = (cred.user.email||'A')[0].toUpperCase();
+      loadAll();
+    })
+    .catch(function(e){ err.textContent = e.message; });
+}
+
+function doSignOut(){
+  auth.signOut().then(function(){ location.reload(); });
+}
+
+auth.onAuthStateChanged(function(u){
+  if(u && u.email === ADMIN_EMAIL){
+    document.getElementById('authWall').style.display = 'none';
+    document.getElementById('sbName').textContent = u.displayName || 'Admin';
+    document.getElementById('sbEmail').textContent = u.email;
+    document.getElementById('sbAv').textContent = (u.email||'A')[0].toUpperCase();
+    loadAll();
+  }
+});
+
+// ── NAVIGATION ────────────────────────────────────────
+function showSection(name){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('section-'+name).classList.add('active');
+  const ni = document.querySelector('.nav-item[onclick*="'+name+'"]');
+  if(ni) ni.classList.add('active');
+  const titles = {overview:'Overview',users:'Users',posts:'Posts',comments:'Comments',
+    notifications:'Notifications',feedback:'Reports & Suggestions','user-activity':'User Activity',storage:'Media Storage',
+    trash:'Trash',stories:'Active Stories','story-archive':'Story Archive',polls:'Polls',badges:'Badge Management',presence:'Presence Monitor'};
+  document.getElementById('topbarTitle').textContent = titles[name] || name;
+  _activeSection = name;
+  document.getElementById('searchInput').value = '';
+  _searchQ = '';
+  renderCurrentSection();
+}
+
+// ── LOAD ALL DATA ─────────────────────────────────────
+async function loadAll(){
+  try{
+    await Promise.all([loadUsers(), loadPosts(), loadNotifs(), loadFeedback(), loadTrash(), loadStories(), loadStoryArchive(), loadBadgeDefinitions()]);
+    buildStorageIndex();
+    updateBadges();
+    renderCurrentSection();
+  }catch(e){ console.error('Load error:', e); }
+}
+
+async function loadTrash(){
+  try{
+    const snap = await db.collection('deletedPosts').orderBy('deletedAt','desc').limit(300).get();
+    _trash = snap.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){ _trash=[]; }
+}
+async function loadStories(){
+  try{
+    const snap = await db.collection('stories').orderBy('createdAt','desc').limit(200).get();
+    _stories = snap.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){ _stories=[]; }
+}
+async function loadStoryArchive(){
+  try{
+    const snap = await db.collection('storyArchive').orderBy('archivedAt','desc').limit(300).get();
+    _storyArchive = snap.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){ _storyArchive=[]; }
+}
+
+async function loadUsers(){
+  const snap = await db.collection('profiles').get();
+  _users = snap.docs.map(d=>({id:d.id, ...d.data()}));
+}
+
+async function loadPosts(){
+  const snap = await db.collection('posts').get();
+  _posts = snap.docs.map(d=>({id:d.id, ...d.data()}));
+  // Sort newest first
+  _posts.sort((a,b)=>{
+    const ta = a.createdAt?(a.createdAt.toMillis?a.createdAt.toMillis():a.createdAt.seconds*1000):0;
+    const tb = b.createdAt?(b.createdAt.toMillis?b.createdAt.toMillis():b.createdAt.seconds*1000):0;
+    return tb-ta;
+  });
+}
+
+async function loadNotifs(){
+  const snap = await db.collection('notifications').get();
+  _notifs = snap.docs.map(d=>({id:d.id, ...d.data()}));
+  _notifs.sort((a,b)=>{
+    const ta=a.ts?(a.ts.toMillis?a.ts.toMillis():a.ts.seconds*1000):0;
+    const tb=b.ts?(b.ts.toMillis?b.ts.toMillis():b.ts.seconds*1000):0;
+    return tb-ta;
+  });
+}
+
+async function loadFeedback(){
+  try{
+    const snap = await db.collection('feedback').get();
+    _feedback = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    _feedback.sort((a,b)=>{
+      const ta=a.ts?(a.ts.toMillis?a.ts.toMillis():a.ts.seconds*1000):0;
+      const tb=b.ts?(b.ts.toMillis?b.ts.toMillis():b.ts.seconds*1000):0;
+      return tb-ta;
+    });
+  }catch(e){ _feedback=[]; }
+}
+
+function updateBadges(){
+  const totalComments = _posts.reduce((sum,p)=>sum+(p.comments?p.comments.length:0),0);
+  const unreadFb = _feedback.filter(f=>!f.read).length;
+
+  document.getElementById('nb-users').textContent    = _users.length;
+  document.getElementById('nb-posts').textContent    = _posts.length;
+  document.getElementById('nb-comments').textContent = totalComments;
+  document.getElementById('nb-notifs').textContent   = _notifs.length;
+  document.getElementById('nb-feedback').textContent = unreadFb || _feedback.length;
+  if(unreadFb) document.getElementById('nb-feedback').style.background='#ef4444';
+  else document.getElementById('nb-feedback').style.background='#f59e0b';
+  var nbBadges = document.getElementById('nb-badges');
+  if(nbBadges) nbBadges.textContent = _badgeDefs.length;
+  var nbPresence = document.getElementById('nb-presence');
+  if(nbPresence){
+    db.collection('presence').get().then(function(snap){
+      var onlineCount = snap.docs.filter(function(d){ return _presenceStatusOf(d.data())==='online'; }).length;
+      nbPresence.textContent = onlineCount;
+    }).catch(function(){});
+  }
+
+  const totalPolls = _posts.filter(p=>p.isPoll).length;
+  const totalReposts = _posts.reduce((s,p)=>s+((p.repostedBy||[]).length),0);
+  const totalVotes = _posts.filter(p=>p.isPoll).reduce((s,p)=>s+(p.pollOptions?p.pollOptions.reduce((a,o)=>a+(o.votes||0),0):0),0);
+  document.getElementById('ov-users').textContent    = _users.length;
+  document.getElementById('ov-posts').textContent    = _posts.length;
+  document.getElementById('ov-comments').textContent = totalComments;
+  document.getElementById('ov-likes').textContent    = _posts.reduce((s,p)=>s+(p.likes||0),0);
+  document.getElementById('ov-feedback').textContent = _feedback.length;
+  document.getElementById('ov-polls').textContent    = totalPolls + ' (' + totalVotes + ' votes)';
+  document.getElementById('ov-reposts').textContent  = totalReposts;
+  const nbPolls = document.getElementById('nb-polls'); if(nbPolls) nbPolls.textContent = totalPolls;
+}
+
+function renderPolls(){
+  const pollPosts = _posts.filter(p=>p.isPoll);
+  document.getElementById('pollsCount').textContent = pollPosts.length+' polls';
+  const tbody = document.getElementById('pollsTable');
+  if(!pollPosts.length){tbody.innerHTML='<tr><td colspan="8"><div class="empty">No polls yet.</div></td></tr>';return;}
+  tbody.innerHTML = pollPosts.map(p=>{
+    const u = getUserByUid(p.uid)||p.user||{};
+    const totalVotes = (p.pollOptions||[]).reduce((s,o)=>s+(o.votes||0),0);
+    const leader = totalVotes>0 ? (p.pollOptions||[]).reduce((best,o)=>((o.votes||0)>(best.votes||0)?o:best),{text:'—',votes:0}) : null;
+    const endsMs = p.pollEnds||(p.pollEndsAt?p.pollEndsAt:0);
+    const ended = endsMs && Date.now() > endsMs;
+    const optList = (p.pollOptions||[]).map(o=>`<span class="badge badge-gray">${esc(typeof o==='object'?o.text:o)} (${o.votes||0})</span>`).join(' ');
+    const postId = String(p.id);
+    return `<tr>
+      <td style="max-width:200px;font-weight:600;color:var(--text);">📊 ${esc((p.pollQuestion||'').slice(0,70))}</td>
+      <td><div class="td-av">${avatarHTML(u)}<div><div class="td-name">${esc(u.name||'?')}</div><div class="td-sub">@${esc(u.handle||'—')}</div></div></div></td>
+      <td style="max-width:220px;">${optList}</td>
+      <td><span class="badge" style="background:#ede9fe;color:#7c3aed;">🗳️ ${totalVotes}</span></td>
+      <td>${leader?`<strong>${esc(typeof leader==='object'?leader.text:leader)}</strong> (${leader.votes||0})`:'—'}</td>
+      <td>${ended?'<span class="badge badge-red">Ended</span>':endsMs?`<span class="badge badge-green">Active · ${timeAgo(endsMs)} left</span>`:'<span class="badge badge-gray">No end</span>'}</td>
+      <td title="${fullDate(p.createdAt)}">${timeAgo(p.createdAt)}</td>
+      <td><button class="action-btn danger" onclick="deletePost('${esc(postId)}')">🗑 Delete</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderCurrentSection(){
+  if(_activeSection==='overview')       renderOverview();
+  else if(_activeSection==='users')     renderUsers();
+  else if(_activeSection==='posts')     renderPosts();
+  else if(_activeSection==='polls')     renderPolls();
+  else if(_activeSection==='comments')  renderComments();
+  else if(_activeSection==='notifications') renderNotifs();
+  else if(_activeSection==='feedback')  renderFeedback();
+  else if(_activeSection==='user-activity') populateUserSelect();
+  else if(_activeSection==='storage') renderStorage();
+  else if(_activeSection==='badges') renderBadgesSection();
+  else if(_activeSection==='presence') renderPresenceSection();
+}
+
+// ── HELPERS ───────────────────────────────────────────
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// Small pink verified badge — same visual style as the main app. Reused wherever a name renders.
+// ── BADGE ICON LIBRARY (colorful SVG, no emoji) ───────
+// Shared shape set for manually-granted badges. Admin picks a shape key + custom color per badge.
+var BADGE_ICON_PATHS = {
+  trophy: '<path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3a2 2 0 0 1-2 4"/><path d="M7 5H4a2 2 0 0 0 2 4"/>',
+  medal:  '<circle cx="12" cy="15" r="6"/><path d="M9 10.5L6 3h3l3 6.5L15 3h3l-3 7.5"/>',
+  crown:  '<path d="M2 18h20l-2-9-5 4-3-7-3 7-5-4z"/>',
+  gem:    '<path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20"/><path d="M9 3l3 6-3 12"/><path d="M15 3l-3 6 3 12"/>',
+  shield: '<path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/><polyline points="9 12 11 14 15 10"/>',
+  star:   '<polygon points="12 2 15.09 8.63 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.63 12 2"/>',
+  heart:  '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21.2l8.8-8.8a5.5 5.5 0 0 0 0-7.8z"/>',
+  target: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  sparkle:'<path d="M12 2l1.5 5.5L19 9l-5.5 1.5L12 16l-1.5-5.5L5 9l5.5-1.5z"/><path d="M19 15l.7 2.3L22 18l-2.3.7L19 21l-.7-2.3L16 18l2.3-.7z"/>',
+  flag:   '<line x1="4" y1="22" x2="4" y2="2"/><path d="M4 4h13l-2.5 4L17 12H4"/>',
+  bolt:   '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  check:  '<circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/>'
+};
+var BADGE_ICON_KEYS = Object.keys(BADGE_ICON_PATHS);
+function badgeIconHTML(shapeKey, hexColor, size){
+  var s = size||34;
+  var color = hexColor || '#e2688a';
+  var pathData = BADGE_ICON_PATHS[shapeKey] || BADGE_ICON_PATHS.trophy;
+  return '<div style="width:'+s+'px;height:'+s+'px;border-radius:50%;background:linear-gradient(135deg,'+color+',#7c3aed);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px '+color+'55;">'
+    + '<svg width="'+Math.round(s*0.55)+'" height="'+Math.round(s*0.55)+'" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+pathData+'</svg>'
+    + '</div>';
+}
+
+function vBadge(u, size){
+  if(!u || !u.verified) return '';
+  var s = size||12;
+  return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;vertical-align:middle;margin-left:2px;" title="Verified"><defs><radialGradient id="avb'+Math.random().toString(36).slice(2,8)+'" cx="35%" cy="25%" r="70%"><stop offset="0%" stop-color="#fde8f2"/><stop offset="30%" stop-color="#f0a0b8"/><stop offset="65%" stop-color="#e2688a"/><stop offset="100%" stop-color="#be185d"/></radialGradient></defs><path d="M12 2l2.4 3.2 3.9-.8-1 3.8 3.2 2.3-3.2 2.3 1 3.8-3.9-.8L12 22l-2.4-3.2-3.9.8 1-3.8L3.5 13.5l3.2-2.3-1-3.8 3.9.8z" fill="#e2688a"/><polyline points="8.5 12.5 10.8 14.8 15.5 10" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>';
+}
+function timeAgo(ts){
+  if(!ts) return '—';
+  let ms = ts.toMillis?ts.toMillis():(ts.seconds?ts.seconds*1000:(typeof ts==='number'?ts:0));
+  if(!ms) return '—';
+  const d=(Date.now()-ms)/1000;
+  if(d<60) return Math.floor(d)+'s ago';
+  if(d<3600) return Math.floor(d/60)+'m ago';
+  if(d<86400) return Math.floor(d/3600)+'h ago';
+  if(d<604800) return Math.floor(d/86400)+'d ago';
+  return new Date(ms).toLocaleDateString([],{month:'short',day:'numeric',year:'numeric'});
+}
+function fullDate(ts){
+  if(!ts) return '—';
+  let ms = ts.toMillis?ts.toMillis():(ts.seconds?ts.seconds*1000:(typeof ts==='number'?ts:0));
+  if(!ms) return '—';
+  return new Date(ms).toLocaleString([],{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+function getUserByUid(uid){
+  return _users.find(u=>u.id===uid||u.uid===uid) || null;
+}
+function avatarHTML(user, size=28){
+  const bg = (user&&user.color)||'#e2688a';
+  const init = (user&&(user.initial||(user.name?user.name[0]:'')||'?'))||'?';
+  const av = user&&user.avatar;
+  return `<div class="av-circle" style="width:${size}px;height:${size}px;background:${esc(bg)};font-size:${Math.floor(size/2.8)}px;">`
+    +(av?`<img src="${esc(av)}" alt="">`:`${esc(init)}`)
+    +`</div>`;
+}
+
+// ── SEARCH ────────────────────────────────────────────
+function handleSearch(q){
+  _searchQ = q.toLowerCase();
+  renderCurrentSection();
+}
+
+// ── OVERVIEW ─────────────────────────────────────────
+function renderOverview(){
+  // Recent posts
+  const rp = document.getElementById('ovRecentPosts');
+  const recent = _posts.slice(0,8);
+  if(!recent.length){ rp.innerHTML='<div class="empty">No posts yet.</div>'; }
+  else{
+    rp.innerHTML=`<div class="tbl-wrap"><table>
+      <thead><tr><th>Post</th><th>Author</th><th>Caption</th><th>Likes</th><th>Comments</th><th>When</th></tr></thead>
+      <tbody>`+recent.map(p=>{
+        const u = getUserByUid(p.uid)||p.user||{};
+        const imgs = p.images||(p.image?[p.image]:[]);
+        return `<tr>
+          <td>${imgs[0]?`<img class="img-thumb" src="${esc(imgs[0])}" alt="">`:`<div class="no-img">${p.isStatus?'✍️':'📄'}</div>`}</td>
+          <td><div class="td-av">${avatarHTML(u)}<div><div class="td-name">${esc(u.name||'Unknown')}</div><div class="td-sub">@${esc(u.handle||'—')}</div></div></div></td>
+          <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc((p.caption||'').slice(0,60))}</td>
+          <td>${p.isPoll?`<span class="badge" style="background:#ede9fe;color:#7c3aed;">🗳️ ${(p.pollOptions||[]).reduce((s,o)=>s+(o.votes||0),0)} votes</span>`:`<span class="badge badge-pink">❤️ ${p.likes||0}</span>`}</td>
+          <td>${(p.comments||[]).length}</td>
+          <td>${(p.repostedBy||[]).length>0?`<span class="badge badge-green">🔁 ${(p.repostedBy||[]).length}</span>`:'-'}</td>
+          <td title="${fullDate(p.createdAt)}">${timeAgo(p.createdAt)}</td>
+        </tr>`;
+      }).join('')+`</tbody></table></div>`;
+  }
+
+  // Recent users
+  const ru = document.getElementById('ovRecentUsers');
+  const recentU = [..._users].sort((a,b)=>{
+    const ta=a.createdAt?(a.createdAt.toMillis?a.createdAt.toMillis():a.createdAt.seconds*1000):0;
+    const tb=b.createdAt?(b.createdAt.toMillis?b.createdAt.toMillis():b.createdAt.seconds*1000):0;
+    return tb-ta;
+  }).slice(0,6);
+  if(!recentU.length){ ru.innerHTML='<div class="empty">No users yet.</div>'; }
+  else{
+    ru.innerHTML=`<div class="tbl-wrap"><table>
+      <thead><tr><th>User</th><th>Handle</th><th>UID</th><th>Posts</th><th>Joined</th></tr></thead>
+      <tbody>`+recentU.map(u=>{
+        const uid = u.id||u.uid||'';
+        const postCount = _posts.filter(p=>p.uid===uid).length;
+        return `<tr>
+          <td><div class="td-av">${avatarHTML(u,32)}<div><div class="td-name">${esc(u.name||'?')}</div></div></div></td>
+          <td>@${esc(u.handle||'—')}</td>
+          <td><span class="tag">${esc(uid.slice(0,12))}…</span></td>
+          <td>${postCount}</td>
+          <td title="${fullDate((u.joinedAt||u.createdAt))}">${timeAgo((u.joinedAt||u.createdAt))||'—'}</td>
+        </tr>`;
+      }).join('')+`</tbody></table></div>`;
+  }
+}
+
+// ── USERS TABLE ────────────────────────────────────────
+function renderUsers(){
+  let data = _users;
+  if(_searchQ) data=data.filter(u=>
+    (u.name||'').toLowerCase().includes(_searchQ)||
+    (u.handle||'').toLowerCase().includes(_searchQ)||
+    (u.id||'').toLowerCase().includes(_searchQ)||
+    (u.email||'').toLowerCase().includes(_searchQ)
+  );
+  document.getElementById('usersCount').textContent = data.length + ' users';
+  const tbody = document.getElementById('usersTable');
+  if(!data.length){ tbody.innerHTML='<tr><td colspan="8"><div class="empty">No users found.</div></td></tr>'; return; }
+  tbody.innerHTML = data.map(u=>{
+    const uid = u.id||u.uid||'';
+    const postCount = _posts.filter(p=>p.uid===uid).length;
+    const isAdm = u.isAdmin || u.email===ADMIN_EMAIL;
+    return `<tr>
+      <td><div class="td-av">${avatarHTML(u,32)}<div><div class="td-name">${esc(u.name||'?')}${vBadge(u)}</div><div class="td-sub">${esc(u.email||'')}</div></div></div></td>
+      <td>@${esc(u.handle||'—')}</td>
+      <td><span class="tag" title="${esc(uid)}">${esc(uid.slice(0,14))}…</span></td>
+      <td style="max-width:160px;font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(u.bio||'—')}</td>
+      <td title="${fullDate((u.joinedAt||u.createdAt))}">${timeAgo((u.joinedAt||u.createdAt))||'—'}</td>
+      <td><span class="badge badge-blue">${postCount}</span></td>
+      <td>${isAdm?'<span class="badge badge-pink">👑 Admin</span>':'<span class="badge badge-gray">User</span>'}</td>
+      <td><button class="action-btn" onclick="drilldownUser('${esc(uid)}')">View All</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── USER DRILLDOWN ─────────────────────────────────────
+function drilldownUser(uid){
+  const u = getUserByUid(uid)||{};
+  const dd = document.getElementById('userDrilldown');
+  const userPosts = _posts.filter(p=>p.uid===uid);
+  const userComments = _posts.reduce((acc,p)=>{
+    (p.comments||[]).forEach(c=>{ if((c.user&&c.user.uid)===uid||(c.user&&c.user.handle)===u.handle) acc.push({...c,postId:p.id,postCaption:p.caption}); });
+    return acc;
+  },[]);
+  const likeCount = userPosts.reduce((s,p)=>s+(p.likes||0),0);
+
+  document.getElementById('ddAv').innerHTML = avatarHTML(u,60);
+  document.getElementById('ddName').textContent = u.name||'Unknown';
+  document.getElementById('ddHandle').textContent = '@'+(u.handle||uid);
+  document.getElementById('ddPosts').textContent = userPosts.length;
+  document.getElementById('ddComments').textContent = userComments.length;
+  document.getElementById('ddLikes').textContent = likeCount;
+
+  let html = '';
+  if(userPosts.length){
+    html += `<div style="padding:12px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);">Posts (${userPosts.length})</div>`;
+    html += `<div class="tbl-wrap"><table><thead><tr><th>Post</th><th>Caption</th><th>Type</th><th>Likes</th><th>Comments</th><th>Posted</th></tr></thead><tbody>`;
+    html += userPosts.map(p=>{
+      const imgs=p.images||(p.image?[p.image]:[]);
+      return `<tr>
+        <td>${imgs[0]?`<img class="img-thumb" src="${esc(imgs[0])}" alt="">`:`<div class="no-img">${p.isStatus?'✍️':'📄'}</div>`}</td>
+        <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc((p.caption||'').slice(0,80))}</td>
+        <td>${p.isStatus?'<span class="badge badge-yellow">Status</span>':'<span class="badge badge-blue">Photo</span>'}</td>
+        <td>❤️ ${p.likes||0}</td>
+        <td>💬 ${(p.comments||[]).length}</td>
+        <td>${timeAgo(p.createdAt)}</td>
+      </tr>`;
+    }).join('')+'</tbody></table></div>';
+  }
+  if(userComments.length){
+    html += `<div style="padding:12px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);border-top:1px solid var(--border);">Comments Left by This User (${userComments.length})</div>`;
+    html += userComments.map(c=>`
+      <div class="comment-row">
+        <div class="comment-meta">
+          <span class="badge badge-gray">on post: ${esc((c.postCaption||c.postId||'').slice(0,40))}</span>
+        </div>
+        <div class="comment-text">"${esc(c.text)}"</div>
+      </div>`).join('');
+  }
+  if(!userPosts.length && !userComments.length) html='<div class="empty">No activity found for this user.</div>';
+
+  document.getElementById('ddPostList').innerHTML = html;
+  dd.classList.add('open');
+  dd.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function closeDrilldown(){
+  document.getElementById('userDrilldown').classList.remove('open');
+}
+
+// ── POSTS TABLE ────────────────────────────────────────
+function filterPosts(type,btn){
+  _postsFilter=type;
+  document.querySelectorAll('#postsFilters .filter-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderPosts();
+}
+
+function renderPosts(){
+  let data = [..._posts];
+  if(_postsFilter==='photo') data=data.filter(p=>!p.isStatus&&!p.isPoll&&(p.images||p.image));
+  else if(_postsFilter==='video') data=data.filter(p=>p.isVideo||(p.media||[]).some(m=>m.type==='video'));
+  else if(_postsFilter==='status') data=data.filter(p=>p.isStatus);
+  else if(_postsFilter==='poll') data=data.filter(p=>p.isPoll);
+  else if(_postsFilter==='repost') data=data.filter(p=>(p.repostedBy||[]).length>0);
+  else if(_postsFilter==='liked') data=data.sort((a,b)=>(b.likes||0)-(a.likes||0));
+  else if(_postsFilter==='mostVoted') data=data.filter(p=>p.isPoll).sort((a,b)=>{
+    const va=(a.pollOptions||[]).reduce((s,o)=>s+(o.votes||0),0);
+    const vb=(b.pollOptions||[]).reduce((s,o)=>s+(o.votes||0),0);
+    return vb-va;
+  });
+  if(_searchQ) data=data.filter(p=>
+    (p.caption||'').toLowerCase().includes(_searchQ)||
+    (p.uid||'').toLowerCase().includes(_searchQ)||
+    (p.user&&(p.user.handle||p.user.name||'').toLowerCase().includes(_searchQ))
+  );
+  document.getElementById('postsCount').textContent=data.length+' posts';
+  const tbody=document.getElementById('postsTable');
+  if(!data.length){tbody.innerHTML='<tr><td colspan="9"><div class="empty">No posts found.</div></td></tr>';return;}
+  tbody.innerHTML=data.map(p=>{
+    const u=getUserByUid(p.uid)||p.user||{};
+    const imgs=p.images||(p.image?[p.image]:[]);
+    const postId=String(p.id);
+    const _mVid=(p.media||[]).filter(m=>m.type==='video').length;
+    const _mImg=(p.media||[]).length-_mVid;
+    let typeBadge;
+    if(p.isPoll) typeBadge='<span class="badge badge-purple" style="background:#ede9fe;color:#7c3aed;">📊 Poll</span>';
+    else if(p.isStatus) typeBadge='<span class="badge badge-yellow">Status</span>';
+    else if(_mVid && _mImg) typeBadge=`<span class="badge badge-blue">🧩 Mixed (${_mImg}📷 ${_mVid}🎥)</span>`;
+    else if(_mVid && !_mImg) typeBadge=`<span class="badge badge-blue">🎬 Video${_mVid>1?' x'+_mVid:''}</span>`;
+    else if(p.isVideo) typeBadge='<span class="badge badge-blue">🎬 Video</span>';
+    else if(imgs.length>1) typeBadge=`<span class="badge badge-blue">Album (${imgs.length})</span>`;
+    else typeBadge='<span class="badge badge-green">Photo</span>';
+    return `<tr>
+      <td>${imgs[0]?`<img class="img-thumb" src="${esc(imgs[0])}" alt="">`:`<div class="no-img">${p.isStatus?'✍️':(_mVid||p.isVideo)?'🎬':'📄'}</div>`}</td>
+      <td><div class="td-av">${avatarHTML(u)}<div><div class="td-name">${esc(u.name||'?')}${vBadge(u)}</div><div class="td-sub">@${esc(u.handle||'—')}</div></div></div></td>
+      <td style="max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.isPoll?'📊 '+esc((p.pollQuestion||'').slice(0,80)):esc((p.caption||'').slice(0,80))}</td>
+      <td>${typeBadge}</td>
+      <td><span class="badge badge-pink">❤️ ${p.likes||0}</span></td>
+      <td>💬 ${(p.comments||[]).length}</td>
+      <td title="${fullDate(p.createdAt)}">${timeAgo(p.createdAt)}</td>
+      <td><button class="action-btn danger" onclick="deletePost('${esc(postId)}')">🗑 Delete</button></td>
+    </tr>`;
+  }).join('');
+}
+
+async function deletePost(id){
+  if(!confirm('Delete this post permanently? This cannot be undone.')) return;
+  await db.collection('posts').doc(id).delete();
+  _posts=_posts.filter(p=>String(p.id)!==id);
+  updateBadges();
+  renderPosts();
+}
+
+// ── COMMENTS TABLE ─────────────────────────────────────
+function renderComments(){
+  const allComments=[];
+  _posts.forEach(p=>{
+    (p.comments||[]).forEach((c,ci)=>{
+      allComments.push({...c,postId:p.id,postCaption:p.caption,postUid:p.uid,ci});
+    });
+  });
+  let data=allComments;
+  if(_searchQ) data=data.filter(c=>
+    (c.text||'').toLowerCase().includes(_searchQ)||
+    (c.user&&(c.user.handle||c.user.name||'').toLowerCase().includes(_searchQ))
+  );
+  document.getElementById('commentsCount').textContent=data.length+' comments';
+  const tbody=document.getElementById('commentsTable');
+  if(!data.length){tbody.innerHTML='<tr><td colspan="5"><div class="empty">No comments found.</div></td></tr>';return;}
+  tbody.innerHTML=data.map(c=>{
+    const cu=c.user||{};
+    const pu=getUserByUid(c.postUid)||{};
+    return `<tr>
+      <td><span class="tag">#${esc(String(c.ci+1))}</span></td>
+      <td><div class="td-av">${avatarHTML(cu)}<div><div class="td-name">${esc(cu.name||'Unknown')}</div><div class="td-sub">@${esc(cu.handle||'—')}</div></div></div></td>
+      <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;color:var(--text2);">${esc((c.postCaption||c.postId||'').slice(0,50))}</td>
+      <td><div class="td-av">${avatarHTML(pu)}<div class="td-sub">@${esc(pu.handle||'—')}</div></div></td>
+      <td style="max-width:280px;">"${esc(c.text)}"</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── NOTIFICATIONS TABLE ────────────────────────────────
+function filterNotifs(type,btn){
+  _notifsFilter=type;
+  document.querySelectorAll('#section-notifications .filter-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderNotifs();
+}
+
+function renderNotifs(){
+  const icons={like:'❤️',comment:'💬',follow:'👤',message:'✉️',repost:'🔁',share:'📤',mention:'@',vote:'🗳️'};
+  const labels={like:'Like',comment:'Comment',follow:'Follow',message:'Message',repost:'Repost',share:'Share',mention:'Mention',vote:'Poll Vote'};
+  const badgeCls={like:'badge-pink',comment:'badge-green',follow:'badge-blue',message:'badge-yellow',repost:'badge-green',share:'badge-blue',mention:'badge-gray',vote:'badge-purple'};
+  let data=[..._notifs];
+  if(_notifsFilter!=='all'&&_notifsFilter!=='unread') data=data.filter(n=>n.type===_notifsFilter);
+  if(_notifsFilter==='unread') data=data.filter(n=>!n.read);
+  if(_searchQ) data=data.filter(n=>
+    (n.fromName||'').toLowerCase().includes(_searchQ)||
+    (n.fromHandle||'').toLowerCase().includes(_searchQ)||
+    (n.extra||'').toLowerCase().includes(_searchQ)
+  );
+  document.getElementById('notifsCount').textContent=data.length+' notifications';
+  const tbody=document.getElementById('notifsTable');
+  if(!data.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty">No notifications found.</div></td></tr>';return;}
+  tbody.innerHTML=data.map(n=>{
+    const toUser=getUserByUid(n.toUid)||{};
+    return `<tr>
+      <td><span class="badge ${badgeCls[n.type]||'badge-gray'}">${icons[n.type]||'🔔'} ${labels[n.type]||n.type}</span></td>
+      <td><div class="td-av"><div class="av-circle" style="width:26px;height:26px;background:${esc(n.fromColor||'#e2688a')};font-size:10px;">${n.fromAvatar?`<img src="${esc(n.fromAvatar)}" alt="">`:esc(n.fromInitial||'?')}</div><div><div class="td-name">${esc(n.fromName||'?')}</div><div class="td-sub">@${esc(n.fromHandle||'—')}</div></div></div></td>
+      <td><div class="td-av">${avatarHTML(toUser)}<div class="td-sub">@${esc(toUser.handle||n.toUid?.slice(0,8)||'—')}</div></div></td>
+      <td style="max-width:180px;font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${n.extra?`"${esc(n.extra.slice(0,60))}"`:'-'}</td>
+      <td>${n.read?'<span class="badge badge-gray">Read</span>':'<span class="badge badge-pink">Unread</span>'}</td>
+      <td title="${fullDate(n.ts)}">${timeAgo(n.ts)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── FEEDBACK TABLE ─────────────────────────────────────
+function filterFeedback(type,btn){
+  _feedbackFilter=type;
+  document.querySelectorAll('#section-feedback .filter-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderFeedback();
+}
+
+function renderFeedback(){
+  const icons={idea:'💡',bug:'🐛',report:'🚩'};
+  let data=[..._feedback];
+  if(_feedbackFilter!=='all'&&_feedbackFilter!=='unread') data=data.filter(f=>f.type===_feedbackFilter);
+  if(_feedbackFilter==='unread') data=data.filter(f=>!f.read);
+  if(_searchQ) data=data.filter(f=>
+    (f.text||'').toLowerCase().includes(_searchQ)||
+    (f.fromHandle||'').toLowerCase().includes(_searchQ)||
+    (f.fromName||'').toLowerCase().includes(_searchQ)
+  );
+  document.getElementById('feedbackCount').textContent=data.length+' items';
+  const tbody=document.getElementById('feedbackTable');
+  if(!data.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty">No feedback yet.</div></td></tr>';return;}
+  tbody.innerHTML=data.map(f=>{
+    return `<tr style="${!f.read?'border-left:3px solid var(--pink);':''}" id="fb-row-${esc(f.id)}">
+      <td><span class="badge ${f.type==='bug'?'badge-red':f.type==='report'?'badge-yellow':'badge-blue'}">${icons[f.type]||'📝'} ${f.type||'feedback'}</span></td>
+      <td><div class="td-name">${esc(f.fromName||'?')}</div><div class="td-sub">@${esc(f.fromHandle||'—')}</div></td>
+      <td style="max-width:300px;">${esc(f.text)}</td>
+      <td>${f.read?'<span class="badge badge-gray">Read</span>':'<span class="badge badge-pink">New</span>'}</td>
+      <td title="${fullDate(f.ts)}">${timeAgo(f.ts)}</td>
+      <td>${!f.read?`<button class="action-btn" onclick="markFeedbackRead('${esc(f.id)}')">Mark Read</button>`:'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function markFeedbackRead(id){
+  await db.collection('feedback').doc(id).update({read:true}).catch(()=>{});
+  const f=_feedback.find(x=>x.id===id);
+  if(f) f.read=true;
+  renderFeedback();
+  updateBadges();
+}
+
+// ── USER ACTIVITY ──────────────────────────────────────
+function populateUserSelect(){
+  const sel=document.getElementById('activityUserSelect');
+  const current=sel.value;
+  sel.innerHTML='<option value="">— Select a user —</option>';
+  _users.forEach(u=>{
+    const uid=u.id||u.uid||'';
+    const opt=document.createElement('option');
+    opt.value=uid; opt.textContent=(u.name||'Unknown')+' (@'+(u.handle||uid.slice(0,8))+')'
+    sel.appendChild(opt);
+  });
+  if(current) sel.value=current;
+}
+
+async function loadUserActivity(uid){
+  if(!uid){document.getElementById('activityPanel').innerHTML='<div class="empty">Select a user above.</div>';return;}
+  const panel=document.getElementById('activityPanel');
+  panel.innerHTML='<div class="loading"><div class="spinner"></div>Loading activity...</div>';
+
+  const u=getUserByUid(uid)||{};
+  const userPosts=_posts.filter(p=>p.uid===uid);
+  const userComments=[];
+  _posts.forEach(p=>{
+    (p.comments||[]).forEach(c=>{
+      if((c.user&&c.user.uid)===uid||(c.user&&c.user.handle===u.handle))
+        userComments.push({...c,postId:p.id,postCaption:p.caption});
+    });
+  });
+  const sentNotifs=_notifs.filter(n=>n.fromUid===uid);
+  const recvNotifs=_notifs.filter(n=>n.toUid===uid);
+  const userFb=_feedback.filter(f=>f.fromUid===uid);
+  const totalLikes=userPosts.reduce((s,p)=>s+(p.likes||0),0);
+
+  let html=`
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px;border-bottom:1px solid var(--border);">
+    <div class="stat-card" style="margin:0;"><div class="stat-num">${userPosts.length}</div><div class="stat-label">Posts made</div></div>
+    <div class="stat-card" style="margin:0;"><div class="stat-num">${userComments.length}</div><div class="stat-label">Comments left</div></div>
+    <div class="stat-card" style="margin:0;"><div class="stat-num">${totalLikes}</div><div class="stat-label">Likes received</div></div>
+    <div class="stat-card" style="margin:0;"><div class="stat-num">${sentNotifs.length}</div><div class="stat-label">Actions (notifs sent)</div></div>
+  </div>`;
+
+  // Timeline
+  const timeline=[];
+  userPosts.forEach(p=>timeline.push({type:'post',ts:p.createdAt,data:p}));
+  userComments.forEach(c=>timeline.push({type:'comment',ts:null,data:c}));
+  sentNotifs.forEach(n=>timeline.push({type:'notif',ts:n.ts,data:n}));
+  userFb.forEach(f=>timeline.push({type:'feedback',ts:f.ts,data:f}));
+
+  const tlIcons={post:'📝',comment:'💬',notif:'🔔',feedback:'📩'};
+
+  html+=`<div style="padding:12px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);">Activity Timeline (${timeline.length} events)</div>`;
+  if(!timeline.length){html+='<div class="empty">No activity recorded for this user.</div>';}
+  else{
+    html+=timeline.slice(0,50).map(item=>{
+      let text='';
+      if(item.type==='post') text=`Posted: "${esc((item.data.caption||'').slice(0,60)||'[photo]')}"`;
+      else if(item.type==='comment') text=`Commented on post "${esc((item.data.postCaption||item.data.postId||'').slice(0,40))}": "${esc(item.data.text)}"`;
+      else if(item.type==='notif'){
+        const icons={like:'❤️',comment:'💬',follow:'👤',message:'✉️'};
+        text=`Sent a ${icons[item.data.type]||'🔔'} ${item.data.type} notification`+(item.data.extra?` — "${esc(item.data.extra.slice(0,40))}"`:'')+` to @${esc(item.data.toUid?.slice(0,8)||'?')}`;
+      }
+      else if(item.type==='feedback') text=`Submitted ${item.data.type}: "${esc(item.data.text.slice(0,60))}"`;
+      return `<div class="timeline-item">
+        <div class="tl-icon" style="background:var(--pink-pale);">${tlIcons[item.type]||'•'}</div>
+        <div class="tl-body"><div class="tl-text">${text}</div><div class="tl-time">${timeAgo(item.ts)}</div></div>
+      </div>`;
+    }).join('');
+  }
+
+  panel.innerHTML=html;
+}
+
+// ── STORAGE BROWSER ──────────────────────────────────
+// Build an index from all posts: every image URL → {user, post, type, ts}
+let _storageFiles = [];   // flat list of all media files
+let _storageView  = 'folders';
+let _lbFiles      = [];   // current lightbox array
+let _lbIdx        = 0;
+
+// Renders either an <img> or a <video> thumbnail tag depending on file type
+function mediaThumbTag(f, cls){
+  if(f.subtype==='video'){
+    return `<video class="${cls}" src="${esc(f.url)}" muted preload="metadata" playsinline onerror="this.style.background='#f1f5f9'"></video><span class="file-video-badge">▶</span>`;
+  }
+  return `<img class="${cls}" src="${esc(f.url)}" alt="" loading="lazy" onerror="this.style.background='#f1f5f9';this.src=''">`;
+}
+
+function buildStorageIndex(){
+  _storageFiles = [];
+
+  _posts.forEach(function(p){
+    const u = getUserByUid(p.uid) || p.user || {};
+    const ts = p.createdAt;
+
+    // Post images
+    const imgs = p.images || (p.image ? [p.image] : []);
+    imgs.forEach(function(url, i){
+      if(!url) return;
+      _storageFiles.push({
+        url, type:'post', subtype: imgs.length>1?'album':'photo',
+        uid: p.uid||'', user: u,
+        postId: String(p.id), caption: p.caption||'',
+        ts, label: 'Post image '+(i+1)+' of '+(imgs.length)
+      });
+    });
+
+    // Mixed media posts (photo + video, any order) — new Photo/Video composer
+    if(Array.isArray(p.media) && p.media.length){
+      p.media.forEach(function(m, i){
+        if(!m || !m.url || m.type!=='video') return; // images already indexed above via p.images
+        _storageFiles.push({
+          url: m.url, type:'post', subtype:'video',
+          uid: p.uid||'', user: u,
+          postId: String(p.id), caption: p.caption||'',
+          ts, label: 'Post video '+(i+1)+' of '+(p.media.length)
+        });
+      });
+    }
+    // Legacy single-video posts (old Video tab, pre-dating mixed media)
+    else if(p.videoUrl){
+      _storageFiles.push({
+        url: p.videoUrl, type:'post', subtype:'video',
+        uid: p.uid||'', user: u,
+        postId: String(p.id), caption: p.caption||'',
+        ts, label: 'Post video'
+      });
+    }
+  });
+
+  // Avatars from user profiles
+  _users.forEach(function(u){
+    if(u.avatar && u.avatar.startsWith('http')){
+      _storageFiles.push({
+        url: u.avatar, type:'avatar', subtype:'avatar',
+        uid: u.id||u.uid||'', user: u,
+        postId:'', caption:'Profile avatar',
+        ts: u.createdAt, label:'Profile avatar'
+      });
+    }
+    if(u.bannerImage && u.bannerImage.startsWith('http')){
+      _storageFiles.push({
+        url: u.bannerImage, type:'banner', subtype:'banner',
+        uid: u.id||u.uid||'', user: u,
+        postId:'', caption:'Cover photo',
+        ts: u.createdAt, label:'Cover photo'
+      });
+    }
+  });
+
+  // Update stats
+  const postImgs   = _storageFiles.filter(f=>f.type==='post' && f.subtype!=='video').length;
+  const postVideos = _storageFiles.filter(f=>f.type==='post' && f.subtype==='video').length;
+  const avatars   = _storageFiles.filter(f=>f.type==='avatar').length;
+  const banners   = _storageFiles.filter(f=>f.type==='banner').length;
+  document.getElementById('stTotalFiles').textContent  = _storageFiles.length;
+  document.getElementById('stPostImgs').textContent    = postImgs;
+  document.getElementById('stPostVideos').textContent  = postVideos;
+  document.getElementById('stAvatars').textContent     = avatars;
+  document.getElementById('stBanners').textContent     = banners;
+  document.getElementById('nb-storage').textContent    = _storageFiles.length;
+  document.getElementById('storageCount').textContent  = _storageFiles.length + ' files';
+}
+
+function setStorageView(view, btn){
+  _storageView = view;
+  document.querySelectorAll('.storage-view-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderStorage();
+}
+
+function renderStorage(){
+  if(!_storageFiles.length){ buildStorageIndex(); }
+  const sort  = (document.getElementById('storageSort')||{}).value || 'newest';
+  const panel = document.getElementById('storageBrowser');
+  if(!panel) return;
+
+  if(_storageView === 'folders') renderStorageFolders(sort, panel);
+  else if(_storageView === 'all') renderStorageAll(sort, panel);
+  else if(_storageView === 'type') renderStorageByType(sort, panel);
+}
+
+// ── FOLDER VIEW (grouped by user) ─────────────────────
+function renderStorageFolders(sort, panel){
+  // Group by uid
+  const groups = {};
+  _storageFiles.forEach(function(f){
+    const uid = f.uid || '__unknown__';
+    if(!groups[uid]) groups[uid] = {uid, user:f.user, files:[]};
+    groups[uid].files.push(f);
+  });
+
+  let grouped = Object.values(groups);
+
+  // Sort groups
+  if(sort==='most')   grouped.sort((a,b)=>b.files.length-a.files.length);
+  else if(sort==='user') grouped.sort((a,b)=>(a.user.name||'').localeCompare(b.user.name||''));
+  else if(sort==='newest') grouped.sort((a,b)=>b.files.length-a.files.length); // fallback
+  else grouped.sort((a,b)=>a.files.length-b.files.length);
+
+  if(!grouped.length){panel.innerHTML='<div class="empty">No media files found.</div>';return;}
+
+  let html = '<div class="folder-grid">';
+  grouped.forEach(function(g){
+    const u = g.user||{};
+    const uid = g.uid;
+    const postFiles = g.files.filter(f=>f.type==='post');
+    const avFile    = g.files.find(f=>f.type==='avatar');
+    const bnFile    = g.files.find(f=>f.type==='banner');
+    const thumbs    = g.files.filter(f=>f.type==='post').slice(0,3);
+    const more      = g.files.length - 3;
+    const bgColor   = u.color||'#e2688a';
+    const init      = u.initial||(u.name?u.name[0]:'?')||'?';
+
+    html += `<div class="folder-card" id="folder-${esc(uid)}" onclick="toggleFolder('${esc(uid)}')">
+      <div class="folder-top">
+        <div class="folder-icon" style="background:${esc(bgColor)};">`
+          +(avFile?`<img src="${esc(avFile.url)}" alt="">`:`${esc(init)}`)
+        +`</div>
+        <div>
+          <div class="folder-name">${esc(u.name||'Unknown User')}</div>
+          <div class="folder-meta">@${esc(u.handle||uid.slice(0,10))} · ${g.files.length} file${g.files.length!==1?'s':''}</div>
+          <div class="folder-meta">${postFiles.length} posts${avFile?' · avatar':''}${bnFile?' · banner':''}</div>
+        </div>
+      </div>
+      ${thumbs.length?`<div class="folder-preview">
+        ${thumbs.map(f=>f.subtype==='video'?`<video class="folder-thumb" src="${esc(f.url)}" muted preload="metadata" playsinline></video>`:`<img class="folder-thumb" src="${esc(f.url)}" alt="" onerror="this.style.display='none'">`).join('')}
+        ${more>0?`<div class="folder-thumb-more">+${more}</div>`:''}
+      </div>`:''}
+      <div class="file-gallery" id="gallery-${esc(uid)}">
+        <div style="padding:10px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);">
+          All files (${g.files.length})
+        </div>
+        <div class="file-gallery-inner">
+          ${g.files.map((f,i)=>`
+            <div class="file-item" onclick="event.stopPropagation();openLightboxForUser('${esc(uid)}',${i})">
+              <span class="file-type-badge">${f.type==='post'?'📷':f.type==='avatar'?'👤':'🖼'}</span>
+              ${mediaThumbTag(f,'file-img')}
+              <div class="file-info">
+                <div class="file-name">${esc(f.label)}</div>
+                <div class="file-date">${timeAgo(f.ts)}</div>
+                ${f.caption?`<div class="file-caption">${esc(f.caption.slice(0,40))}</div>`:''}
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  panel.innerHTML = html;
+
+  // Cache per-user file arrays for lightbox navigation
+  window._folderFileMap = {};
+  grouped.forEach(function(g){ window._folderFileMap[g.uid] = g.files; });
+}
+
+function toggleFolder(uid){
+  const card    = document.getElementById('folder-'+uid);
+  const gallery = document.getElementById('gallery-'+uid);
+  if(!card||!gallery) return;
+  const isOpen  = gallery.classList.contains('open');
+  // Close all others
+  document.querySelectorAll('.file-gallery.open').forEach(function(g){g.classList.remove('open');});
+  document.querySelectorAll('.folder-card.open').forEach(function(c){c.classList.remove('open');});
+  if(!isOpen){
+    gallery.classList.add('open');
+    card.classList.add('open');
+  }
+}
+
+function openLightboxForUser(uid, idx){
+  const files = (window._folderFileMap||{})[uid] || [];
+  _lbFiles = files;
+  _lbIdx   = idx;
+  openLightbox();
+}
+
+// ── ALL FILES FLAT VIEW ────────────────────────────────
+function renderStorageAll(sort, panel){
+  let files = [..._storageFiles];
+  if(sort==='newest')    files.sort((a,b)=>{const ta=a.ts?a.ts.toMillis?a.ts.toMillis():a.ts.seconds*1000:0,tb=b.ts?b.ts.toMillis?b.ts.toMillis():b.ts.seconds*1000:0;return tb-ta;});
+  else if(sort==='oldest') files.sort((a,b)=>{const ta=a.ts?a.ts.toMillis?a.ts.toMillis():a.ts.seconds*1000:0,tb=b.ts?b.ts.toMillis?b.ts.toMillis():b.ts.seconds*1000:0;return ta-tb;});
+  else if(sort==='user') files.sort((a,b)=>(a.user.name||'').localeCompare(b.user.name||''));
+
+  if(!files.length){panel.innerHTML='<div class="empty">No media files found.</div>';return;}
+
+  _lbFiles = files;
+  let html = '<div class="file-gallery-inner" style="padding:18px;">';
+  files.forEach(function(f,i){
+    html += `<div class="file-item" onclick="openLightboxAt(${i})">
+      <span class="file-type-badge">${f.type==='post'?'📷':f.type==='avatar'?'👤':'🖼'}</span>
+      ${mediaThumbTag(f,'file-img')}
+      <div class="file-info">
+        <div class="file-name">${esc((f.user.name||'?').slice(0,16))}</div>
+        <div class="file-date">${timeAgo(f.ts)}</div>
+        ${f.caption?`<div class="file-caption">${esc(f.caption.slice(0,40))}</div>`:''}
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  panel.innerHTML = html;
+}
+
+// ── BY TYPE VIEW ───────────────────────────────────────
+function renderStorageByType(sort, panel){
+  const types = ['post','avatar','banner'];
+  const typeLabels = {post:'📷 Post Images', avatar:'👤 Profile Avatars', banner:'🖼 Cover Photos'};
+  let html = '';
+  types.forEach(function(type){
+    const files = _storageFiles.filter(f=>f.type===type);
+    if(!files.length) return;
+    _lbFiles = files; // will be overridden per-type but used for global nav
+    html += `<div style="padding:12px 18px 6px;font-size:13px;font-weight:700;color:var(--text);border-bottom:1px solid var(--border);">${typeLabels[type]} <span style="font-weight:400;color:var(--text3);">(${files.length})</span></div>`;
+    html += '<div class="file-gallery-inner" style="padding:14px;">';
+    const typeKey = type;
+    files.forEach(function(f,i){
+      html += `<div class="file-item" onclick="openLightboxByType('${typeKey}',${i})">
+        ${mediaThumbTag(f,'file-img')}
+        <div class="file-info">
+          <div class="file-name">${esc((f.user.name||'?').slice(0,16))}</div>
+          <div class="file-date">${timeAgo(f.ts)}</div>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  if(!html) html='<div class="empty">No media files found.</div>';
+  panel.innerHTML = html;
+  // Cache type arrays for lightbox
+  window._typeFileMap = {};
+  types.forEach(function(t){ window._typeFileMap[t] = _storageFiles.filter(f=>f.type===t); });
+}
+
+function openLightboxByType(type, idx){
+  _lbFiles = (window._typeFileMap||{})[type] || [];
+  _lbIdx   = idx;
+  openLightbox();
+}
+
+// ── LIGHTBOX ───────────────────────────────────────────
+function openLightboxAt(idx){
+  _lbIdx = idx;
+  openLightbox();
+}
+
+function openLightbox(){
+  const f = _lbFiles[_lbIdx];
+  if(!f) return;
+  const isVid = f.subtype==='video' || f.type==='video' || /\.(mp4|mov|webm|m4v)(\?|$)/i.test(f.url||'');
+  const imgEl = document.getElementById('slbImg');
+  const vidEl = document.getElementById('slbVideo');
+  if(isVid){
+    imgEl.style.display='none'; imgEl.src='';
+    vidEl.style.display='block'; vidEl.src=f.url; vidEl.load();
+  } else {
+    vidEl.style.display='none'; vidEl.pause(); vidEl.src='';
+    imgEl.style.display='block'; imgEl.src=f.url;
+  }
+  document.getElementById('slbCaption').textContent = f.caption ? '"'+f.caption.slice(0,120)+'"' : f.label;
+  document.getElementById('slbMeta').textContent    = (f.user.name||'?')+' · @'+(f.user.handle||'—')+' · '+timeAgo(f.ts);
+  document.getElementById('slbCounter').textContent = (_lbIdx+1)+' / '+_lbFiles.length;
+  document.getElementById('storageLightbox').classList.add('open');
+  document.onkeydown = function(e){
+    if(e.key==='ArrowRight') lbNav(1);
+    else if(e.key==='ArrowLeft') lbNav(-1);
+    else if(e.key==='Escape') closeLightbox();
+  };
+}
+
+function lbNav(dir){
+  _lbIdx = (_lbIdx + dir + _lbFiles.length) % _lbFiles.length;
+  openLightbox();
+}
+
+function closeLightbox(){
+  document.getElementById('storageLightbox').classList.remove('open');
+  var vidEl = document.getElementById('slbVideo');
+  if(vidEl){ vidEl.pause(); }
+  document.onkeydown = null;
+}
+
+// ── EXPORT ────────────────────────────────────────────
+function exportData(){
+  const data={
+    exported: new Date().toISOString(),
+    users: _users,
+    posts: _posts.map(p=>({...p})),
+    notifications: _notifs,
+    feedback: _feedback,
+    summary:{
+      totalUsers: _users.length,
+      totalPosts: _posts.length,
+      totalComments: _posts.reduce((s,p)=>s+(p.comments?p.comments.length:0),0),
+      totalLikes: _posts.reduce((s,p)=>s+(p.likes||0),0),
+    }
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='kez-media-export-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+}
+
+// ══════════════════════════════════════════════════════
+// BADGE MANAGEMENT (manual, admin-granted — separate from automatic achievements)
+// Firestore: badgeDefinitions/{id}, profiles/{uid}/badges/{badgeId}, badgeHistory/{id}
+// ══════════════════════════════════════════════════════
+var _badgeDefs = [];
+
+async function loadBadgeDefinitions(){
+  try{
+    var snap = await db.collection('badgeDefinitions').orderBy('createdAt','desc').get();
+    _badgeDefs = snap.docs.map(function(d){ return {id:d.id, ...d.data()}; });
+  }catch(e){ _badgeDefs = []; }
+}
+
+function renderBadgesSection(){
+  loadBadgeDefinitions().then(renderBadgeDefsList);
+}
+
+function renderBadgeDefsList(){
+  var wrap = document.getElementById('badgeDefsList');
+  if(!_badgeDefs.length){
+    wrap.innerHTML = '<div class="empty">No badges created yet. Click "+ New Badge" to make your first one.</div>';
+    return;
+  }
+  wrap.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;padding:14px 16px;">'
+    + _badgeDefs.map(function(b){
+      return '<div style="border:1px solid var(--border);border-radius:10px;padding:12px;">'
+        + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">'
+        + badgeIconHTML(b.icon, b.color, 34)
+        + '<div><div style="font-weight:700;font-size:13px;">'+esc(b.name)+'</div><div style="font-size:10.5px;color:var(--text3);">'+esc(b.rarity||'Common')+' · '+esc(b.category||'General')+'</div></div>'
+        + '</div>'
+        + '<div style="font-size:11.5px;color:var(--text2);margin-bottom:8px;">'+esc(b.description||'')+'</div>'
+        + '<button class="action-btn danger" style="font-size:11px;" onclick="deleteBadgeDefinition(\''+b.id+'\')">Delete Definition</button>'
+        + '</div>';
+    }).join('')
+    + '</div>';
+}
+
+function openCreateBadgeForm(){
+  document.getElementById('bfId').value='';
+  document.getElementById('bfName').value='';
+  document.getElementById('bfDescription').value='';
+  document.getElementById('bfIcon').value='trophy';
+  document.getElementById('bfColor').value='#e2688a';
+  document.getElementById('bfRarity').value='Common';
+  document.getElementById('bfCategory').value='';
+  renderBfIconPicker();
+  document.getElementById('badgeFormModal').style.display='flex';
+}
+function renderBfIconPicker(){
+  var picker = document.getElementById('bfIconPicker');
+  var current = document.getElementById('bfIcon').value;
+  var color = document.getElementById('bfColor').value;
+  picker.innerHTML = BADGE_ICON_KEYS.map(function(key){
+    var selected = key===current;
+    return '<div onclick="_selectBfIcon(\''+key+'\')" style="cursor:pointer;padding:2px;border-radius:50%;border:2px solid '+(selected?'var(--pink)':'transparent')+';">'+badgeIconHTML(key,color,32)+'</div>';
+  }).join('');
+}
+function _selectBfIcon(key){
+  document.getElementById('bfIcon').value = key;
+  renderBfIconPicker();
+}
+
+async function saveBadgeDefinition(){
+  var name = document.getElementById('bfName').value.trim();
+  if(!name){ alert('Badge name is required'); return; }
+  var data = {
+    name: name,
+    description: document.getElementById('bfDescription').value.trim(),
+    icon: document.getElementById('bfIcon').value.trim() || 'trophy',
+    color: document.getElementById('bfColor').value,
+    rarity: document.getElementById('bfRarity').value,
+    category: document.getElementById('bfCategory').value.trim() || 'General',
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+  try{
+    await db.collection('badgeDefinitions').add(data);
+    document.getElementById('badgeFormModal').style.display='none';
+    await loadBadgeDefinitions();
+    renderBadgeDefsList();
+  }catch(e){ alert('Error saving badge: '+e.message); }
+}
+
+async function deleteBadgeDefinition(id){
+  if(!confirm('Delete this badge definition? Users who already have it keep it, but it can no longer be granted.')) return;
+  try{
+    await db.collection('badgeDefinitions').doc(id).delete();
+    await loadBadgeDefinitions();
+    renderBadgeDefsList();
+  }catch(e){ alert('Error: '+e.message); }
+}
+
+var _badgeSearchTimeout = null;
+function searchUsersForBadges(q){
+  clearTimeout(_badgeSearchTimeout);
+  _badgeSearchTimeout = setTimeout(function(){
+    var query = q.trim().toLowerCase();
+    var resultsEl = document.getElementById('badgeUserResults');
+    if(!query){ resultsEl.innerHTML=''; return; }
+    var matches = _users.filter(function(u){
+      return (u.name||'').toLowerCase().includes(query)
+          || (u.handle||'').toLowerCase().includes(query)
+          || (u.email||'').toLowerCase().includes(query)
+          || u.uid===query;
+    }).slice(0,8);
+    if(!matches.length){ resultsEl.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:6px 0;">No users found.</div>'; return; }
+    resultsEl.innerHTML = matches.map(function(u){
+      return '<div onclick="openUserBadgePanel(\''+u.uid+'\')" style="display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;border-radius:6px;" onmouseover="this.style.background=\'var(--bg2)\'" onmouseout="this.style.background=\'none\'">'
+        + avatarHTML(u,26) + '<span style="font-size:12.5px;font-weight:600;">'+esc(u.name||'?')+vBadge(u)+'</span>'
+        + '<span style="font-size:11px;color:var(--text3);">@'+esc(u.handle||'—')+'</span></div>';
+    }).join('');
+  }, 250);
+}
+
+async function openUserBadgePanel(uid){
+  document.getElementById('badgeUserResults').innerHTML='';
+  document.getElementById('badgeUserSearch').value='';
+  var u = _users.find(function(x){return x.uid===uid;}) || {};
+  var panel = document.getElementById('badgeUserPanel');
+  panel.innerHTML = '<div class="loading"><div class="spinner"></div>Loading badges...</div>';
+  var snap = await db.collection('profiles').doc(uid).collection('badges').get().catch(function(){return {docs:[]};});
+  var theirBadges = snap.docs.map(function(d){ return {id:d.id, ...d.data()}; });
+  panel.innerHTML = '<div style="padding:14px 16px;">'
+    + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">'
+    + avatarHTML(u,40)
+    + '<div><div style="font-weight:700;font-size:14px;">'+esc(u.name||'?')+vBadge(u)+'</div><div style="font-size:11.5px;color:var(--text3);">@'+esc(u.handle||'—')+' · '+theirBadges.length+' badge'+(theirBadges.length===1?'':'s')+'</div></div>'
+    + '<button class="action-btn" style="margin-left:auto;" onclick="openGrantModal(\''+uid+'\')">+ Grant Badge</button>'
+    + '</div>'
+    + (theirBadges.length ? theirBadges.map(function(b){
+        var def = _badgeDefs.find(function(d){return d.id===b.badgeId;}) || {};
+        var expiresLabel = b.expiresAt ? ('Expires '+b.expiresAt) : 'Permanent';
+        return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">'
+          + badgeIconHTML(def.icon, def.color, 30)
+          + '<div style="flex:1;"><div style="font-size:12.5px;font-weight:600;">'+esc(def.name||b.badgeId)+'</div>'
+          + '<div style="font-size:10.5px;color:var(--text3);">'+esc(b.reason||'No reason given')+' · '+expiresLabel+'</div></div>'
+          + '<button class="action-btn danger" style="font-size:11px;" onclick="removeBadgeFromUser(\''+uid+'\',\''+b.id+'\')">Remove</button>'
+          + '</div>';
+      }).join('') : '<div class="empty">No badges granted yet.</div>')
+    + '</div>';
+}
+
+function openGrantModal(uid){
+  document.getElementById('gbUid').value = uid;
+  document.getElementById('gbReason').value='';
+  document.getElementById('gbExpires').value='';
+  var sel = document.getElementById('gbBadgeId');
+  sel.innerHTML = _badgeDefs.map(function(b){ return '<option value="'+b.id+'">'+esc(b.name)+' ('+b.rarity+')</option>'; }).join('')
+    || '<option value="">No badge definitions yet — create one first</option>';
+  document.getElementById('grantBadgeModal').style.display='flex';
+}
+
+async function grantBadgeToUser(){
+  var uid = document.getElementById('gbUid').value;
+  var badgeId = document.getElementById('gbBadgeId').value;
+  var reason = document.getElementById('gbReason').value.trim();
+  var expires = document.getElementById('gbExpires').value || null;
+  if(!badgeId){ alert('Select a badge to grant'); return; }
+  var def = _badgeDefs.find(function(d){return d.id===badgeId;});
+  try{
+    var ref = await db.collection('profiles').doc(uid).collection('badges').add({
+      badgeId: badgeId, grantedBy: auth.currentUser.email, grantedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      reason: reason, expiresAt: expires, visibility: 'public'
+    });
+    await db.collection('badgeHistory').add({
+      uid: uid, badgeId: badgeId, action: 'grant', by: auth.currentUser.email,
+      at: firebase.firestore.FieldValue.serverTimestamp(), reason: reason, expiresAt: expires
+    });
+    // Notify the user
+    await db.collection('notifications').add({
+      toUid: uid, type: 'badge', fromName: 'KEZ Media Team',
+      text: 'Congratulations! You received the '+(def?def.name:'a new')+' badge.'+(reason?' — '+reason:''),
+      read: false, ts: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    document.getElementById('grantBadgeModal').style.display='none';
+    openUserBadgePanel(uid);
+  }catch(e){ alert('Error granting badge: '+e.message); }
+}
+
+async function removeBadgeFromUser(uid, badgeDocId){
+  var reason = prompt('Reason for removing this badge (optional, shown to user):','');
+  if(reason===null) return; // cancelled
+  try{
+    var badgeDoc = await db.collection('profiles').doc(uid).collection('badges').doc(badgeDocId).get();
+    var badgeData = badgeDoc.exists ? badgeDoc.data() : {};
+    await db.collection('profiles').doc(uid).collection('badges').doc(badgeDocId).delete();
+    await db.collection('badgeHistory').add({
+      uid: uid, badgeId: badgeData.badgeId||'', action: 'remove', by: auth.currentUser.email,
+      at: firebase.firestore.FieldValue.serverTimestamp(), reason: reason
+    });
+    if(reason){
+      await db.collection('notifications').add({
+        toUid: uid, type: 'badge', fromName: 'KEZ Media Team',
+        text: 'A badge was removed from your profile: '+reason,
+        read: false, ts: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+    openUserBadgePanel(uid);
+  }catch(e){ alert('Error removing badge: '+e.message); }
+}
+
+// ══════════════════════════════════════════════════════
+// PRESENCE MONITOR (v1.4) — mirrors the main app's staleness-based status logic
+// ══════════════════════════════════════════════════════
+var AWAY_THRESHOLD_MS = 3*60*1000;
+var OFFLINE_STALE_MS  = 90*1000;
+var _presenceRefreshTimer = null;
+
+function _presenceStatusOf(p){
+  if(!p || !p.lastActive) return 'offline';
+  var lastActiveMs = p.lastActive.toMillis ? p.lastActive.toMillis() : (p.lastActive.seconds ? p.lastActive.seconds*1000 : 0);
+  if(Date.now() - lastActiveMs > OFFLINE_STALE_MS) return 'offline';
+  var lastInteractionMs = p.lastInteractionAt || lastActiveMs;
+  if(Date.now() - lastInteractionMs > AWAY_THRESHOLD_MS) return 'away';
+  return 'online';
+}
+function _parseDevice(ua){
+  if(!ua) return '—';
+  var browser = /Edg\//.test(ua)?'Edge':/Chrome\//.test(ua)?'Chrome':/Firefox\//.test(ua)?'Firefox':/Safari\//.test(ua)?'Safari':'Unknown';
+  var device = /Mobile|Android|iPhone/.test(ua)?'Mobile':/iPad|Tablet/.test(ua)?'Tablet':'Desktop';
+  return browser+' · '+device;
+}
+function _formatDuration(ms){
+  if(!ms || ms<0) return '—';
+  var mins = Math.floor(ms/60000);
+  if(mins<1) return '<1 min';
+  if(mins<60) return mins+' min';
+  var hrs = Math.floor(mins/60);
+  return hrs+'h '+(mins%60)+'m';
+}
+
+async function renderPresenceSection(){
+  var snap = await db.collection('presence').get().catch(function(){return {docs:[]};});
+  var rows = snap.docs.map(function(d){ return {uid:d.id, ...d.data()}; });
+  var counts = {online:0, away:0, offline:0};
+  rows.forEach(function(r){ counts[_presenceStatusOf(r)]++; });
+  document.getElementById('presenceCount').textContent = rows.length;
+  document.getElementById('ps-online').textContent = counts.online;
+  document.getElementById('ps-away').textContent = counts.away;
+  document.getElementById('ps-offline').textContent = counts.offline;
+
+  rows.sort(function(a,b){
+    var order = {online:0, away:1, offline:2};
+    return order[_presenceStatusOf(a)] - order[_presenceStatusOf(b)];
+  });
+
+  var tbody = document.getElementById('presenceTableBody');
+  if(!rows.length){ tbody.innerHTML = '<tr><td colspan="6" class="empty">No presence data yet.</td></tr>'; }
+  else {
+    tbody.innerHTML = rows.map(function(r){
+      var u = _users.find(function(x){return x.uid===r.uid;}) || {name:r.name, handle:r.handle};
+      var status = _presenceStatusOf(r);
+      var statusHTML = status==='online' ? '<span style="color:#22c55e;font-weight:700;">● Online</span>'
+        : status==='away' ? '<span style="color:#f59e0b;font-weight:700;">🌙 Away</span>'
+        : '<span style="color:#94a3b8;">⚫ Offline</span>';
+      var lastActiveMs = r.lastActive ? (r.lastActive.toMillis?r.lastActive.toMillis():(r.lastActive.seconds?r.lastActive.seconds*1000:0)) : 0;
+      var sessionMs = r.sessionStartedAt ? (Date.now()-r.sessionStartedAt) : 0;
+      return '<tr>'
+        + '<td><div class="td-av">'+avatarHTML(u,26)+'<div><div class="td-name">'+esc(u.name||'?')+vBadge(u)+'</div><div class="td-sub">@'+esc(u.handle||'—')+'</div></div></div></td>'
+        + '<td>'+statusHTML+'</td>'
+        + '<td style="font-size:12px;color:var(--text3);">'+esc(r.currentPage||'—')+'</td>'
+        + '<td style="font-size:12px;">'+_formatDuration(sessionMs)+'</td>'
+        + '<td style="font-size:12px;" title="'+(lastActiveMs?new Date(lastActiveMs).toLocaleString():'')+'">'+(lastActiveMs?timeAgo(lastActiveMs):'—')+'</td>'
+        + '<td style="font-size:12px;color:var(--text3);">'+_parseDevice(r.userAgent)+'</td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  clearTimeout(_presenceRefreshTimer);
+  if(_activeSection==='presence'){
+    _presenceRefreshTimer = setTimeout(renderPresenceSection, 15000);
+  }
+}
+</script>
+</body>
+</html>
+<script>
+// ══════════════════════════════════════════════════════════════
+// TRASH / RECYCLE BIN + STORIES + STORY ARCHIVE
+// ══════════════════════════════════════════════════════════════
+
+// ── TRASH RENDER ────────────────────────────────────────────
+function filterTrash(type, btn){
+  _trashFilter = type;
+  document.querySelectorAll('#trashFilters .filter-btn').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  renderTrash();
+}
+
+function renderTrash(){
+  let data = [..._trash];
+  if(_trashFilter==='photo')   data=data.filter(d=>d.postType==='photo'||(!d.postType&&!d.isStatus&&!d.isPoll&&!d.isVideo&&!d.isStory&&!d.isComment&&(d.mediaUrls&&d.mediaUrls.length)));
+  else if(_trashFilter==='status') data=data.filter(d=>d.postType==='status'||d.isStatus);
+  else if(_trashFilter==='video')  data=data.filter(d=>d.postType==='video'||d.isVideo);
+  else if(_trashFilter==='poll')   data=data.filter(d=>d.postType==='poll'||d.isPoll);
+  else if(_trashFilter==='story')  data=data.filter(d=>d.postType==='story'||d.isStory);
+  else if(_trashFilter==='comment')data=data.filter(d=>d.postType==='comment'||d.isComment);
+
+  const list = document.getElementById('trashList');
+  document.getElementById('trashCount').textContent = data.length + ' items';
+  if(!data.length){
+    list.innerHTML = '<div class="empty" style="padding:40px;text-align:center;color:var(--text3);">No deleted items' + (_trashFilter!=='all'?' in this category':'') + '.</div>';
+    return;
+  }
+  list.innerHTML = '';
+  data.forEach(function(item){
+    const card = document.createElement('div');
+    card.className = 'trash-card';
+    const u = getUserByUid(item.uid) || {};
+    const imgs = item.mediaUrls || (item.imageUrl?[{url:item.imageUrl}]:[]);
+    const firstImg = imgs[0] && imgs[0].url ? imgs[0].url : (item.mediaUrl||'');
+    const isVid = item.isVideo || item.postType==='video' || (firstImg&&/\.mp4|\.mov|\.webm/i.test(firstImg));
+
+    // Thumb
+    let thumbHTML = '<div class="trash-thumb">';
+    if(firstImg && !isVid){
+      thumbHTML += '<img src="'+esc(firstImg)+'" onerror="this.style.display=\'none\'">';
+    } else if(isVid){
+      thumbHTML += '🎬';
+    } else if(item.isPoll||item.postType==='poll'){
+      thumbHTML += '📊';
+    } else if(item.isStatus||item.postType==='status'){
+      thumbHTML += '✍️';
+    } else if(item.isStory||item.postType==='story'){
+      thumbHTML += '⭕';
+    } else if(item.isComment||item.postType==='comment'){
+      thumbHTML += '💬';
+    } else {
+      thumbHTML += '📄';
+    }
+    thumbHTML += '</div>';
+
+    // Type label
+    const typeMap = {photo:'📷 Photo',status:'✍️ Status',video:'🎬 Video',poll:'📊 Poll',story:'⭕ Story',comment:'💬 Comment'};
+    const typeLbl = typeMap[item.postType] || (item.isPoll?'📊 Poll':item.isStatus?'✍️ Status':item.isVideo?'🎬 Video':item.isStory?'⭕ Story':item.isComment?'💬 Comment':'📷 Photo');
+
+    // Cloudinary IDs
+    const cloudIds = (item.mediaUrls||[]).filter(m=>m.publicId).map(m=>'<code style="font-size:10px;background:var(--bg2);padding:1px 5px;border-radius:4px;">'+esc(m.publicId)+'</code>').join(' ');
+
+    const caption = item.caption||item.pollQuestion||item.text||item.commentText||'[no caption]';
+    const deletedBy = item.deletedByHandle ? '@'+item.deletedByHandle : (item.deletedBy==='self'?'by owner':'by admin');
+    const iid = esc(String(item.id));
+    const origId = esc(String(item.originalPostId||item.id));
+
+    card.innerHTML = thumbHTML +
+      '<div class="trash-info">' +
+        '<div class="trash-caption">' + typeLbl + ' — ' + esc(caption.slice(0,80)) + '</div>' +
+        '<div class="trash-meta">' +
+          '<strong>' + esc(item.userName||u.name||'?') + '</strong> @' + esc(item.userHandle||u.handle||'—') +
+          ' &nbsp;·&nbsp; Deleted ' + timeAgo(item.deletedAt) + ' (' + deletedBy + ')' +
+          (item.likes?' &nbsp;·&nbsp; ❤️ '+item.likes:'') +
+          (item.viewCount?' &nbsp;·&nbsp; 👁 '+item.viewCount:'') +
+          (cloudIds?'<br>Cloudinary IDs: '+cloudIds:'') +
+        '</div>' +
+        '<div class="trash-actions">' +
+          (firstImg?'<button class="tbtn view" onclick="openTrashPreview(\''+iid+'\')">👁 Preview</button>':'') +
+          '<button class="tbtn restore" onclick="restoreTrashItem(\''+iid+'\')">↺ Restore</button>' +
+          '<button class="tbtn purge" onclick="purgeTrashItem(\''+iid+'\')">🗑 Purge</button>' +
+        '</div>' +
+      '</div>';
+    list.appendChild(card);
+  });
+}
+
+function openTrashPreview(itemId){
+  const item = _trash.find(x=>x.id===itemId);
+  if(!item) return;
+  const urls = (item.mediaUrls||[]).filter(m=>m.url).map(m=>m.url);
+  if(item.mediaUrl) urls.unshift(item.mediaUrl);
+  if(!urls.length){ alert('No media to preview.'); return; }
+  _lbFiles = urls.map(function(url,i){
+    const u = getUserByUid(item.uid)||{};
+    return {url, type:'trash', user:u, caption:item.caption||'Deleted post', label:'Deleted media '+(i+1)};
+  });
+  _lbIdx = 0;
+  openLightbox();
+}
+
+async function restoreTrashItem(itemId){
+  if(!confirm('Restore this post? It will reappear on the user\'s feed.')) return;
+  const item = _trash.find(x=>x.id===itemId);
+  if(!item) return;
+  try{
+    const origId = item.originalPostId || item.id;
+    // Restore the original post by clearing hidden flag
+    await db.collection('posts').doc(String(origId)).update({
+      hidden: false,
+      restoredAt: firebase.firestore.FieldValue.serverTimestamp(),
+      restoredBy: auth.currentUser ? auth.currentUser.uid : 'admin'
+    });
+    // Remove from deletedPosts
+    await db.collection('deletedPosts').doc(String(itemId)).delete();
+    _trash = _trash.filter(x=>x.id!==itemId);
+    updateBadges();
+    renderTrash();
+    alert('Post restored! It is now visible again.');
+  }catch(e){ alert('Error restoring: '+e.message); }
+}
+
+async function purgeTrashItem(itemId){
+  if(!confirm('Permanently delete this item? Cannot be undone. The post and its Cloudinary media will be unrecoverable from this dashboard (you must delete from Cloudinary separately).')) return;
+  try{
+    const item = _trash.find(x=>x.id===itemId);
+    if(item){
+      // Permanently delete original post too if it exists
+      if(item.originalPostId){
+        await db.collection('posts').doc(String(item.originalPostId)).delete().catch(()=>{});
+      }
+      await db.collection('deletedPosts').doc(String(itemId)).delete();
+    }
+    _trash = _trash.filter(x=>x.id!==itemId);
+    updateBadges();
+    renderTrash();
+  }catch(e){ alert('Error purging: '+e.message); }
+}
+
+async function purgeAllTrash(){
+  if(!confirm('Permanently delete ALL items in trash? This cannot be undone.')) return;
+  try{
+    const batch = db.batch();
+    _trash.forEach(function(item){
+      batch.delete(db.collection('deletedPosts').doc(String(item.id)));
+    });
+    await batch.commit();
+    _trash = [];
+    updateBadges();
+    renderTrash();
+    alert('Trash purged.');
+  }catch(e){ alert('Error: '+e.message); }
+}
+
+// ── STORIES RENDER ──────────────────────────────────────────
+function filterStories(type, btn){
+  _storiesFilter = type;
+  document.querySelectorAll('#storiesFilters .filter-btn').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  renderStories();
+}
+
+function renderStories(){
+  let data = [..._stories];
+  if(_storiesFilter==='image') data=data.filter(s=>s.type==='image'||(!s.type&&(s.mediaUrl||s.imageUrl)));
+  else if(_storiesFilter==='video') data=data.filter(s=>s.type==='video'||s.videoUrl);
+  else if(_storiesFilter==='text') data=data.filter(s=>s.type==='text'||(!s.mediaUrl&&!s.imageUrl&&!s.videoUrl));
+  document.getElementById('storiesCount').textContent = data.length+' stories';
+  const tbody = document.getElementById('storiesTable');
+  if(!data.length){tbody.innerHTML='<tr><td colspan="9"><div class="empty">No active stories.</div></td></tr>';return;}
+
+  function msLeft(s){
+    const ex = s.expiresAt?(s.expiresAt.toMillis?s.expiresAt.toMillis():s.expiresAt.seconds?s.expiresAt.seconds*1000:0):0;
+    if(!ex) return '';
+    const diff = ex - Date.now();
+    if(diff<=0) return '<span class="badge badge-red">Expired</span>';
+    const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000);
+    return '<span class="badge badge-green">'+(h>0?h+'h ':'')+m+'m left</span>';
+  }
+
+  tbody.innerHTML = data.map(function(s){
+    const u = getUserByUid(s.uid)||s.user||{};
+    const url = s.mediaUrl||s.imageUrl||s.videoUrl||'';
+    const isVid = s.type==='video'||!!s.videoUrl;
+    const views = (s.seenBy||s.seen||[]).length;
+    const reactions = Object.values(s.reactionCounts||{}).reduce(function(a,v){return a+v;},0);
+    const thumbCell = url
+      ? (isVid ? '<div style="width:44px;height:44px;background:#111;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;">🎬</div>'
+               : '<img src="'+esc(url)+'" style="width:44px;height:44px;object-fit:cover;border-radius:8px;" onclick="openSingleLightboxAdmin(\''+esc(url)+'\')" class="img-thumb">')
+      : '<div class="no-img">✍️</div>';
+    const sid = esc(String(s.id));
+    return '<tr>'+
+      '<td>'+thumbCell+'</td>'+
+      '<td><div class="td-av">'+avatarHTML(u)+'<div><div class="td-name">'+esc(u.name||s.userName||'?')+'</div><div class="td-sub">@'+esc(u.handle||s.userHandle||'—')+'</div></div></div></td>'+
+      '<td style="max-width:160px;font-size:12px;">'+esc((s.caption||s.text||'').slice(0,60))+'</td>'+
+      '<td>'+(isVid?'<span class="badge badge-blue">Video</span>':'<span class="badge badge-green">Photo</span>')+(s.type==='text'?'<span class="badge badge-yellow">Text</span>':'')+'</td>'+
+      '<td><span class="badge" style="background:#dbeafe;color:#1d4ed8;">👁 '+views+'</span></td>'+
+      '<td>'+(reactions>0?'<span class="badge badge-pink">❤️ '+reactions+'</span>':'—')+'</td>'+
+      '<td>'+msLeft(s)+'</td>'+
+      '<td title="'+fullDate(s.createdAt)+'">'+timeAgo(s.createdAt)+'</td>'+
+      '<td style="white-space:nowrap;">'+
+        '<button class="action-btn" onclick="adminArchiveStory(\''+sid+'\')" style="margin-bottom:4px;">📦 Archive</button> '+
+        '<button class="action-btn danger" onclick="adminDeleteStory(\''+sid+'\')">🗑 Delete</button>'+
+      '</td>'+
+    '</tr>';
+  }).join('');
+}
+
+function openSingleLightboxAdmin(url){
+  _lbFiles = [{url:url,type:'story',user:{},caption:'Story media',label:'Story'}];
+  _lbIdx = 0;
+  openLightbox();
+}
+
+async function adminArchiveStory(storyId){
+  const s = _stories.find(x=>x.id===storyId);
+  if(!s||!confirm('Move to archive?')) return;
+  try{
+    await db.collection('storyArchive').add(Object.assign({},s,{storyId:s.id,archivedAt:firebase.firestore.FieldValue.serverTimestamp(),archiveReason:'admin'}));
+    await db.collection('stories').doc(storyId).delete();
+    _stories=_stories.filter(x=>x.id!==storyId);
+    _storyArchive.unshift(Object.assign({},s,{archiveReason:'admin'}));
+    updateBadges(); renderStories();
+  }catch(e){alert('Error: '+e.message);}
+}
+
+async function adminDeleteStory(storyId){
+  if(!confirm('Delete this story permanently?')) return;
+  try{
+    const s=_stories.find(x=>x.id===storyId);
+    if(s) await db.collection('storyArchive').add(Object.assign({},s,{storyId:s.id,archivedAt:firebase.firestore.FieldValue.serverTimestamp(),archiveReason:'admin-deleted'})).catch(function(){});
+    await db.collection('stories').doc(storyId).delete();
+    _stories=_stories.filter(x=>x.id!==storyId);
+    updateBadges(); renderStories();
+  }catch(e){alert('Error: '+e.message);}
+}
+
+// ── STORY ARCHIVE RENDER ─────────────────────────────────────
+function renderStoryArchive(){
+  const data = [..._storyArchive];
+  document.getElementById('sarchiveCount').textContent = data.length+' archived';
+  const tbody = document.getElementById('sarchiveTable');
+  if(!data.length){tbody.innerHTML='<tr><td colspan="7"><div class="empty">No archived stories yet.</div></td></tr>';return;}
+  tbody.innerHTML = data.map(function(s){
+    const u = getUserByUid(s.uid)||s.user||{};
+    const url = s.mediaUrl||s.imageUrl||s.videoUrl||'';
+    const views=(s.seenBy||s.seen||[]).length;
+    const reactions=Object.values(s.reactionCounts||{}).reduce(function(a,v){return a+v;},0);
+    const reasonMap={'admin':'<span class="badge badge-yellow">👮 Admin archived</span>','admin-deleted':'<span class="badge badge-red">🗑 Admin deleted</span>','expired':'<span class="badge badge-gray">⏰ Expired</span>','user-deleted':'<span class="badge badge-gray">👤 User deleted</span>'};
+    const reason=reasonMap[s.archiveReason]||'<span class="badge badge-gray">Archived</span>';
+    const thumb=url?'<img src="'+esc(url)+'" class="img-thumb" style="width:44px;height:44px;border-radius:8px;object-fit:cover;" onclick="openSingleLightboxAdmin(\''+esc(url)+'\')">':'<div class="no-img">✍️</div>';
+    return '<tr>'+
+      '<td>'+thumb+'</td>'+
+      '<td><div class="td-av">'+avatarHTML(u)+'<div><div class="td-name">'+esc(u.name||s.userName||'?')+'</div><div class="td-sub">@'+esc(u.handle||s.userHandle||'—')+'</div></div></div></td>'+
+      '<td style="max-width:160px;font-size:12px;">'+esc((s.caption||s.text||'').slice(0,60))+'</td>'+
+      '<td><span class="badge" style="background:#dbeafe;color:#1d4ed8;">👁 '+views+'</span></td>'+
+      '<td>'+(reactions>0?'<span class="badge badge-pink">❤️ '+reactions+'</span>':'—')+'</td>'+
+      '<td title="'+fullDate(s.archivedAt)+'">'+timeAgo(s.archivedAt)+'</td>'+
+      '<td>'+reason+'</td>'+
+    '</tr>';
+  }).join('');
+}
+
+// ── WIRE updateBadges for trash/stories ──────────────────────
+var _origUpdateBadges = updateBadges;
+updateBadges = function(){
+  _origUpdateBadges();
+  var nbT=document.getElementById('nb-trash');
+  if(nbT){nbT.textContent=_trash.length;nbT.style.background=_trash.length>0?'#ef4444':'#64748b';}
+  var nbSt=document.getElementById('nb-stories'); if(nbSt) nbSt.textContent=_stories.length;
+  var nbSa=document.getElementById('nb-sarchive'); if(nbSa) nbSa.textContent=_storyArchive.length;
+};
+
+// ── WIRE renderCurrentSection for trash/stories ───────────────
+var _origRenderSection = renderCurrentSection;
+renderCurrentSection = function(){
+  if(_activeSection==='trash')          renderTrash();
+  else if(_activeSection==='stories')   renderStories();
+  else if(_activeSection==='story-archive') renderStoryArchive();
+  else _origRenderSection();
+};
+</script>
